@@ -1,0 +1,5 @@
+c:\users\administrator\documents\visual studio 2015\Projects\UserAuthProvidersSolution\UserAuthProvidersSolution\bin\Debug\UserAuthProvidersSolution.dll
+c:\users\administrator\documents\visual studio 2015\Projects\UserAuthProvidersSolution\UserAuthProvidersSolution\bin\Debug\UserAuthProvidersSolution.pdb
+c:\users\administrator\documents\visual studio 2015\Projects\UserAuthProvidersSolution\UserAuthProvidersSolution\obj\Debug\UserAuthProviders.csprojResolveAssemblyReference.cache
+c:\users\administrator\documents\visual studio 2015\Projects\UserAuthProvidersSolution\UserAuthProvidersSolution\obj\Debug\UserAuthProvidersSolution.dll
+c:\users\administrator\documents\visual studio 2015\Projects\UserAuthProvidersSolution\UserAuthProvidersSolution\obj\Debug\UserAuthProvidersSolution.pdb

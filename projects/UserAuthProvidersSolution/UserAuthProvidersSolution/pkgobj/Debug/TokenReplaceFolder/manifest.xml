@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Solution xmlns="http://schemas.microsoft.com/sharepoint/" SolutionId="23df6480-5b40-461e-b14c-d08aec922df5" SharePointProductVersion="15.0">
+  <Assemblies>
+    <Assembly Location="UserAuthProvidersSolution.dll" DeploymentTarget="GlobalAssemblyCache" />
+  </Assemblies>
+  <FeatureManifests>
+    <FeatureManifest Location="UserAuthProviders_ClearanceClaimFeature\Feature.xml" />
+  </FeatureManifests>
+</Solution>

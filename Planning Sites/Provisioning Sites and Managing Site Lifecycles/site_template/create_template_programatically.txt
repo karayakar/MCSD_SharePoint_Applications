@@ -1,0 +1,57 @@
+using Microsoft.SharePoint;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+
+namespace SavingWebTemplatesEtAl
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            //Create a web template programatically
+            SPSite siteToAddTo = new SPSite("http://abcuniversity");
+
+            SPWeb webToCreateTemplateFrom = siteToAddTo.AllWebs["testsitedef"];
+            bool success = SaveSiteAsWebTemplate(webToCreateTemplateFrom);
+
+            if(success)
+            {
+                Console.WriteLine("New Web Template Created!");
+            }
+            else
+            {
+                Console.WriteLine("It Didn't Work!");
+            }
+        }//end static void Main(string[] args)
+
+        static bool SaveSiteAsWebTemplate(SPWeb web)
+        {
+            bool success = false;
+
+            try
+            {
+                //Not really based on a blog template here, just wanting to show the 'readability' option
+                web.SaveAsTemplate(strTemplateName: "Template based on " +
+                    SPWebTemplate.WebTemplateBLOG,
+                    strTemplateDescription: "Template created in C# code",
+                    strTemplateTitle: "Code-Created Template",
+                    fSaveData: false
+                );
+                success = true;
+
+               
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                success = false;
+            }
+
+            return success;
+        }
+    }
+}

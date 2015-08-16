@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Elements xmlns="http://schemas.microsoft.com/sharepoint/">  
+  <Field
+       ID="{9372f04b-5408-4db7-ab8e-e01dfaa9d017}"
+       Name="ChemicalAtomicNumber"
+       DisplayName="Chemical Atomic Number"
+       Type="Number"
+       Required="FALSE"
+       Group="Custom Site Columns">
+  </Field>
+</Elements>

@@ -1,0 +1,2 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<feature xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" dslVersion="1.0.0.0" Id="0f3c8174-2a18-4ee1-9430-3599215f6cfc" featureId="0f3c8174-2a18-4ee1-9430-3599215f6cfc" imageUrl="" solutionId="00000000-0000-0000-0000-000000000000" title="Farm_Solution2 Feature1" version="" deploymentPath="$SharePoint.Project.FileNameWithoutExtension$_$SharePoint.Feature.FileNameWithoutExtension$" xmlns="http://schemas.microsoft.com/VisualStudio/2008/SharePointTools/FeatureModel" />

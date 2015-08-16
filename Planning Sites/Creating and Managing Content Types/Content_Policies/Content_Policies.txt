@@ -1,0 +1,29 @@
+﻿1. Configure Central Administration to Enable 'Content Type Policy Template'
+
+Test Activate Features in Central Admin 'Site Collection Features'
+
+	Content Deployment Source Feature
+	Content Type Syndication Hub
+	Reporting
+	Cross-Site Collection Publishing
+
+
+2. Go to Top level site -> Site Collection Administration -> Content Type Policy Templates 
+
+3. Create Policy
+	Retention
+	Auditing
+	Barcodes
+	Labels
+
+4. Go to target document library or list.
+
+5. Go to library or list settings.
+
+6. Go to 'Advance Settings' -> 'Allow management of content types?' must be on.
+
+7. Go to target content type
+
+8. Go to 'Information Management Policy Settings' and apply policies.
+	
+

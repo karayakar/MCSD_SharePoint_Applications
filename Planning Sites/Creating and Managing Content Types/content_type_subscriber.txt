@@ -1,0 +1,19 @@
+1. Create a hub site to push the content types.
+
+2. Go to Central Admin -> Application Management -> Manage Service Applications
+
+3. Look for 'Managed MetaData Service' 
+
+4. Click for each service 'Properties'
+
+5. 
+  Property1:Enter url of site collection hosting the hub.
+  Property 2: Check box 'Consumes content types from the Content Type Gallery at http(s)//
+ 
+
+6. Click Monitoring -> Timer Jobs -> Review Job Definitions
+
+7. Look for Content Type Jobs and Content Type Subscriber.
+
+8. Click both timer jobs and click 'Run Now' to ensure that they run. The jobs might take a while to run.
+
