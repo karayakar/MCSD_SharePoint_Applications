@@ -1,2 +1,2 @@
-# MCSD_SharePoint-_Applications
+# MCSD SharePoint Applications
 MCSD: SharePoint Applications
