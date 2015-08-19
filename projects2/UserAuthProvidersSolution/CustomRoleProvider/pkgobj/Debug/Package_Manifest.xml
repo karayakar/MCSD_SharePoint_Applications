@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Solution xmlns="http://schemas.microsoft.com/sharepoint/" SolutionId="948bec0b-e573-46c9-bd83-353d21930c18" SharePointProductVersion="15.0">
+  <Assemblies>
+    <Assembly Location="CustomRoleProvider.dll" DeploymentTarget="GlobalAssemblyCache" />
+  </Assemblies>
+</Solution>

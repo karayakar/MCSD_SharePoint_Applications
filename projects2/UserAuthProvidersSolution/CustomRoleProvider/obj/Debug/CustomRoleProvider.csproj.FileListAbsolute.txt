@@ -1,0 +1,4 @@
+C:\Users\Administrator\documents\visual studio 2015\Projects\UserAuthProvidersSolution\CustomRoleProvider\bin\Debug\CustomRoleProvider.dll
+C:\Users\Administrator\documents\visual studio 2015\Projects\UserAuthProvidersSolution\CustomRoleProvider\bin\Debug\CustomRoleProvider.pdb
+C:\Users\Administrator\documents\visual studio 2015\Projects\UserAuthProvidersSolution\CustomRoleProvider\obj\Debug\CustomRoleProvider.dll
+C:\Users\Administrator\documents\visual studio 2015\Projects\UserAuthProvidersSolution\CustomRoleProvider\obj\Debug\CustomRoleProvider.pdb

@@ -1,0 +1,5 @@
+C:\Users\Administrator\documents\visual studio 2015\Projects\Farm_Solution2\ProvisionASiteWithCode\bin\Debug\ProvisionASiteWithCode.dll
+C:\Users\Administrator\documents\visual studio 2015\Projects\Farm_Solution2\ProvisionASiteWithCode\bin\Debug\ProvisionASiteWithCode.pdb
+C:\Users\Administrator\documents\visual studio 2015\Projects\Farm_Solution2\ProvisionASiteWithCode\obj\Debug\ProvisionASiteWithCode.csprojResolveAssemblyReference.cache
+C:\Users\Administrator\documents\visual studio 2015\Projects\Farm_Solution2\ProvisionASiteWithCode\obj\Debug\ProvisionASiteWithCode.dll
+C:\Users\Administrator\documents\visual studio 2015\Projects\Farm_Solution2\ProvisionASiteWithCode\obj\Debug\ProvisionASiteWithCode.pdb

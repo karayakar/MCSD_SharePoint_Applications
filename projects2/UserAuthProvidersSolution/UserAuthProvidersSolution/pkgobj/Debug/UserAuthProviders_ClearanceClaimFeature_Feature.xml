@@ -1,0 +1,2 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Feature xmlns="http://schemas.microsoft.com/sharepoint/" Title="ClearanceClaimFeature" Id="4a527fec-a8b5-4bab-8e88-cf4fe38a2d60" ReceiverAssembly="UserAuthProvidersSolution, Version=1.0.0.0, Culture=neutral, PublicKeyToken=515ee159aff38cac" ReceiverClass="UserAuthProvidersSolution.Features.ClearanceClaimFeature.ClearanceClaimFeatureEventReceiver" Scope="Web"></Feature>

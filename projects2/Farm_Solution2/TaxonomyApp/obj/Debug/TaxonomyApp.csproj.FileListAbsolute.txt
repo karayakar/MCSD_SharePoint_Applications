@@ -1,0 +1,7 @@
+C:\Users\Administrator\documents\visual studio 2015\Projects\Farm_Solution2\TaxonomyApp\bin\Debug\TaxonomyApp.exe.config
+C:\Users\Administrator\documents\visual studio 2015\Projects\Farm_Solution2\TaxonomyApp\bin\Debug\TaxonomyApp.exe
+C:\Users\Administrator\documents\visual studio 2015\Projects\Farm_Solution2\TaxonomyApp\bin\Debug\TaxonomyApp.pdb
+C:\Users\Administrator\documents\visual studio 2015\Projects\Farm_Solution2\TaxonomyApp\obj\Debug\TaxonomyApp.csproj.TaxonomyApp.exe.config
+C:\Users\Administrator\documents\visual studio 2015\Projects\Farm_Solution2\TaxonomyApp\obj\Debug\TaxonomyApp.exe
+C:\Users\Administrator\documents\visual studio 2015\Projects\Farm_Solution2\TaxonomyApp\obj\Debug\TaxonomyApp.pdb
+C:\Users\Administrator\documents\visual studio 2015\Projects\Farm_Solution2\TaxonomyApp\obj\Debug\TaxonomyApp.csprojResolveAssemblyReference.cache

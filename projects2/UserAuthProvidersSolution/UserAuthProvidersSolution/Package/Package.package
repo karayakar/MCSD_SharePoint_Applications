@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" dslVersion="1.0.0.0" Id="23df6480-5b40-461e-b14c-d08aec922df5" solutionId="23df6480-5b40-461e-b14c-d08aec922df5" resetWebServer="false" sharePointProductVersion="15.0" name="UserAuthProvidersSolution" xmlns="http://schemas.microsoft.com/VisualStudio/2008/SharePointTools/PackageModel">
+  <features>
+    <featureReference itemId="15189d28-ca0f-4ddb-84b6-82b411d80352" />
+  </features>
+</package>

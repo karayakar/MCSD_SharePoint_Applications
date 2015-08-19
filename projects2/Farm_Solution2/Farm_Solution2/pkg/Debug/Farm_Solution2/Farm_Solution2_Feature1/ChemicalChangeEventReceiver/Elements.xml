@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Elements xmlns="http://schemas.microsoft.com/sharepoint/">
+  <Receivers ListTemplateId="100">
+      <Receiver>
+        <Name>ChemicalChangeEventReceiverItemAdding</Name>
+        <Type>ItemAdding</Type>
+        <Assembly>Farm_Solution2, Version=1.0.0.0, Culture=neutral, PublicKeyToken=ab4d6a9aa649b487</Assembly>
+        <Class>Farm_Solution2.ChemicalChangeEventReceiver.ChemicalChangeEventReceiver</Class>
+        <SequenceNumber>10000</SequenceNumber>
+      </Receiver>
+      <Receiver>
+        <Name>ChemicalChangeEventReceiverItemUpdating</Name>
+        <Type>ItemUpdating</Type>
+        <Assembly>Farm_Solution2, Version=1.0.0.0, Culture=neutral, PublicKeyToken=ab4d6a9aa649b487</Assembly>
+        <Class>Farm_Solution2.ChemicalChangeEventReceiver.ChemicalChangeEventReceiver</Class>
+        <SequenceNumber>10000</SequenceNumber>
+      </Receiver>
+      <Receiver>
+        <Name>ChemicalChangeEventReceiverItemDeleting</Name>
+        <Type>ItemDeleting</Type>
+        <Assembly>Farm_Solution2, Version=1.0.0.0, Culture=neutral, PublicKeyToken=ab4d6a9aa649b487</Assembly>
+        <Class>Farm_Solution2.ChemicalChangeEventReceiver.ChemicalChangeEventReceiver</Class>
+        <SequenceNumber>10000</SequenceNumber>
+      </Receiver>
+      <Receiver>
+        <Name>ChemicalChangeEventReceiverItemAdded</Name>
+        <Type>ItemAdded</Type>
+        <Assembly>Farm_Solution2, Version=1.0.0.0, Culture=neutral, PublicKeyToken=ab4d6a9aa649b487</Assembly>
+        <Class>Farm_Solution2.ChemicalChangeEventReceiver.ChemicalChangeEventReceiver</Class>
+        <SequenceNumber>10000</SequenceNumber>
+      </Receiver>
+      <Receiver>
+        <Name>ChemicalChangeEventReceiverItemUpdated</Name>
+        <Type>ItemUpdated</Type>
+        <Assembly>Farm_Solution2, Version=1.0.0.0, Culture=neutral, PublicKeyToken=ab4d6a9aa649b487</Assembly>
+        <Class>Farm_Solution2.ChemicalChangeEventReceiver.ChemicalChangeEventReceiver</Class>
+        <SequenceNumber>10000</SequenceNumber>
+      </Receiver>
+      <Receiver>
+        <Name>ChemicalChangeEventReceiverItemDeleted</Name>
+        <Type>ItemDeleted</Type>
+        <Assembly>Farm_Solution2, Version=1.0.0.0, Culture=neutral, PublicKeyToken=ab4d6a9aa649b487</Assembly>
+        <Class>Farm_Solution2.ChemicalChangeEventReceiver.ChemicalChangeEventReceiver</Class>
+        <SequenceNumber>10000</SequenceNumber>
+      </Receiver>
+  </Receivers>
+</Elements>
