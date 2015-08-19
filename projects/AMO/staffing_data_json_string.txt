@@ -1,0 +1,82 @@
+StaffingData --> {&quot;AMOTitle2&quot;:&quot;
+	GCSS-Army Transportation/Distribution Capability Development &quot;,
+	&quot;Amount&quot;:&quot;$21,212.00&quot;,
+	&quot;cbStaffing&quot;:&quot;true&quot;,
+	&quot;cbACRB&quot;:&quot;true&quot;,
+	&quot;CheckBox0&quot;:&quot;true&quot;,
+	&quot;CheckBox1&quot;:&quot;false&quot;,
+	&quot;CheckBox2&quot;:&quot;false&quot;,
+	&quot;CheckBox3&quot;:&quot;false&quot;,
+	&quot;CheckBox4&quot;:&quot;false&quot;,
+	&quot;CheckBox5&quot;:&quot;false&quot;,
+	&quot;CheckBox6&quot;:&quot;false&quot;,
+	&quot;CheckBox7&quot;:&quot;false&quot;,
+	&quot;CheckBox8&quot;:&quot;false&quot;,
+	&quot;CheckBox9&quot;:&quot;false&quot;,
+	&quot;CheckBox10&quot;:&quot;false&quot;,
+	&quot;CheckBox11&quot;:&quot;false&quot;,
+	&quot;CheckBox12&quot;:&quot;true&quot;,
+	&quot;CheckBox13&quot;:&quot;false&quot;,
+	&quot;CheckBox14&quot;:&quot;false&quot;,
+	&quot;CheckBox15&quot;:&quot;false&quot;,
+	&quot;CheckBox16&quot;:&quot;false&quot;,
+	&quot;CheckBox17&quot;:&quot;false&quot;,
+	&quot;CheckBox18&quot;:&quot;false&quot;,
+	&quot;CheckBox19&quot;:&qu  CheckBox35 } -->
+
+
+AMOData -->{&quot;AmountFunded&quot;:&quot;&quot;,
+		&quot;AmountUnfunded&quot;:&quot;&quot;,
+		&quot;AppropriationAmount&quot;:&quot;&quot;,
+		&quot;AppropriationAmount2&quot;:&quot;&quot;,
+		&quot;AppropriationAmount3&quot;:&quot;&quot;,
+		&quot;RecurringContractValue1&quot;:&quot;true&quot;,
+		&quot;RecurringContractValue2&quot;:&quot;false&quot;,
+		&quot;EndorserConcurYes&quot;:&quot;true&quot;,
+		&quot;EndorserConcurNo&quot;:&quot;false&quot;,
+		&quot;EndorserNameRankPosition&quot;:&quot;&quot;,
+		&quot;EndorserSig&quot;:&quot;false&quot;,
+		&quot;EndorserUserName&quot;:&quot;shaun.lewis1&quot;,
+		&quot;EndorserSignature&quot;:&quot;shaun.lewis1&quot;,
+		&quot;EndorsedDate&quot;:&quot;20150729&quot;,
+		&quot;RMConcurYes&quot;:&quot;false&quot;,
+		&quot;RMConcurNo&quot;:&quot;true&quot;,
+		&quot;RMNameRankPosition&quot;:&quot;&quot;,
+		&quot;RMSig&quot;:&quot;false&quot;,
+		&quot;RMUserName&quot;:&quot;shaun.lewis1&quot;,
+		&quot;RMSignature&quot;:&quot;shaun.lewis1&quot;,
+		&quot;RMDate&quot;:&quot;20150729&quot;,
+		&quot;ApproverConcurYes&quot;:&quot;true&quot; 
+
+
+
+
+16
+MasterPageCode.js 
+	DoAction() Case: FYCopy line ranges 579+
+
+17
+AMOEditForm.js 
+	var check_boxes = false; line 471+
+	$(document).ready lines 60+
+	ExecuteOrDelayUntilScriptLoaded(Loadme, "SP.js"); lines 420
+	TRADOC_PeoplePicker lines 414
+		<script type="text/javascript" src="../SiteAssets/amo/TRADOC_PeoplePicker.js"></script> -->AMOEditForm.aspx
+		 $.fn.TRADOC_PeoplePicker --> TRADOC_Picker.js
+	Loadme() lines 424+
+	TabsLoaded() lines 460+
+	UpdateFieds() line ranges 470+
+	//DETERMINE TO CLEAR STAFFING CHECK BOXES BASED ON [DESCRIPTION TEXT AREA] line 630+
+	Hide Checkboxes line range 801 - 802;
+	//HIDE STAFFING DATA CHECKBOXES AFTER FY COPY -> ines 787+
+	
+
+
+
+	
+
+
+
+
+
+

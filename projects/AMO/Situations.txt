@@ -1,0 +1,6 @@
+Compare list columns to 10 site.
+
+Add AMOFormsListContentType
+
+Target Functions --> SaveContract(), RemoveReadOnly()
+

@@ -1,0 +1,11 @@
+1. Do not link Proponent_Number to 'Link to List.'
+
+2. All Parent unit IDs have to be filled in.
+
+3. Title have to be unique.
+
+4. Proponent and Parent Ids Must Match.
+
+5. Leave Proponent to None as Default.
+
+6. Set Parent Fied as Required Field.

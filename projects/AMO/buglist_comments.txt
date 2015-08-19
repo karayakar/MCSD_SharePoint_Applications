@@ -1,0 +1,1 @@
+﻿[Action Officer] column was a person and groups field that is changed to a single line of text field. The saving functionality is finalized when the field cease to call jQueryUI peoplepicker.

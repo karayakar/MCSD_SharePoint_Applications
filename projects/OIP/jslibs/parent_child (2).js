@@ -1,0 +1,183 @@
+init = function(){
+	
+	var dom_id = 1;
+	var parentID = 1;
+	var proponentID = 1;
+	
+	
+	
+	
+	//get url
+	var SLASH = "/";
+	var test = new String(window.location);
+	var tp1 = test.indexOf("sites");
+	var tp1 = test.substring(0, tp1);
+	var tp2 = tp1 + "sites" + SLASH + "oip";
+	
+	
+	
+	  //add parent option attributes
+    var client_parent =  $( '#ctl00_m_g_a2971a75_99c6_43fa_b9ea_6dcbb886d4ed_ctl00_ctl05_ctl02_ctl00_ctl00_ctl04_ctl00_Lookup option' ).each(function(){
+    
+      		
+    		var option = $(this).text();
+    		$(this).attr('id',dom_id); //identifies Parent
+    		$(this).prop('parent',parentID);   	
+    		dom_id++;
+    		parentID++;
+    		
+    		    
+    });
+    
+      //add proponent option attributes
+    var client_parent =  $( '#ctl00_m_g_a2971a75_99c6_43fa_b9ea_6dcbb886d4ed_ctl00_ctl05_ctl03_ctl00_ctl00_ctl04_ctl00_Lookup option' ).each(function(){
+    
+      		
+    		var option = $(this).text();
+    		$(this).attr('id',dom_id);   	
+    		dom_id++;
+ 
+    		
+    		    
+    });
+
+    
+    
+        
+    
+ //parent combobox event handler 
+var parent_event = $( "#ctl00_m_g_a2971a75_99c6_43fa_b9ea_6dcbb886d4ed_ctl00_ctl05_ctl02_ctl00_ctl00_ctl04_ctl00_Lookup " ).change(function () {
+
+
+			
+
+	$( "#ctl00_m_g_a2971a75_99c6_43fa_b9ea_6dcbb886d4ed_ctl00_ctl05_ctl02_ctl00_ctl00_ctl04_ctl00_Lookup option:selected" ).each(function() {
+      
+      	var parent_option = parseInt($( this ).attr('parent')); 
+      	var count = 0;     	
+     	//obj and properties
+		parent_proponent = {};
+	
+		parent_arr = [];
+		proponent_arr = [];
+		parent_id_arr = [];
+		proponent_id_arr = [];
+		assoc_arr = [];
+		assoc_arr2 = [];
+		
+		var last_parent = 'empty';
+		
+		
+      
+      	
+      	
+					$().SPServices({
+												operation: "GetListItems",
+												async: false,
+												listName: 'Proponent',
+												webURL: tp2,
+												CAMLViewFields: "<ViewFields properties='true'><FieldRef Name='Title' /><FieldRef Name='ProponentID' /><FieldRef Name='Parent' /></ViewFields>",
+												CAMLQuery: "<Query><OrderBy><FieldRef Name='Title' Ascending='True'/></OrderBy></Query>",
+												completefunc: function (xData, status) {
+									            
+												//alert(xData.responseXML.xml);//debug xml
+																	
+														$(xData.responseXML).SPFilterNode("z:row").each(function() {
+																
+
+																var parent = $(this).attr("ows_Parent");
+;					             		   						alert(parent);
+																var proponent = $(this).attr("ows_Title");
+																var proponent_id = parseInt($(this).attr("ows_ProponentID"));
+																itemCount = $(xData.responseXML).find("rs\\:data").attr("ItemCount"); //get item count
+																
+																parent_arr.push(parent);
+						        					    		
+						        					    		
+						        					    		
+						        					    		for( var i = 0, count = parent_arr.length; i < count; i++ ){
+						        					    		
+						        					    			
+						        					    			
+						        					    			if(parent_arr[i] === parent_arr[i+1]){
+						        					    				alert(parent_arr[i]);
+						        					    			
+						        					    			}
+						        					    			else{
+						        					    				alert(parent_arr[i]);
+						        					    			
+						        					    			}
+						        					    		
+						        					    		}
+						        					    		
+						        					    		
+																if(last_parent === parent){
+						        					    		
+						        					    			//alert(last_parent + ' != ' + parent)
+						        					    			//alert(parent + ' : ' + count)
+						        					    			//parent_proponent[parent] = {};
+						        					    			//parent_proponent[parent][count] = {};
+						        					    			//parent_proponent[parent][count] = proponent;
+						        					    			
+						        					    		
+						        					    		}
+						        					    		else{
+						        					    			//alert(parent + ' : ' + count)
+						        					    			//parent_proponent[parent][count] = {};
+																	//parent_proponent[parent][count] = proponent;
+						        					    		
+						        					    		
+						        					    		}
+						        					    		last_parent = parent;
+						        					    		
+						        					    		
+																							        					   	
+																
+																					        					   		    
+																//alert(count);					        					   		   
+																					        					   		    
+																count++;								        					  		
+														});
+														            	  
+									        	}
+									       
+					    				});				
+					    			
+					        					   
+					    			
+					    			
+					  
+		
+    	
+    	
+			    						
+				
+    });
+    
+    
+    
+        
+    
+    
+    	    	
+    	
+    													
+		    		    
+ }).change();
+ 
+ 
+ 
+ 
+}//end init
+
+
+
+$( window ).load(function() {
+
+
+ 	SP.SOD.executeFunc('sp.js', 'SP.ClientContext',init);
+ 	
+ 	
+ 	
+});
+

@@ -1,0 +1,350 @@
+﻿/*Parent Proponent OIP Script, Beta Version*/
+
+
+init = function(){
+	
+	var dom_id = 0;
+	var parentID = 0;
+	var proponentID = 0;
+	var count = 0;
+	var good_arr = [];
+	var arr_backup = [];
+	var append_at_page_load = 0;
+	var dom_ready = false;
+	
+	
+	
+	//get url
+	var SLASH = "/";
+	var test = new String(window.location);
+	var tp1 = test.indexOf("sites");
+	var tp1 = test.substring(0, tp1);
+	var tp2 = tp1 + "sites" + SLASH + "oip";
+	
+	
+	
+	  //add parent option attributes
+    var client_parent =  $( '#ctl00_m_g_a2971a75_99c6_43fa_b9ea_6dcbb886d4ed_ctl00_ctl05_ctl01_ctl00_ctl00_ctl04_ctl00_Lookup option' ).each(function(){
+    
+      		
+    		var option = $(this).text();
+    		$(this).attr('id',dom_id); //identifies Parent
+    		$(this).prop('parent',parentID);   	
+    		dom_id++;
+    		parentID++;
+    		
+    		    
+    });
+    
+     //add proponent option attributes
+    var client_proponent =  $( '#ctl00_m_g_a2971a75_99c6_43fa_b9ea_6dcbb886d4ed_ctl00_ctl05_ctl02_ctl00_ctl00_ctl04_ctl00_Lookup option' ).each(function(){
+    
+    		$(this).attr('proponent',proponentID);   	
+    		proponentID++;
+	    
+    });
+
+  
+    
+ //parent combobox event handler 
+var parent_event = $( "#ctl00_m_g_a2971a75_99c6_43fa_b9ea_6dcbb886d4ed_ctl00_ctl05_ctl01_ctl00_ctl00_ctl04_ctl00_Lookup " ).change(function () {
+
+
+	$( "#ctl00_m_g_a2971a75_99c6_43fa_b9ea_6dcbb886d4ed_ctl00_ctl05_ctl01_ctl00_ctl00_ctl04_ctl00_Lookup option:selected" ).each(function() {
+      
+      
+      	     	
+     	//obj and properties
+		parent_proponent = {};
+	
+		parent_arr = [];
+		proponent_arr = [];
+		parent_id_arr = [];
+		proponent_id_arr = [];
+		assoc_arr = [];
+		assoc_arr2 = [];
+		
+		var last_parent = 'empty';
+		
+					$().SPServices({
+												operation: "GetListItems",
+												async: false,
+												listName: 'Proponent',
+												webURL: tp2,
+												CAMLViewFields: "<ViewFields properties='true'><FieldRef Name='Title' /><FieldRef Name='ProponentID' /><FieldRef Name='Parent' /></ViewFields>",
+												CAMLQuery: "<Query><OrderBy><FieldRef Name='Title' Ascending='True'/></OrderBy></Query>",
+												completefunc: function (xData, status) {
+									            
+												//alert(xData.responseXML.xml);//debug xml
+																	
+														$(xData.responseXML).SPFilterNode("z:row").each(function() {
+																
+
+																var parent = $(this).attr("ows_Parent");
+																var proponent = $(this).attr("ows_Title");
+																//alert(parent);
+																
+																var eval_repeats = $.inArray( parent, parent_arr );
+																
+																
+																if(eval_repeats === -1){
+																	//alert(parent);
+																	parent_proponent[parent] = {};
+																	parent_proponent[parent][count] = proponent;
+																
+																}
+																else{
+																	parent_proponent[parent][count] = proponent;
+																}
+																
+					             		   						parent_arr.push(parent);
+					             		   						
+					             		   					
+					             		   						
+					             		   						itemCount = $(xData.responseXML).find("rs\\:data").attr("ItemCount"); //get item count
+					             		   						
+					             		   						
+							             		   				
+					             		   						
+																
+																//var proponent_id = parseInt($(this).attr("ows_ProponentID"));
+																
+																
+																
+						        					    		
+						        					    		//alert(parent_arr.length);
+						        					    		
+			        					   		   
+																					        					   		    
+																count++;								        					  		
+														});
+														            	  
+									        	}
+									       
+					    				});				
+					    			
+    		//alert(parent_option);	
+    		var dom_length = (dom_id - 1);
+    		var parent_option = parseInt($( this ).attr('parent'));
+    		var proponent_dom = $( '#ctl00_m_g_a2971a75_99c6_43fa_b9ea_6dcbb886d4ed_ctl00_ctl05_ctl02_ctl00_ctl00_ctl04_ctl00_Lookup option' );
+    		var dom_text = $(this).text(); 
+    		var counter = 0;//proponent list count		
+    		var proponent_item_count = (count);
+    		
+    		
+    		
+    		
+    		
+    		for(var i = 0; i <= dom_length; i++){
+    			
+    				if(i === parent_option){
+    					
+    					for(prop in parent_proponent){
+    						
+			    			
+			    			if(prop === dom_text){//select parent
+			    					//alert(prop);
+			    					
+			    					for(var j = 0; j <= proponent_item_count; j++){//get proponent
+			    					
+			    						if((typeof parent_proponent[prop][j] === 'string')){
+			    							//alert(parent_proponent[prop][j]);
+			    							
+				    							proponent_dom.each(function(){
+				    								
+				    								
+				    								
+				    								var proponent_text = $(this).text();
+				    								if(parent_proponent[prop][j] === proponent_text){
+				    									//alert(parent_proponent[prop][j]);
+				    									
+				    											proponent_dom.each(function(){//filter
+				    												if(parent_proponent[prop][j] === $(this).text()){
+				    													good_arr.push($(this).prop('proponent'));
+				    													//alert(good_arr);
+				    													
+				    												
+				    												}
+				    											});//end each
+				    								}//end if
+								    			});//end each
+			    							
+			    						
+			    						}//end if
+			    					
+			    					
+			    					}//end for
+			    					
+			    					//alert(proponent_item_count)
+			    					
+			    					
+			    						
+			    			}//end if
+			    					
+			    			//parent_proponent['Parent 5'][7];
+			    
+			    			counter++;//proponent list count
+			    		}//end for	
+    					
+    					//alert(parent_option);
+    					//alert(dom_text);
+    				
+    				}//end if
+    				
+    				
+    			
+    		}//end for
+    		
+    		
+  	
+	
+	 
+	
+		
+	var hide_proponents_at_load = proponent_dom.each(function(){//hide proponents at load
+	 	
+	 	if(append_at_page_load  <  proponent_dom.length){//hide proponents at page load
+	 		$(this).wrap('<span/>');
+	 		append_at_page_load++;
+	 	
+	 	}//end if
+	
+	 	
+	 	
+    });//end each()
+    
+    
+    
+    
+   hide_proponents = function(){
+   		
+   			
+	 		for(var i = 0; i < arr_backup.length; i++){
+	 		
+	 				proponent_dom.each(function(){//hide proponents at load
+	 					var current_prop = parseInt($(this).prop('proponent'));
+	 					
+	 					if( (current_prop === arr_backup[i]) && (dom_ready === true) ){
+	 							var indexes_to_remove = arr_backup.length;
+	 							//alert(indexes_to_remove);
+	 						//alert('wrap ' + current_prop);
+	 						$(this).wrap('<span/>');
+	 						//alert('i : ' + i);
+	 						arr_backup.splice(i,1);
+	 						
+	 						
+	 						//alert('arr_backup length' + arr_backup.length);
+	 					}
+	 					
+	 				
+	 				});
+	 				//alert('wrap this prop ' + arr_backup[i]);
+	 			
+	 			
+	 			
+	 		
+	 	}//end for
+    
+    }//end ()
+   
+	
+    
+	//alert(parent_option);		
+ 	//alert(good_arr);
+			
+		var show_proponents = function(){//show proponents	
+							dom_ready = true;//prevents premature wrapping
+							for(var i = 0; i < good_arr.length; i++){//show properties
+						
+									 var good_prop = parseInt(good_arr[i]);
+									 proponent_dom.each(function(){//hide proponents
+					    
+									    	var dom_prop2 = parseInt($(this).prop('proponent'));
+									    	
+									    	
+									    	if(good_prop === dom_prop2){//show parent properties
+									    		//alert(good_prop + ' === ' + dom_prop2);
+									    		arr_backup.push(good_prop);
+									    		//alert('show proponent :  ' + dom_prop2)
+									    		$(this).unwrap('<span/>');
+									    	}
+								     });//end each
+						}//end for
+			}//end ()
+			
+			
+			
+			
+			hide_proponents_at_load;//call
+			
+			hide_proponents();//call
+			
+			show_proponents();//call
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			good_arr = [];//clear parent properties;
+			
+			
+	
+			
+	 		
+			
+	
+	
+	
+	
+					
+				
+  });
+    
+   	//$(this).wrap('<span/>');
+    
+    
+    	
+   count = 0; 													
+		    		    
+ }).change();
+ 
+ 
+ 
+ 
+}//end init
+
+
+
+$( window ).load(function() {
+
+
+ 	SP.SOD.executeFunc('sp.js', 'SP.ClientContext',init);
+ 	
+ 	
+ 	
+});
+
+
+/*
+		parent_proponent{
+				parent_unitA{
+					
+					proponent: []
+				}
+				
+				parent_unitB{
+				
+					proponent: []
+					
+				}
+		}
+
+
+
+
+*/
+

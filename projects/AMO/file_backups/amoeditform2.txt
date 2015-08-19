@@ -1,0 +1,2196 @@
+<script type="text/javascript" src="../SiteAssets/amo/jquery.json.min.js"></script>
+<script type="text/javascript" src="../SiteAssets/amo/TRADOC_PeoplePicker.js"></script>
+<script type="text/javascript" src="../SiteAssets/amo/AMOEditForm2.js"></script>
+<style type="text/css">
+	@media all  
+	{
+		.page-break { display: none; }
+		.ms-dialog .s4-ca { width: 980px !important; } 
+	}
+	@media print  
+	{
+		.page-break { display: block; page-break-before: always; } 
+		.noprint { display: none; }
+	}
+</style>
+<div id="ConfirmPopup" style="display:none;">
+	<div id="messageDiv" style="height:100px; padding-top:10px;padding-left:10px;padding-right:10px; font-weight:bold;">
+		<label id="lblConfirmationMessage">Save The Form?</label>
+	</div>
+	<div id="buttonDiv" style="float:right;padding-right:5px;">
+		<input type="button" style="width:75px;" value="Save" onclick="SP.UI.ModalDialog.commonModalDialogClose(SP.UI.DialogResult.OK, 'Save'); return false;" />
+		<input type="button" style="width:75px;" value="Close" onclick="SP.UI.ModalDialog.commonModalDialogClose(SP.UI.DialogResult.cancel, 'Close'); return false;"/>
+	</div>
+</div>
+<div id="formDiv">
+	<div id="errorcontainer" class="ui-state-error noprint" style="display: none;">
+		<div id="errormessage" class="ui-state-error errormessage"></div>
+		<div id="ErrorButtonDiv" style="float:right;padding-right:5px;">
+			<input type="button" id="ErrorOK" style="width:75px;" value="OK" onclick="SP.UI.ModalDialog.commonModalDialogClose(SP.UI.DialogResult.OK); return false;" />
+		</div>
+	</div>
+	<div id="tabstop" class="noprint">
+		<ul class="tabs toptabs">
+			<li class="tab"><a href="#tabs-1">Organization Input</a></li>
+			<li class="tab"><a href="#tabs-2">5-14 Page 1</a></li>
+			<li class="tab"><a href="#tabs-3">5-14 Page 2</a></li>
+			<li class="tab"><a href="#tabs-4">5-14 Page 3</a></li>
+			<li class="tab"><a href="#tabs-5">Post Approval Data</a></li>
+			<!-- <li class="tab"><a href="#tabs-6">SCAF</a></li> -->
+			<li class="tab"><a href="#tabs-7">Staffing Page</a></li>
+		</ul>
+	</div>
+	<div id="tabscontainer">
+		<!-- TAB 1 -->
+		<div id="tabs-1" class="tabcontent">
+			<table class="formWrapper">
+				<tbody valign="top">      
+					<tr>
+						<td colspan="2" style="text-align: center;" class="ui-state-default">
+							<strong>Organization Input</strong><br /><br />
+						</td>
+					</tr>
+					<tr>
+						<td width="175px" class="ui-state-default">Organization</td>
+						<td class="ui-state-active"><select class="disable PTS" size="1" loaded="false" id="Level4Organization" ifname="Level4Organization" onchange="changeme(this)" function="cascadeselect" cascadeto="UIC" lookuplist="TRADOCValuesList" field="UIC" filterfield="Level4Name" lookupsite="parent"></select></td>
+					</tr>
+					<tr>
+						<td width="175px" class="ui-state-default">UIC</td>
+						<td class="ui-state-active"><select class="disable PTS" size="1" loaded="false" id="UIC" ifname="UIC" onchange="changeme(this)" function="cascadeselect" cascadeto="CostCenterPlusName" lookuplist="TRADOCValuesList" field="CostCenterPlusName" filterfield="UIC" lookupsite="parent"></select></td>
+					</tr>
+					<tr>
+						<td width="175px" class="ui-state-default">Cost Center</td>
+						<td class="ui-state-active"><select class="disable PTS" size="1" loaded="false" id="CostCenterPlusName" ifname="Cost_x0020_Center_x0020_Name" onchange="changeme(this)" function="costcenter"></select></td>
+					</tr>
+					<tr>
+						<td width="175px" class="ui-state-default">Name of Organization</td>
+						<td class="ui-state-active"><input class="disable PTS" type="text" onchange="changeme(this)" modified="false"  id="Organization" ifname="Organization" size="100" readonly="readonly" /></td>
+					</tr>
+					<tr>
+						<td width="175px" class="ui-state-default">Contract Title</td>
+						<td class="ui-state-active"><input class="disable PTS" type="text" onchange="changeme(this)" modified="false"  id="AMOTitle" ifname="Title" size="100" function="title" /></td>
+					</tr>
+					<tr id="hiddenamo" style="display: none;">
+						<td width="175px" class="ui-state-default">AMO#</td>
+						<td class="ui-state-active"><input class="disable PTS" type="text" onchange="changeme(this)" modified="false"  id="AMOHidden" ifname="AMO_x0020_No_x002e_" size="100" /></td>
+					</tr>
+					<tr style="display: none;">
+						<td class="ui-state-default">
+							<table>
+								<tr><td><input type="text" class="PTS" ifname="AMOStatus" id="Status" /></td></tr>
+								<tr><td><input type="text" class="fundingdata" ifname="Level_x0020_1_x0020_Fund_x0020_Center" id="LEVEL1FundCenter" /></td></tr>
+								<tr><td><input type="text" class="fundingdata" ifname="Level_x0020_1_x0020_Name" id="LEVEL1Name" /></td></tr>
+								<tr><td><input type="text" class="fundingdata" ifname="Level_x0020_2_x0020_Fund_x0020_Center" id="LEVEL2FundCenter" /></td></tr>
+								<tr><td><input type="text" class="fundingdata" ifname="Level_x0020_2_x0020_Name" id="Level2Name" /></td></tr>
+								<tr><td><input type="text" class="fundingdata" ifname="Level_x0020_3_x0020_Fund_x0020_Center" id="LEVEL3FundCenter" /></td></tr>
+								<tr><td><input type="text" class="fundingdata" ifname="Level_x0020_3_x0020_Name" id="Level3Name" /></td></tr>
+								<tr><td><input type="text" class="fundingdata" ifname="Level_x0020_4_x0020_Fund_x0020_Center" id="Level4FundCenter" /></td></tr>
+								<tr><td><input type="text" class="fundingdata" ifname="Level_x0020_4_x0020_Name" id="Level4Name" /></td></tr>
+								<tr><td><input type="text" class="fundingdata" ifname="Level_x0020_5_x0020_Name" id="Level5Name" /></td></tr>
+								<tr><td><input type="text" class="fundingdata" ifname="Cost_x0020_Center" id="CostCenter" lookup="true" lookupval="" /></td></tr>
+							</table>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="page-break"></div>
+		<!-- TAB 2 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
+		<div id="tabs-2" class="tabcontent">
+			<table class="formWrapper">
+				<tbody>
+					<tr>
+						<td class="ui-state-default">
+							<table style="width: 100%;"><tr>
+								<td class="ui-state-default" style="width: 30%; text-align: center;">
+									Previous AMO No.&nbsp;<input type="text" class="PTS" style="width: 50%;" id="PreviousAMO" ifname="Previous_x0020_AMO_x0020_No" onchange="changeme(this)" modified="false" />
+								</td>
+								<td class="ui-state-default" style="width: 40%; text-align: center;"><strong>(FOUO)</strong></td>
+								<td class="ui-state-default amo" style="width: 30%; text-align: center;"></td>
+							</tr></table>
+						</td>
+					</tr>
+					<tr>
+						<td class="ui-state-default">
+							<div align="center">
+								<strong>REQUEST FOR APPROVAL OF SERVICE AND SUPPLY/PRODUCT CONTRACT REQUIREMENTS V.3</strong><br />
+								<strong><font style="FONT-SIZE: 5pt">For use of this form see TRADOC Regulation 5-14. The proponent is TRADOC Deputy Chief of Staff, G-8 (ATRM-MDA). RCS ATRM-159 (R2)</font></strong>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td class="ui-state-default">
+							<table><tr><td class="ui-state-default" style="width: 136px;">Name of Organization:</td>
+							<td class="ui-state-active" id="OrganizationName" style="width: 696px;"></td></tr></table>
+						</td>
+					</tr>
+					<tr>
+						<td class="ui-state-default">
+							<table><tr><td class="ui-state-default" style="width: 136px;">Contract Title:</td> 
+							<td class="ui-state-active" id="ContractTitle" style="width: 696px;"></td></tr></table>
+						</td>
+					</tr>
+					<tr>
+						<td class="ui-state-default">
+							<div align="center">
+								<strong>SECTION I: REQUIREMENT DESCRIPTION AND APPROVAL DECISIONS</strong>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td class="ui-state-default" style="text-align: center;">
+							<table style="width: 100%;">
+								<tr>   
+									<td class="ui-state-default">A. PURPOSE OF THE CONTRACT: <font style="FONT-SIZE: 7pt">(Include description of which staff element or work center the contract supports)</font></td>
+								</tr>
+								<tr>
+									<td class="ui-state-default" style="text-align: center;">
+										<textarea class="disable PTS" ifname="Contract_x0020_Purpose" id="ContractPurpose" rows="3" cols="100" style="width: 98%; height: 60px;"></textarea>
+									</td>
+								</tr>
+								<tr>
+									<td class="ui-state-default" style="text-align: center;">
+										<table style="width: 100%;">
+											<tr>
+												<td class="ui-state-default" style="width: 50%;">Are there any IT services/support/products in this requirement?</td>
+												<td class="ui-state-default" style="text-align: left; width: 50%;">
+													<select class="disable PTS" size="1" onchange="changeme(this)" modified="false"  ifname="IT_x0020_Support" id="ITSupport">
+														<option selected="selected" value="Select...">Select...</option>
+														<option value="Yes">Yes</option>
+														<option value="No">No</option>
+													</select>
+												</td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+								<tr>
+									<td class="ui-state-default" style="text-align: center;">
+										<table style="width: 100%;">
+											<tr>   
+												<td class="ui-state-default" style="text-align: center; width: 16%;">Software Buy</td>
+												<td class="ui-state-default" style="text-align: center; width: 17%;">License(s)</td>
+												<td class="ui-state-default" style="text-align: center; width: 17%;">Hardware Buy</td>
+												<td class="ui-state-default" style="text-align: center; width: 17%;">Cell Phones/Cards</td>
+												<td class="ui-state-default" style="text-align: center; width: 17%;">Help Desk Support</td>
+												<td class="ui-state-default" style="text-align: center; width: 16%;">Maintenance</td>
+											</tr> 
+											<tr>
+												<td class="ui-state-default" style="text-align: center;"><input class="disable PTS" type="checkbox" checkedvalue="true" uncheckedvalue="false" onchange="changeme(this)" modified="false"  ifname="Software" id="Software" /></td>
+												<td class="ui-state-default" style="text-align: center;"><input class="disable PTS" type="checkbox" checkedvalue="true" uncheckedvalue="false" onchange="changeme(this)" modified="false"  ifname="License" id="License" /></td>
+												<td class="ui-state-default" style="text-align: center;"><input class="disable PTS" type="checkbox" checkedvalue="true" uncheckedvalue="false" onchange="changeme(this)" modified="false"  ifname="Hardware" id="Hardware" /></td>
+												<td class="ui-state-default" style="text-align: center;"><input class="disable PTS" type="checkbox" checkedvalue="true" uncheckedvalue="false" onchange="changeme(this)" modified="false"  ifname="Cell_x0020_Phones" id="CellPhones" /></td>
+												<td class="ui-state-default" style="text-align: center;"><input class="disable PTS" type="checkbox" checkedvalue="true" uncheckedvalue="false" onchange="changeme(this)" modified="false"  ifname="Helpdesk_x0020_Support" id="HelpdeskSupport" /></td>
+												<td class="ui-state-default" style="text-align: center;"><input class="disable PTS" type="checkbox" checkedvalue="true" uncheckedvalue="false" onchange="changeme(this)" modified="false"  ifname="Maintenance" id="Maintenance" /></td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+								<tr>
+									<td class="ui-state-default" style="text-align: center;">
+										<table style="width: 100%;">
+											<tr>
+												<td class="ui-state-default" style="text-align: center; width: 50%;">Limitation 1:</td>
+												<td class="ui-state-default" style="text-align: center; width: 50%;">Limitation 2:</td>
+											</tr>
+											<tr>
+												<td class="ui-state-default" style="text-align: center;"><select class="disable PTS" size="1" onchange="changeme(this)" modified="false"  ifname="Limitation1" id="Limitation1" style="width:410px;"></select></td>
+												<td class="ui-state-default" style="text-align: center;"><select class="disable PTS" size="1" onchange="changeme(this)" modified="false"  ifname="Limitation2" id="Limitation2" style="width:410px;"></select></td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td class="ui-state-default" style="text-align: center;">
+							<table style="width: 100%;">
+								<tr>
+									<td class="ui-state-default" style="width: 336px; text-align: left;">B. Estimated Costs</td>
+									<td class="ui-state-default" style="width: 96px; text-align: center;">FY <input class="disable PTS" type="text" onchange="changeme(this)" modified="false" ifname="FY_x0020_1" id="FY1" style="width: 50px;" /></td>
+									<td class="ui-state-default" style="width: 96px; text-align: center;">FY <input class="disable PTS" type="text" onchange="changeme(this)" modified="false" ifname="FY_x0020_2" id="FY2" style="width: 50px;" /></td>
+									<td class="ui-state-default" style="width: 96px; text-align: center;">FY <input class="disable PTS" type="text" onchange="changeme(this)" modified="false" ifname="FY_x0020_3" id="FY3" style="width: 50px;" /></td>
+									<td class="ui-state-default" style="width: 96px; text-align: center;">FY <input class="disable PTS" type="text" onchange="changeme(this)" modified="false" ifname="FY_x0020_4" id="FY4" style="width: 50px;" /></td>
+									<td class="ui-state-default" style="width: 96px; text-align: center;">FY <input class="disable PTS" type="text" onchange="changeme(this)" modified="false" ifname="FY_x0020_5" id="FY5" style="width: 50px;" /></td>
+								</tr>
+								<tr>
+									<td class="ui-state-default" style="text-align: left;"><span style="FONT-SIZE: 10pt">Choose Option Periods</span></td>
+									<td class="ui-state-default" style="text-align: center;"><font size="1">Base Year</font></td>
+									<td class="ui-state-default" style="text-align: center;"><select class="disable PTS" size="1" loaded="false" onchange="changeme(this)" modified="false"  ifname="Period_x0020_2" id="Period2" style="width: 94px;"></select></td>
+									<td class="ui-state-default" style="text-align: center;"><select class="disable PTS" size="1" loaded="false" onchange="changeme(this)" modified="false"  ifname="Period_x0020_3" id="Period3" style="width: 94px;"></select></td>
+									<td class="ui-state-default" style="text-align: center;"><select class="disable PTS" size="1" loaded="false" onchange="changeme(this)" modified="false"  ifname="Period_x0020_4" id="Period4" style="width: 94px;"></select></td>
+									<td class="ui-state-default" style="text-align: center;"><select class="disable PTS" size="1" loaded="false" onchange="changeme(this)" modified="false"  ifname="Period_x0020_5" id="Period5" style="width: 94px;"></select></td>
+								</tr>
+								<tr>
+									<td class="ui-state-default" style="text-align: left;">1. Estimated Labor Cost</td>
+									<td class="ui-state-default" style="text-align: center;"><input class="disable currency PTS " type="text"  onchange="changeme(this)" modified="false"  ifname="EstimatedLaborCost1" totalfield="EstimatedTotalCost1" id="EstimatedLaborCost1" style="width: 94px;" /></td>
+									<td class="ui-state-default" style="text-align: center;"><input class="disable currency PTS " type="text"  onchange="changeme(this)" modified="false"  ifname="EstimatedLaborCost2" totalfield="EstimatedTotalCost2" id="EstimatedLaborCost2" style="width: 94px;" /></td>
+									<td class="ui-state-default" style="text-align: center;"><input class="disable currency PTS " type="text"  onchange="changeme(this)" modified="false"  ifname="EstimatedLaborCost3" totalfield="EstimatedTotalCost3" id="EstimatedLaborCost3" style="width: 94px;" /></td>
+									<td class="ui-state-default" style="text-align: center;"><input class="disable currency PTS " type="text"  onchange="changeme(this)" modified="false"  ifname="EstimatedLaborCost4" totalfield="EstimatedTotalCost4" id="EstimatedLaborCost4" style="width: 94px;" /></td>
+									<td class="ui-state-default" style="text-align: center;"><input class="disable currency PTS " type="text"  onchange="changeme(this)" modified="false"  ifname="EstimatedLaborCost5" totalfield="EstimatedTotalCost5" id="EstimatedLaborCost5" style="width: 94px;" /></td>
+								</tr>
+								<tr>
+									<td class="ui-state-default" style="text-align: left;">2. Estimated Supply/Product Cost</td>
+									<td class="ui-state-default" style="text-align: center;"><input class="disable currency PTS " type="text"  onchange="changeme(this)" modified="false"  ifname="EstimatedSupplyProductCost1" totalfield="EstimatedTotalCost1" id="EstimatedSupplyProductCost1" style="width: 94px;" /></td>
+									<td class="ui-state-default" style="text-align: center;"><input class="disable currency PTS " type="text"  onchange="changeme(this)" modified="false"  ifname="EstimatedSupplyProductCost2" totalfield="EstimatedTotalCost2" id="EstimatedSupplyProductCost2" style="width: 94px;" /></td>
+									<td class="ui-state-default" style="text-align: center;"><input class="disable currency PTS " type="text"  onchange="changeme(this)" modified="false"  ifname="EstimatedSupplyProductCost3" totalfield="EstimatedTotalCost3" id="EstimatedSupplyProductCost3" style="width: 94px;" /></td>
+									<td class="ui-state-default" style="text-align: center;"><input class="disable currency PTS " type="text"  onchange="changeme(this)" modified="false"  ifname="EstimatedSupplyProductCost4" totalfield="EstimatedTotalCost4" id="EstimatedSupplyProductCost4" style="width: 94px;" /></td>
+									<td class="ui-state-default" style="text-align: center;"><input class="disable currency PTS " type="text"  onchange="changeme(this)" modified="false"  ifname="EstimatedSupplyProductCost5" totalfield="EstimatedTotalCost5" id="EstimatedSupplyProductCost5" style="width: 94px;" /></td>
+								</tr>
+								<tr>
+									<td class="ui-state-default" style="text-align: left;">3. Estimated Travel Cost</td>
+									<td class="ui-state-default" style="text-align: center;"><input class="disable currency PTS " type="text"  onchange="changeme(this)" modified="false"  ifname="EstimatedTravelCost1" totalfield="EstimatedTotalCost1" id="EstimatedTravelCost1" style="width: 94px;" /></td>
+									<td class="ui-state-default" style="text-align: center;"><input class="disable currency PTS " type="text"  onchange="changeme(this)" modified="false"  ifname="EstimatedTravelCost2" totalfield="EstimatedTotalCost2" id="EstimatedTravelCost2" style="width: 94px;" /></td>
+									<td class="ui-state-default" style="text-align: center;"><input class="disable currency PTS " type="text"  onchange="changeme(this)" modified="false"  ifname="EstimatedTravelCost3" totalfield="EstimatedTotalCost3" id="EstimatedTravelCost3" style="width: 94px;" /></td>
+									<td class="ui-state-default" style="text-align: center;"><input class="disable currency PTS " type="text"  onchange="changeme(this)" modified="false"  ifname="EstimatedTravelCost4" totalfield="EstimatedTotalCost4" id="EstimatedTravelCost4" style="width: 94px;" /></td>
+									<td class="ui-state-default" style="text-align: center;"><input class="disable currency PTS " type="text"  onchange="changeme(this)" modified="false"  ifname="EstimatedTravelCost5" totalfield="EstimatedTotalCost5" id="EstimatedTravelCost5" style="width: 94px;" /></td>
+								</tr>
+								<tr>
+									<td class="ui-state-default" style="text-align: left;">4. Estimated IT Labor Cost</td>
+									<td class="ui-state-default" style="text-align: center;"><input class="disable currency PTS " type="text"  onchange="changeme(this)" modified="false"  ifname="EstimatedITLaborCost1" totalfield="EstimatedTotalCost1" id="EstimatedITLaborCost1" style="width: 94px;" /></td>
+									<td class="ui-state-default" style="text-align: center;"><input class="disable currency PTS " type="text"  onchange="changeme(this)" modified="false"  ifname="EstimatedITLaborCost2" totalfield="EstimatedTotalCost2" id="EstimatedITLaborCost2" style="width: 94px;" /></td>
+									<td class="ui-state-default" style="text-align: center;"><input class="disable currency PTS " type="text"  onchange="changeme(this)" modified="false"  ifname="EstimatedITLaborCost3" totalfield="EstimatedTotalCost3" id="EstimatedITLaborCost3" style="width: 94px;" /></td>
+									<td class="ui-state-default" style="text-align: center;"><input class="disable currency PTS " type="text"  onchange="changeme(this)" modified="false"  ifname="EstimatedITLaborCost4" totalfield="EstimatedTotalCost4" id="EstimatedITLaborCost4" style="width: 94px;" /></td>
+									<td class="ui-state-default" style="text-align: center;"><input class="disable currency PTS " type="text"  onchange="changeme(this)" modified="false"  ifname="EstimatedITLaborCost5" totalfield="EstimatedTotalCost5" id="EstimatedITLaborCost5" style="width: 94px;" /></td>
+								</tr>
+								<tr>
+									<td class="ui-state-default" style="text-align: left;">4a. Estimated IT Supply/Product Cost</td>
+									<td class="ui-state-default" style="text-align: center;"><input class="disable currency PTS " type="text"  onchange="changeme(this)" modified="false"  ifname="EstimatedITSPCost1" totalfield="EstimatedTotalCost1" id="EstimatedITSPCost1" style="width: 94px;" /></td>
+									<td class="ui-state-default" style="text-align: center;"><input class="disable currency PTS " type="text"  onchange="changeme(this)" modified="false"  ifname="EstimatedITSPCost2" totalfield="EstimatedTotalCost2" id="EstimatedITSPCost2" style="width: 94px;" /></td>
+									<td class="ui-state-default" style="text-align: center;"><input class="disable currency PTS " type="text"  onchange="changeme(this)" modified="false"  ifname="EstimatedITSPCost3" totalfield="EstimatedTotalCost3" id="EstimatedITSPCost3" style="width: 94px;" /></td>
+									<td class="ui-state-default" style="text-align: center;"><input class="disable currency PTS " type="text"  onchange="changeme(this)" modified="false"  ifname="EstimatedITSPCost4" totalfield="EstimatedTotalCost4" id="EstimatedITSPCost4" style="width: 94px;" /></td>
+									<td class="ui-state-default" style="text-align: center;"><input class="disable currency PTS " type="text"  onchange="changeme(this)" modified="false"  ifname="EstimatedITSPCost5" totalfield="EstimatedTotalCost5" id="EstimatedITSPCost5" style="width: 94px;" /></td>
+								</tr>
+								<tr>
+									<td class="ui-state-default" style="text-align: left;">5. Estimated Other Costs</td>
+									<td class="ui-state-default" style="text-align: center;"><input class="disable currency PTS " type="text"  onchange="changeme(this)" modified="false"  ifname="EstimatedOtherCost1" totalfield="EstimatedTotalCost1" id="EstimatedOtherCost1" style="width: 94px;" /></td>
+									<td class="ui-state-default" style="text-align: center;"><input class="disable currency PTS " type="text"  onchange="changeme(this)" modified="false"  ifname="EstimatedOtherCost2" totalfield="EstimatedTotalCost2" id="EstimatedOtherCost2" style="width: 94px;" /></td>
+									<td class="ui-state-default" style="text-align: center;"><input class="disable currency PTS " type="text"  onchange="changeme(this)" modified="false"  ifname="EstimatedOtherCost3" totalfield="EstimatedTotalCost3" id="EstimatedOtherCost3" style="width: 94px;" /></td>
+									<td class="ui-state-default" style="text-align: center;"><input class="disable currency PTS " type="text"  onchange="changeme(this)" modified="false"  ifname="EstimatedOtherCost4" totalfield="EstimatedTotalCost4" id="EstimatedOtherCost4" style="width: 94px;" /></td>
+									<td class="ui-state-default" style="text-align: center;"><input class="disable currency PTS " type="text"  onchange="changeme(this)" modified="false"  ifname="EstimatedOtherCost5" totalfield="EstimatedTotalCost5" id="EstimatedOtherCost5" style="width: 94px;" /></td>
+								</tr>
+								<tr>
+									<td class="ui-state-default" style="text-align: left;">6. Estimated Total Cost</td>
+									<td class="ui-state-default" style="text-align: center;"><input class="disable currency PTS " type="text"  onchange="changeme(this)" calculated="true" id="EstimatedTotalCost1" ifname="EstimatedTotalCost1" totalfield="TotalContractCost" style="width: 94px;" /></td>
+									<td class="ui-state-default" style="text-align: center;"><input class="disable currency PTS " type="text"  onchange="changeme(this)" calculated="true" id="EstimatedTotalCost2" ifname="EstimatedTotalCost2" totalfield="TotalContractCost" style="width: 94px;" /></td>
+									<td class="ui-state-default" style="text-align: center;"><input class="disable currency PTS " type="text"  onchange="changeme(this)" calculated="true" id="EstimatedTotalCost3" ifname="EstimatedTotalCost3" totalfield="TotalContractCost" style="width: 94px;" /></td>
+									<td class="ui-state-default" style="text-align: center;"><input class="disable currency PTS " type="text"  onchange="changeme(this)" calculated="true" id="EstimatedTotalCost4" ifname="EstimatedTotalCost4" totalfield="TotalContractCost" style="width: 94px;" /></td>
+									<td class="ui-state-default" style="text-align: center;"><input class="disable currency PTS " type="text"  onchange="changeme(this)" calculated="true" id="EstimatedTotalCost5" ifname="EstimatedTotalCost5" totalfield="TotalContractCost" style="width: 94px;" /></td>
+								</tr>
+								<tr>
+									<td class="ui-state-default" style="text-align: left;">7. Estimated CMEs</td>
+									<td class="ui-state-default" style="text-align: center;"><input class="disable PTS" type="text"  onchange="changeme(this)" modified="false"  ifname="EstimatedCMEs1" id="EstimatedCMEs1" style="width: 94px;" /></td>
+									<td class="ui-state-default" style="text-align: center;"><input class="disable PTS" type="text"  onchange="changeme(this)" modified="false"  ifname="EstimatedCMEs2" id="EstimatedCMEs2" style="width: 94px;" /></td>
+									<td class="ui-state-default" style="text-align: center;"><input class="disable PTS" type="text"  onchange="changeme(this)" modified="false"  ifname="EstimatedCMEs3" id="EstimatedCMEs3" style="width: 94px;" /></td>
+									<td class="ui-state-default" style="text-align: center;"><input class="disable PTS" type="text"  onchange="changeme(this)" modified="false"  ifname="EstimatedCMEs4" id="EstimatedCMEs4" style="width: 94px;" /></td>
+									<td class="ui-state-default" style="text-align: center;"><input class="disable PTS" type="text"  onchange="changeme(this)" modified="false"  ifname="EstimatedCMEs5" id="EstimatedCMEs5" style="width: 94px;" /></td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td class="ui-state-default">
+							8. Total Contract Cost (base plus all option periods)
+							<input class="disable currency PTS" type="text"  onchange="format(this, 'currency')" modified="false"  ifname="Total_x0020_Contract_x0020_Cost" id="TotalContractCost" />
+						</td>
+					</tr>
+					<tr>
+						<td class="ui-state-default">
+							8a. Are funds available?
+							<select class="disable PTS" size="1" loaded="false" onchange="changeme(this)" modified="false"  ifname="Funds_x0020_Available" id="FundsAvailable" lookup="true"></select>
+						</td>
+					</tr>
+					<tr>
+						<td class="ui-state-default">
+							8b. What is the source of funding?
+							<select class="disable PTS" size="1" loaded="false" onchange="changeme(this)" modified="false"  ifname="Source_x0020_of_x0020_Funds" id="SourceofFunds" lookup="true"></select> 
+						</td>
+					</tr>
+					<tr>
+						<td class="ui-state-default">
+							8c. If partially funded, provide the funded and SAF amounts: Funded: 
+							<input class="disable currency PTS AMOData" type="text" onchange="format(this, 'currency')" modified="false"  ifname="Amount_x0020_Funded" id="AmountFunded" />  
+							SAF:
+							<input class="disable currency PTS AMOData" type="text" onchange="format(this, 'currency')" modified="false"  ifname="Amount_x0020_Unfunded" id="AmountUnfunded" />
+						</td>
+					</tr>
+					<tr>
+						<td class="ui-state-default" style="text-align: center;">
+							<table style="width: 100%;">
+								<tr>
+									<td class="ui-state-default" style="width: 50%;">8d. Who provided the funding (organization details)? Explain:</td>
+									<td class="ui-state-default" style="width: 50%;">8e. Was this funded from the Funding Priority List (FPL)?</td>
+								</tr>
+								<tr>
+									<td class="ui-state-default"><input class="disable PTS" type="text" onchange="changeme(this)" modified="false"  ifname="Funds_x0020_Explanation" id="FundsExplanation" style="width: 410px;" /></td>
+									<td class="ui-state-default">
+										<select class="disable PTS" size="1" onchange="changeme(this)" modified="false" ifname="FPL" id="FPL">
+											<option selected="selected" value="Select...">Select...</option>
+											<option value="Yes">Yes</option>
+											<option value="No">No</option>
+										</select>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td class="ui-state-default">
+							9a. Is a contracting activity other than the mission and installation contracting command proposed (i.e. offload)? 
+							<select class="disable PTS" size="1" onchange="changeme(this)" modified="false" ifname="Offload" id="Offload">
+								<option selected="selected" value="Select...">Select...</option>
+								<option value="Yes">Yes</option>
+								<option value="No">No</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td class="ui-state-default">
+							9b. Contracting Office: 
+							<select class="disable PTS" size="1" loaded="false" onchange="changeme(this)" modified="false"  ifname="Contracting_x0020_Office" id="ContractingOffice" lookup="true"></select> 
+							9c. Assisted acquisition? 
+							<select class="disable PTS" size="1" onchange="changeme(this)" modified="false" ifname="Assisted_x0020_Acq" id="AssistedAcq">
+								<option selected="selected" value="Select...">Select...</option>
+								<option value="Yes">Yes</option>
+								<option value="No">No</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td class="ui-state-default" style="text-align: center;">
+							<div style="width: 225px; float: left;">9d. Fees: Offload <input class="disable PTS" type="text"  onchange="format(this, 'currency')" modified="false"  ifname="Offload_x0020_Fee_x0020_Amount" id="OffloadFeeAmount" /></div>
+							<div style="width: 205px; float: left;">Service <input class="disable PTS" type="text"  onchange="changeme(this)" modified="false"  ifname="Service_x0020_Fee" id="ServiceFee" /></div>
+							<div style="width: 205px; float: left;">Admin <input class="disable PTS" type="text"  onchange="changeme(this)" modified="false"  ifname="Admin_x0020_Fee" id="AdminFee" /></div>
+							<div style="width: 205px; float: left;">Other <input class="disable PTS" type="text"  onchange="changeme(this)" modified="false"  ifname="Other_x0020_Fee" id="OtherFee" /></div>
+						</td>
+					</tr>
+					<tr><td class="ui-state-default">10. Financial Classification:</td> </tr>
+					<tr>
+						<td class="ui-state-default" style="text-align: center;">
+							<table style="width: 100%;">
+								<tr>
+									<td class="ui-state-default" style="width: 35%; text-align: center;">Appropriation(s)</td>
+									<td class="ui-state-default" style="width: 20%; text-align: center;">MDEP(s)</td>
+									<td class="ui-state-default" style="width: 20%; text-align: center;">AMSCO(s)</td>
+									<td class="ui-state-default" style="width: 25%; text-align: center;">Mission Category:</td>
+								</tr>
+								<tr>
+									<td class="ui-state-default" style="text-align: center;">
+										<select class="disable PTS" size="1" loaded="false" onchange="changeme(this)" modified="false"  ifname="Appropriation" id="Appropriation" lookup="true"></select>
+										Amount:<input type="text" id="AppropriationAmount" class="disable currency AMOData" onchange="format(this, 'currency')" />
+									</td>
+									<td class="ui-state-default" style="text-align: center;"><select class="disable PTS" size="1" onchange="changeme(this)" modified="false"  ifname="MDEP" id="MDEP" function="cascadeselect" cascadeto="AMSCO" lookup="true" lookuplist="ddl514" field="AMSCO" filterfield="MDEP" lookupsite="parent"></select></td>
+									<td class="ui-state-default" style="text-align: center;"><select class="disable PTS" size="1" onchange="changeme(this)" modified="false"  ifname="AMSCO" id="AMSCO" function="cascadetext" cascadeto="MissionCategory" lookup="true" lookuplist="ddl514" field="MissionCategory" filterfield="AMSCO" lookupsite="parent"></select></td>
+									<td class="ui-state-default" style="text-align: center;"><input class="disable PTS" type="text" onchange="changeme(this)" modified="false"  ifname="Mission_x0020_Category" id="MissionCategory" style="width: 200px;" lookup="true" lookupval=""/></td>
+								</tr>
+								<tr>
+									<td class="ui-state-default" style="text-align: center;">
+										<select class="disable PTS" size="1" loaded="false" onchange="changeme(this)" modified="false"  ifname="Appropriation_x0020_2" id="Appropriation2" lookup="true"></select>
+										Amount:<input type="text" id="AppropriationAmount2" class="disable currency AMOData" onchange="format(this, 'currency')" />
+									</td>
+									<td class="ui-state-default" style="text-align: center;"><select class="disable PTS" size="1" onchange="changeme(this)" modified="false"  ifname="MDEP_x0020_2" id="MDEP2" function="cascadeselect" cascadeto="AMSCO2" lookup="true" lookuplist="ddl514" field="AMSCO" filterfield="MDEP" lookupsite="parent"></select></td>
+									<td class="ui-state-default" style="text-align: center;"><select class="disable PTS" size="1" onchange="changeme(this)" modified="false"  ifname="AMSCO_x0020_2" id="AMSCO2" function="cascadetext" cascadeto="MissionCategory2" lookup="true" lookuplist="ddl514" field="MissionCategory" filterfield="AMSCO" lookupsite="parent"></select></td>
+									<td class="ui-state-default" style="text-align: center;"><input class="disable PTS" type="text" onchange="changeme(this)" modified="false"  ifname="Mission_x0020_Category_x0020_2" id="MissionCategory2" style="width: 200px;" lookup="true" lookupval=""/></td>
+								</tr>
+								<tr>
+									<td class="ui-state-default" style="text-align: center;">
+										<select class="disable PTS" size="1" loaded="false" onchange="changeme(this)" modified="false"  ifname="Appropriation_x0020_3" id="Appropriation3" lookup="true"></select>
+										Amount:<input type="text" id="AppropriationAmount3" class="disable currency AMOData" onchange="format(this, 'currency')" />
+									</td>
+									<td class="ui-state-default" style="text-align: center;"><select class="disable PTS" size="1" onchange="changeme(this)" modified="false"  ifname="MDEP_x0020_3" id="MDEP3" function="cascadeselect" cascadeto="AMSCO3" lookup="true" lookuplist="ddl514" field="AMSCO" filterfield="MDEP" lookupsite="parent"></select></td>
+									<td class="ui-state-default" style="text-align: center;"><select class="disable PTS" size="1" onchange="changeme(this)" modified="false"  ifname="AMSCO_x0020_3" id="AMSCO3" function="cascadetext" cascadeto="MissionCategory3" lookup="true" lookuplist="ddl514" field="MissionCategory" filterfield="AMSCO" lookupsite="parent"></select></td>
+									<td class="ui-state-default" style="text-align: center;"><input class="disable PTS" type="text" onchange="changeme(this)" modified="false"  ifname="Mission_x0020_Category_x0020_3" id="MissionCategory3" style="width: 200px;" lookup="true" lookupval=""/></td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td class="ui-state-default" style="text-align: center;">
+							<table>
+								<tr>
+									<td class="ui-state-default" style="width: 116px;">FSC (Services Only)</td>
+									<td class="ui-state-default" style="width: 426px;"><select class="disable PTS" size="1" loaded="false" onchange="changeme(this)" modified="false"  ifname="FSC" id="FSC" lookup="true"></select></td>
+									<td class="ui-state-default" rowspan="2" style="width: 286px">*Descriptions of EORs are located <a href="http://asafm.army.mil/offices/BU/Dfas37100.aspx?OfficeCode=1200" style="text-decoration:underline;color:#000000;">here</a>.<br />Scroll down to 2B-EOR-NonPay,<br />2B-EOR-Pay</td>
+								</tr>
+								<tr>
+									<td class="ui-state-default" style="width: 116px;">EOR*</td>
+									<td class="ui-state-default" style="width: 426px;"><select class="disable PTS" size="1" loaded="false" onchange="alertit(this, 'Possible funding limitations for this EOR. For additional information see your budget analyst')" modified="false"  ifname="EOR" id="EOR" lookup="true"></select></td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr><td class="ui-state-default">C. CONTRACT REQUIREMENT DETAILS</td></tr>
+					<tr>
+						<td class="ui-state-default">
+							1. Is this a service or supply/product? 
+							<select class="disable PTS" size="1" loaded="false" onchange="format(this, 'ServiceSupply')" modified="false"  ifname="Service_x0020_Supply" id="ServiceSupply" lookup="true"></select>  
+							2. Contract type 
+							<select class="disable PTS" size="1" loaded="false" onchange="changeme(this)" modified="false"  ifname="Contract_x0020_Type" id="ContractType" lookup="true"></select>
+						</td>
+					</tr>
+					<tr>
+						<td class="ui-state-default">
+							<span style="font-size: 8pt">
+								3. Provide the contract number including the Task Order or Delivery order number and MIPR number
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="ui-state-default">
+							<table>
+								<tr>
+									<td class="ui-state-default" style="width: 336px; text-align: center;">Contract #:</td>
+									<td class="ui-state-default" style="width: 246px; text-align: center;">MIPR #/Funded Program:</td>
+									<td class="ui-state-default" style="width: 246px; text-align: center;">Task Order# or Delivery Order#:</td>
+								</tr>
+								<tr>
+									<td class="ui-state-default" style="text-align: center;">
+										<input class="disable PTS" type="text" onchange="format(this, 'contractnumber')" modified="false" title="Must match this format - W91QUZ-06-D-0004" ifname="Contract_x0020_No_x002e_" id="ContractNo" style="width: 330px;" />
+									</td>
+									<td class="ui-state-default" style="text-align: center;"><input class="disable PTS" type="text"  onchange="changeme(this)" modified="false"  ifname="MIPR" id="MIPR" style="width: 240px;" /></td>
+									<td class="ui-state-default" style="text-align: center;"><input class="disable PTS" type="text"  onchange="changeme(this)" modified="false"  ifname="WBS" id="WBS" style="width: 240px;" /></td>
+								</tr> 
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td class="ui-state-default">
+							4. Reporting and Acquisition Decision Number:
+							<input class="disable PTS" type="text"  onchange="changeme(this)" modified="false"  ifname="RAD" id="RADNumber" style="width: 250px;" />
+						</td>
+					</tr>
+					<tr>
+						<td class="ui-state-default">
+							5a. First Contract Award Date: 
+							<input class="disable date PTS" type="text" onchange="changeme(this)" modified="false" ifname="First_x0020_Contract_x0020_Award_x0020_Date" id="FirstContractAwardDate" />
+							5b. 
+							<input class="disable AMOData" type="radio" id="RecurringContractValue1" onclick="HandleMe(this, 'RecurringContractValue')" name="RecurringContract" value="Recurring"/>Recurring&nbsp;
+							<input class="disable AMOData" type="radio" id="RecurringContractValue2" onclick="HandleMe(this, 'RecurringContractValue')" name="RecurringContract" value="One-time"/>One-time
+							<input type="text" class="PTS" id="RecurringContractValue" ifname="Recurring_x0020_Contract" style="display:none;" />
+						</td>
+					</tr>
+					<tr>
+						<td class="ui-state-default">
+							6. What period of the contract is being exercised?&nbsp; 
+							<select class="disable PTS" size="1" loaded="false" onchange="changeme(this)" modified="false" ifname="What_x0020_Option_x0020_Year" id="WhatOptionYear" lookup="true"></select>
+						</td>
+					</tr>
+					<tr>
+						<td class="ui-state-default">
+							7a. List work center TDA paragraph number: 
+							<input class="disable PTS" type="text"  onchange="changeme(this)" modified="false"  ifname="TDA_x0020_Number" id="TDANumber" /> 
+							7b. PDC Number: 
+							<input class="disable PTS" type="text"  onchange="format(this, 'PDC')" modified="false"  ifname="PDC_x0020_Number" title="Six digits no hyphens" id="PDCNumber" />
+						</td>
+					</tr>
+					<tr>
+						<td class="ui-state-default">
+							8. What is the period of performance? Start Date 
+							<input class="disable date PTS" type="text" onchange="changeme(this)" modified="false"  ifname="POP_x0020_Start_x0020_Date" id="POPStartDate" />   
+							End Date 
+							<input class="disable date PTS" type="text" onchange="changeme(this)" modified="false"  ifname="POP_x0020_End_x0020_Date" id="POPEndDate" />
+						</td>
+					</tr>
+					<tr>
+						<td class="ui-state-default">
+							9. ACRB/ECAB review decision needed by 
+							<input class="disable date PTS" type="text" onchange="changeme(this)" modified="false"  ifname="Needed_x0020_By" id="NeededBy" />
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="page-break"></div>        
+		<!-- TAB 3 ---------------------------------------------------------------------------------------------------------------------------------------------------->
+		<div id="tabs-3" class="tabcontent">
+			<table class="formWrapper">
+				<tr>
+					<td class="ui-state-default">
+						<table style="width: 100%;"><tr>
+							<td class="ui-state-default" style="width: 15%; text-align: center;"><strong>5-14 page 2</strong></td>
+							<td class="ui-state-default" style="width: 70%; text-align: center;"><strong>SECTION I: REQUIREMENT DESCRIPTION AND APPROVAL DECISIONS (CONT)</strong></td>
+							<td class="ui-state-default amo" style="width: 15%; text-align: center;"></td>
+						</tr></table>
+					</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">
+						D. JUSTIFICATION FOR CONTRACT REQUIREMENT:
+					</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">
+						1. Has a cost benefit analysis been completed? 
+						<select class="disable PTS YesNo" size="1" onchange="changeme(this)" modified="false" ifname="CBA" id="CBA">
+							<option selected="selected" value="Select...">Select...</option>
+							<option value="Yes">Yes</option>
+							<option value="No">No</option>
+						</select>
+						If yes, provide the approval date:
+						<input class="disable date PTS" type="text" ifname="CBA_x0020_Date" id="CBADate" onchange="changeme(this)" modified="false" />
+					</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">
+						2. Is this mission mandated by regulation, directed by higher HQ, etc.? Explain.<br />
+						<textarea class="disable PTS" ifname="Mandated_x0020_Mission" id="MandatedMission" rows="2" cols="100" style="width: 98%; height: 40px;"></textarea>
+						<br />
+						2a. CG Priority
+						<select class="disable PTS" size="1" loaded="false" onchange="changeme(this)" modified="false" ifname="CG_x0020_Priority" id="CGPriority" lookup="true"></select>
+					</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">
+						3. What is the operational impact if this contract is not awarded?<br />
+						<textarea class="disable PTS" ifname="Operational_x0020_Impact" id="OperationalImpact" rows="3" cols="100" style="width: 98%; height: 60px;"></textarea>
+					</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">
+						4. Comments:<br />
+						<textarea class="disable PTS" ifname="Justification_x0020_Comments" id="Comments" rows="3" cols="100" style="width: 98%; height: 60px;"></textarea>
+					</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">
+						<table><tr><td class="ui-state-default" colspan="3">E. ORGANIZATION POINT OF CONTACT:</td></tr>
+						<tr><td class="ui-state-default">Name: <input class="disable PTS" type="text" ifname="POC_x0020_Name" id="POCName" style="width: 200px;" onchange="HandleMe(this, 'RAPOCName')" modified="false"/></td>
+						<td>E-mail: <input class="disable PTS" type="text" ifname="POC_x0020_Email" id="POCEmail" style="width: 200px;" onchange="changeme(this)" modified="false"/></td>
+						<td>Phone: <input class="disable PTS" type="text" ifname="POC_x0020_Phone" id="POCPhone" style="width: 150px;" onchange="HandleMe(this, 'RAPOCPhone')" modified="false"/></td></tr></table>
+					</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">
+						F. CONTRACTING OFFICERS REPRESENTATIVE (COR)/ALTERNATE COR/SUPPORTING COR NOMINATION:
+					</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">
+						1. Has a COR, Alternate or Supporting COR been nominated through the Virtual Contracting Enterprise System?
+						<select class="disable PTS YesNo" size="1" onchange="changeme(this)" modified="false" ifname="Nominated_x0020_COR" id="NominatedCOR">
+							<option selected="selected" value="Select...">Select...</option>
+							<option value="Yes">Yes</option>
+							<option value="No">No</option>
+						</select>
+						<br />
+						If yes, nomination date (YYYYMMDD):
+						<input class="disable date PTS" type="text" class="date" ifname="Nomination_x0020_Date" id="NominationDate" onchange="changeme(this)" modified="false" />
+					</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">
+						<table><tr><td class="ui-state-default" colspan="3">2. TRADOC Contract Representative (COR/Alternate COR/Supporting COR)</td></tr>
+						<tr><td class="ui-state-default">Name: <input class="disable PTS" type="text" ifname="COR_x0020_Name" id="CORName" style="width: 200px;" onchange="changeme(this)" modified="false"/></td>
+						<td>E-mail: <input class="disable PTS" type="text" ifname="COR_x0020_Email" id="COREmail" style="width: 200px;" onchange="changeme(this)" modified="false"/></td>
+						<td>Phone: <input class="disable PTS" type="text" ifname="COR_x0020_Phone" id="CORPhone" style="width: 150px;" onchange="changeme(this)" modified="false"/></td></tr></table>
+					</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">G. ENDORSEMENT</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">
+						<table>
+							<tr>
+								<td class="ui-state-default" style="width:375px;padding:1px 1px;">
+									<table>
+										<tr>
+											<td class="ui-state-default">Name, Rank, Position:</td>
+											<td class="ui-state-default">
+												<input type="radio" class="AMOData" id="EndorserConcurYes" onclick="Concur(this)" name="EndorserConcur" value="Concur"/>Concur&nbsp;
+												<input type="radio" class="AMOData" id="EndorserConcurNo" onclick="Concur(this)" name="EndorserConcur" value="Non-concur"/>Non-concur
+												<input type="text" class="PTS" ifname="Endorser_x0020_Concur" id="EndorserConcurValue" style="display:none;" modified="false" />
+											</td>
+											<td class="ui-state-default" align="right"><input type="button" value="Clear" id="EndorserClear" /></td>
+										</tr>
+										<tr>
+											<td class="ui-state-default" colspan="3"> 
+												<input type="text" id="EndorserNameRankPosition" class="AMOData" style="width: 326px;" /><br />
+											</td>
+										</tr>
+										<tr>
+											<td class="ui-state-default" colspan="3">   
+												<input type="checkbox" id="EndorserSig" class="AMOData" /> 5-14 with hardcopy signature attached in section B.
+											</td>
+										</tr>
+										<tr>
+											<td class="ui-state-active" colspan="3"><input type="text" id="EndorserUserName" class="AMOData" style="width: 326px;" readonly="readonly" /></td>
+										</tr>
+									</table>
+								</td>
+								<td class="ui-state-default" style="width:330px;padding:1px 1px;">
+									<table style="font-family: Verdana; font-size: 10pt; width: 100%; height: 100%;">
+										<tr>
+											<td class="ui-state-default" style="text-align:center;">Signature</td>
+										</tr>
+										<tr style="min-height: 86px;">
+											<td class="ui-state-active" style="text-align:center; vertical-align: middle;">
+												<input type="button" value="Sign" id="EndorserSign" /><input type="text" style="width: 220px;" readonly="readonly" id="EndorserSignature" class="AMOData" />
+											</td>
+										</tr>
+									</table>
+								</td>
+								<td class="ui-state-default" style="width:200px;padding:1px 1px;">
+									<table style="font-family: Verdana; font-size: 10pt; width: 100%; height: 100%;">
+										<tr>
+											<td class="ui-state-default" style="width: 110px;">Date (YYYYMMDD)</td>
+										</tr>
+										<tr style="min-height: 86px;">
+											<td class="ui-state-active" style="text-align:center; vertical-align: middle;">
+												<input type="text" id="EndorsedDate" class="AMOData date" />
+											</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">H. RESOURCE MANAGER REPRESENTATIVE:</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">
+						<table>
+							<tr>
+								<td class="ui-state-default" style="width:375px;padding:1px 1px;">
+									<table>
+										<tr>
+											<td class="ui-state-default">Name, Rank, Position:</td>
+											<td class="ui-state-default">
+												<input type="radio" class="AMOData" id="RMConcurYes" onclick="Concur(this)" name="RMConcur" value="Concur"/>Concur&nbsp;
+												<input type="radio" class="AMOData" id="RMConcurNo" onclick="Concur(this)" name="RMConcur" value="Non-concur"/>Non-concur
+												<input type="text" class="PTS" ifname="RM_x0020_Concur" id="RMConcurValue" style="display:none;" modified="false" />
+											</td>
+											<td class="ui-state-default" align="right"><input type="button" value="Clear" id="RMClear" /></td>
+										</tr>
+										<tr>
+											<td class="ui-state-default" colspan="3"> 
+												<input type="text" id="RMNameRankPosition" class="AMOData" style="width: 326px;" /><br />
+											</td>
+										</tr>
+										<tr>
+											<td class="ui-state-default" colspan="3">   
+												<input type="checkbox" id="RMSig" class="AMOData" /> 5-14 with hardcopy signature attached in section B.
+											</td>
+										</tr>
+										<tr>
+											<td class="ui-state-active" colspan="3"><input type="text" id="RMUserName" class="AMOData" style="width: 326px;" readonly="readonly" /></td>
+										</tr>
+									</table>
+								</td>
+								<td class="ui-state-default" style="width:330px;padding:1px 1px;">
+									<table style="font-family: Verdana; font-size: 10pt; width: 100%; height: 100%;">
+										<tr>
+											<td class="ui-state-default" style="text-align:center;">Signature</td>
+										</tr>
+										<tr style="min-height: 86px;">
+											<td class="ui-state-active" style="text-align:center; vertical-align: middle;">
+												<input type="button" value="Sign" id="RMSign" /><input type="text" style="width: 220px;" readonly="readonly" id="RMSignature" class="AMOData" />
+											</td>
+										</tr>
+									</table>
+								</td>
+								<td class="ui-state-default" style="width:200px;padding:1px 1px;">
+									<table style="font-family: Verdana; font-size: 10pt; width: 100%; height: 100%;">
+										<tr>
+											<td class="ui-state-default" style="width: 110px;">Date (YYYYMMDD)</td>
+										</tr>
+										<tr style="min-height: 86px;">
+											<td class="ui-state-active" style="text-align:center; vertical-align: middle;">
+												<input type="text" id="RMDate" class="AMOData date" />
+											</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">
+						I. Certification (Service contracts only).  Services contracts must also include the latest Request for Services Contract Approval (RSCA) form at http://www.asamra.army.mil/scra/documents/ServicesContractApprovalForm.pdf.  The RSCA form must be filled and attached to the 5-14 page 3; then, certified when the ACRB or ECAB is completed.
+					</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">
+						J. APPROVAL (All contracts)
+					</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">
+						<table>
+							<tr>
+								<td class="ui-state-default" style="width:375px;padding:1px 1px;">
+									<table>
+										<tr>
+											<td class="ui-state-default">Name, Rank, Position:</td>
+											<td class="ui-state-default">
+												<input type="radio" class="AMOData" id="ApproverConcurYes" onclick="Concur(this)" name="ApproverConcur" value="Approved"/>Approved&nbsp;
+												<input type="radio" class="AMOData" id="ApproverConcurNo" onclick="Concur(this)" name="ApproverConcur" value="Disapproved"/>Disapproved
+											</td>
+											<td class="ui-state-default" align="right"><input type="button" value="Clear" id="ApproverClear" /></td>
+										</tr>
+										<tr>
+											<td class="ui-state-default" colspan="3"> 
+												<input type="text" id="NRPName" class="AMOData" value="Name" />
+												<select size="1" loaded="false" id="NRPRank" class="AMOData"></select>
+												<input type="text" id="NRPPosition" class="AMOData" value="Position" />
+											</td>
+										</tr>
+										<tr>
+											<td class="ui-state-default" colspan="3">   
+												<input type="checkbox" id="ApproverSig" class="AMOData" /> 5-14 with hardcopy signature attached in section B.
+											</td>
+										</tr>
+										<tr>
+											<td class="ui-state-active" colspan="3">Approval No.&nbsp;<input type="text" class="PTS" ifname="ApprovalNumber" id="ApprovalNumber" style="width: 250px;" readonly="readonly" onchange="changeme(this)" modified="false" /></td>
+										</tr>
+										<tr>
+											<td class="ui-state-active" colspan="3"><input type="text" class="PTS" ifname="ApproverName" id="ApproverName" style="width: 326px;" readonly="readonly" onchange="changeme(this)" modified="false" /></td>
+										</tr>
+									</table>
+								</td>
+								<td class="ui-state-default" style="width:330px;padding:1px 1px;">
+									<table style="font-family: Verdana; font-size: 10pt; width: 100%; height: 100%;">
+										<tr>
+											<td class="ui-state-default" style="text-align:center;">Signature</td>
+										</tr>
+										<tr style="min-height: 116px;">
+											<td class="ui-state-active" style="text-align:center; vertical-align: middle;">
+												<input type="button" value="Sign" id="ApproverSign" /><input type="text" style="width: 220px;" readonly="readonly" id="ApproverSignature" class="AMOData" />
+											</td>
+										</tr>
+									</table>
+								</td>
+								<td class="ui-state-default" style="width:200px;padding:1px 1px;">
+									<table style="font-family: Verdana; font-size: 10pt; width: 100%; height: 100%;">
+										<tr>
+											<td class="ui-state-default" style="width: 110px;">Date (YYYYMMDD)</td>
+										</tr>
+										<tr style="min-height: 116px;">
+											<td class="ui-state-active" style="text-align:center; vertical-align: middle;">
+												<input type="text" class="date PTS" ifname="ApprovedDate" id="ApprovedDate" onchange="changeme(this)" modified="false" />
+											</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div class="page-break"></div>        
+		<!-- TAB 4 ---------------------------------------------------------------------------------------------------------------------------------------------->
+		<div id="tabs-4" class="tabcontent">
+			<table class="formWrapper">
+				<tr>
+					<td class="ui-state-default">
+						<table style="width: 100%;"><tr>
+							<td class="ui-state-default" style="width: 15%; text-align: center;"><strong>5-14 page 3</strong></td>
+							<td class="ui-state-default" style="width: 70%; text-align: center;"><strong>A. Additional Resource Information</strong></td>
+							<td class="ui-state-default amo" style="width: 15%; text-align: center;"></td>
+						</tr></table>
+					</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">
+						<table style="width: 100%;"><tr>
+							<td class="ui-state-default">1. Does the contract support an Special Interest Item (SII)?</td>
+							<td class="ui-state-default">
+								<select size="1" class="PTS" onchange="changeme(this)" modified="false" ifname="SII_x0020_Support" id="SIISupport">
+									<option selected="selected" value="Select...">Select...</option>
+									<option value="Yes">Yes</option>
+									<option value="No">No</option>
+								</select>
+							</td>
+						</tr></table>
+					</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">
+						<table style="width: 100%;"><tr>
+							<td class="ui-state-default" style="width: 30%;">ITRM Cost Category Description:</td>
+							<td class="ui-state-default" style="width: 50%;">School Course Description:</td>
+							<td class="ui-state-default" style="width: 20%;">ITRM Cost Category:</td>
+						</tr>
+						<tr>
+							<td class="ui-state-active" style="width: 30%;">
+								<select size="1" class="PTS" loaded="false" onchange="changeme(this)" modified="false" ifname="ITRM_x0020_Cost_x0020_Cat_x002e_" id="CostCatDesc" function="cascadeselect" cascadeto="SchoolCourseDesc" lookup="true" lookuplist="ddl514" field="SchoolDescription" filterfield="ITRMDesciption" lookupsite="parent" ></select>
+							</td>
+							<td class="ui-state-active" style="width: 50%;">
+								<select size="1" class="PTS" onchange="changeme(this)" modified="false" ifname="School_x0020_Course_x0020_Descri" id="SchoolCourseDesc" function="cascadetext" cascadeto="ITRMCostCategory" lookup="true" lookuplist="ddl514" field="ITRMCategory" filterfield="SchoolDescription" lookupsite="parent" ></select>
+							</td>
+							<td class="ui-state-active" style="width: 20%;">
+								<input type="text" class="PTS" onchange="changeme(this)" modified="false" ifname="ITRM_x0020_Cost_x0020_Category" id="ITRMCostCategory" lookup="true" lookupval="" />
+							</td>
+						</tr></table>
+					</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">
+						<table style="width: 100%;">
+							<tr>
+								<td class="ui-state-default" colspan="4">2. Does this contract support...</td>
+							</tr>
+							<tr>
+								<td class="ui-state-default" style="width: 25%;">an ITRO course?</td>
+								<td class="ui-state-default" style="width: 25%;">a reimbursable course?</td>
+								<td class="ui-state-default" style="width: 25%;">fill a manpower shortfall?</td>
+								<td class="ui-state-default" style="width: 25%;">support a TRAP action?</td>
+							</tr>
+							<tr>
+								<td class="ui-state-active" style="width: 25%;">
+									<select size="1" class="PTS" onchange="changeme(this)" modified="false" ifname="ITRO_x0020_Support" id="ITROSupport">
+										<option selected="selected" value="Select...">Select...</option>
+										<option value="Yes">Yes</option>
+										<option value="No">No</option>
+									</select>
+								</td>
+								<td class="ui-state-active" style="width: 25%;">
+									<select size="1" class="PTS" onchange="changeme(this)" modified="false" ifname="Reimbursable_x0020_Course" id="ReimbursableCourse">
+										<option selected="selected" value="Select...">Select...</option>
+										<option value="Yes">Yes</option>
+										<option value="No">No</option>
+									</select>
+								</td>
+								<td class="ui-state-active" style="width: 25%;">
+									<select size="1" class="PTS" onchange="changeme(this)" modified="false" ifname="Manpower_0020_Shortfall" id="ManpowerShortfall">
+										<option selected="selected" value="Select...">Select...</option>
+										<option value="Yes">Yes</option>
+										<option value="No">No</option>
+									</select>
+								</td>
+								<td class="ui-state-active" style="width: 25%;">
+									<select size="1" class="PTS" onchange="changeme(this)" modified="false" ifname="TRAP_x0020_Support" id="TrapSupport">
+										<option selected="selected" value="Select...">Select...</option>
+										<option value="Yes">Yes</option>
+										<option value="No">No</option>
+									</select>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr> 
+				<tr>
+					<td class="ui-state-default">
+						3. If you answered yes to the IT question in Section I, A. Purpose of Contract on page 1and the value of the contract is over $25K, you are required to apply for a RAD approval though the TRADOC IT RAD Portal at: (<a href="https://www.us.army.mil/suite/page/205769" style="text-decoration:underline; color: #000000;">https://www.us.army.mil/suite/page/205769</a>). Once a RAD approval is received, insert and submit it with your other contract documents below in B. CONTRACT DOCUMENTS UPLOAD.
+					</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">4. PDC Data:</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">GFEBS Fund Center: <input type="text" class="PTS" ifname="Level_x0020_4_x0020_Fund_x0020_Center" id="GFEBSFundCenter" onchange="changeme(this)" modified="false" />
+					&nbsp;TRADOC Budget Guidance (TBG) transaction number:<input type="text" class="PTS" ifname="TBG_x0020_Number" id="TBGNumber" onchange="changeme(this)" modified="false" /></td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">Contract being renewed during the next fiscal year?
+						<select size="1" class="PTS" onchange="changeme(this)" modified="false" ifname="PDC_x0020_Contract_x0020_Renew" id="PDCContractRenewal">
+							<option selected="selected" value="Select...">Select...</option>
+							<option value="Yes">Yes</option>
+							<option value="No">No</option>
+						</select> 
+					</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">Contract support an MDEP other than the one listed above in Sec I, 10. Financial Classification?</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">If Yes, list the MDEP:
+						<select size="1" class="PTS" loaded="false" onchange="changeme(this)" modified="false" ifname="PDC_x0020_Other_x0020_MDEP" id="OtherMDEP"></select>&nbsp;
+						Is Contract fixed or load driven?
+						<select size="1" class="PTS" onchange="changeme(this)" modified="false" ifname="PDC_x0020_Fixed_x0020_Load" id="PDCFixedLoad">
+							<option selected="selected" value="Select...">Select...</option>
+							<option value="Fixed">Fixed</option>
+							<option value="Load driven">Load driven</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">Is this IMCOM support?
+						<select size="1" class="PTS" onchange="changeme(this)" modified="false" ifname="IMCOM_x0020_Support" id="IMCOMSupport">
+							<option selected="selected" value="Select...">Select...</option>
+							<option value="Yes">Yes</option>
+							<option value="No">No</option>
+						</select> 
+					</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">Does the school request the contract be included in PC rate?
+						<select size="1" class="PTS" onchange="changeme(this)" modified="false" ifname="PDC_x0020_PD_x0020_Rate" id="PDCPDRate">
+							<option selected="selected" value="Select...">Select...</option>
+							<option value="Yes">Yes</option>
+							<option value="No">No</option>
+						</select> 
+					</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">Is there a justification to include the contract in the Per Capita Base?
+						<select size="1" class="PTS" onchange="changeme(this)" modified="false" ifname="PDC_x0020_Per_x0020_Capita_x0020_Base" id="PDCPerCapitaBase">
+							<option selected="selected" value="Select...">Select...</option>
+							<option value="Yes">Yes</option>
+							<option value="No">No</option>
+						</select> 
+					</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">Schoolhouse recommended exclusion amount (in Dollars): <input type="text" class="PTS" ifname="PDC_x0020_School_x0020_Exclusion_x0020_Amount" id="PDCSchoolExclusionAmount" onchange="format(this, 'currency')" modified="false" /></td> 
+				</tr>
+				<tr>
+					<td class="ui-state-default">Include contract in PC base? 
+						<select size="1" class="PTS" onchange="changeme(this)" modified="false" ifname="PDC_x0020_PC_x0020_Base" id="PDCPCBase">
+							<option selected="selected" value="Select...">Select...</option>
+							<option value="Yes">Yes</option>
+							<option value="No">No</option>
+						</select>&nbsp;
+						PAE validated exclusion amount: 
+						<input type="text" class="PTS" ifname="PDC_x0020_PAE_x0020_Exclusion_x0020_Amount" id="PDCPAEExlusionAmount" onchange="format(this, 'currency')" modified="false" />
+					</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">5. AMO Packet at contracting? 
+						<select size="1" class="PTS" onchange="alertit(this, 'Contracting Status is mandatory. Please select one of the options from the dropdown list.')" modified="false" ifname="AMO_x0020_At_x0020_Contracting" id="AMOATContracting">
+							<option selected="selected" value="Select...">Select...</option>
+							<option value="Yes">Yes</option>
+							<option value="No">No</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">Contracting Status: <select size="1" class="PTS" loaded="false" onchange="changeme(this)" modified="false" ifname="AMO_x0020_Packet_x0020_Status" id="AMOPacketStatus"></select></td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">Projected Award per MICC: <input type="text" class="date AMOData" id="ProjectedAward" /></td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">
+						<table style="table-layout: fixed; width: 100%;">
+							<tr>
+								<td class="ui-state-default" colspan="3">Contracting Officer:</td>
+							</tr>
+							<tr>
+								<td class="ui-state-default" style="width: 40%;">Name:</td>
+								<td class="ui-state-default" style="width: 40%;">E-mail:</td>
+								<td class="ui-state-default" style="width: 20%;">Phone</td>
+							</tr>
+							<tr>
+								<td class="ui-state-active" style="width: 40%; text-align: center;"><input type="text" class="PTS" style="width: 98%;" ifname="CO_x0020_Name" id="ContractingOfficerName" onchange="changeme(this)" modified="false" /></td>
+								<td class="ui-state-active" style="width: 40%; text-align: center;"><input type="text" class="PTS" style="width: 98%;" ifname="CO_x0020_Email" id="ContractingOfficerEmail" onchange="changeme(this)" modified="false" /></td>
+								<td class="ui-state-active" style="width: 20%; text-align: center;"><input type="text" class="PTS" style="width: 98%;" ifname="CO_x0020_Phone" id="ContractingOfficerPhone" onchange="changeme(this)" modified="false" /></td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">
+						<table style="width: 100%;">
+							<tr>
+								<td class="ui-state-default" colspan="4">6. Priorities: to be completed by authorized personnel only</td>
+							</tr>
+							<tr>
+								<td class="ui-state-default" style="width: 25%; text-align: center;">School Priority</td>
+								<td class="ui-state-default" style="width: 25%; text-align: center;">COE Priority</td>
+								<td class="ui-state-default" style="width: 25%; text-align: center;">Priority Type</td>
+								<td class="ui-state-default" style="width: 25%; text-align: center;">TRADOC Priority</td>
+							</tr>
+							<tr>
+								<td class="ui-state-active" style="width: 25%; text-align: center;"><input type="text" class="PTS" style="width: 98%;" ifname="School_x0020_Priority" id="SchoolPriority" onchange="changeme(this)" modified="false" function="username" control="SchoolPriorityUser" /></td>
+								<td class="ui-state-active" style="width: 25%; text-align: center;"><input type="text" class="PTS" style="width: 98%;" ifname="COE_x0020_Priority" id="COEPriority" onchange="changeme(this)" modified="false" function="username" control="COEPriorityUser" /></td>
+								<td class="ui-state-active" style="width: 25%; text-align: center;"><select size="1" class="PTS" loaded="false" style="width: 98%;" onchange="changeme(this)" modified="false" ifname="Priority_x0020_Type" id="PriorityType" function="username" control="PriorityTypeUser"></select></td>
+								<td class="ui-state-active" style="width: 25%; text-align: center;"><input type="text" class="PTS" style="width: 98%;" ifname="TRADOC_x0020_Priority" id="TRADOCPriority" onchange="changeme(this)" modified="false" function="username" control="TRADOCPriorityUser" /></td>
+							</tr>
+							<tr>
+								<td class="ui-state-active" style="width: 25%; text-align: center;"><input type="text" class="PTS" style="width: 98%;" ifname="School_x0020_Priority_x0020_User" id="SchoolPriorityUser" onchange="changeme(this)" modified="false" readonly="readonly" /></td>
+								<td class="ui-state-active" style="width: 25%; text-align: center;"><input type="text" class="PTS" style="width: 98%;" ifname="COE_x0020_Priority_x0020_User" id="COEPriorityUser" onchange="changeme(this)" modified="false" readonly="readonly" /></td>
+								<td class="ui-state-active" style="width: 25%; text-align: center;"><input type="text" class="PTS" style="width: 98%;" ifname="Priority_x0020_Type_x0020_User" id="PriorityTypeUser" onchange="changeme(this)" modified="false" /></td>
+								<td class="ui-state-active" style="width: 25%; text-align: center;"><input type="text" class="PTS" style="width: 98%;" ifname="TRADOC_x0020_Priority_x0020_User" id="TRADOCPriorityUser" onchange="changeme(this)" modified="false" readonly="readonly" /></td>
+							</tr>
+						</table>
+					</td>
+				</tr> 
+				<tr>
+					<td class="ui-state-default">
+						7.Cost Savings: 
+							<input type="text" class="PTS" ifname="Cost_x0020_Saving" id="CostSaving" style="width: 150px;" onchange="format(this, 'currency')" modified="false"/>
+						8. COE STATUS: 
+							<input type="text" class="PTS" ifname="COE_x0020_Status" id="COEStatus" style="width: 300px;" onchange="changeme(this)" modified="false"/>
+					</td>
+				</tr>
+				<tr><td class="ui-state-active" style="height: 20px;">&nbsp;</td></tr>
+				<tr>
+					<td class="ui-state-default">
+						<strong>B. CONTRACT DOCUMENTS UPLOAD</strong> (Select "Click here to attach file" then browse/locate the required contract document for each block. Attach documents in the specific place indicated by the descriptions. <font color="#ff0000">Highlighted Attachment field indicates the document is REQUIRED.</font>
+					</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">
+						<table style="width: 100%;">
+							<tr>
+								<td class="ui-state-default" style="width: 34%;">
+									<table class="tblcontractupload">
+										<tr>
+											<td class="ui-state-default uploadedfilebtn"><input type="button" function="upload" staffed="false" value="Attach" DocumentType="RSCAF" /></td>
+											<td class="ui-state-default uploadedfile service"></td>
+										</tr>
+										<tr>
+											<td class="ui-state-active doctypetext" colspan="2"><strong>Request for Service Contract Approval Form (RSCAF)</strong> a(mandatory for services)</td>
+										</tr>
+									</table>
+								</td>
+								<td class="ui-state-default" style="width: 33%;">
+									<table class="tblcontractupload">
+										<tr>
+											<td class="ui-state-default uploadedfilebtn"><input type="button" function="upload" staffed="false" value="Attach" DocumentType="RSCAFWorksheet" /></td>
+											<td class="ui-state-default uploadedfile"></td>
+										</tr>
+										<tr>
+											<td class="ui-state-active doctypetext" colspan="2"><strong>RSCAF Worksheet Explanations</strong> for "yes" answers.</td>
+										</tr>
+									</table>
+								</td>
+								<td class="ui-state-default" style="width: 33%;">
+									<table class="tblcontractupload">
+										<tr>
+											<td class="ui-state-default uploadedfilebtn"><input type="button" function="upload" staffed="false" value="Attach" DocumentType="FRB" /></td>
+											<td class="ui-state-default uploadedfile service supply"></td>
+										</tr>
+										<tr>
+											<td class="ui-state-active doctypetext" colspan="2"><strong>Functional Review Board (FRB) </strong>memo<br />(mandatory for services and supply/product contracts)</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">
+						<table style="width: 100%;">
+							<tr>
+								<td class="ui-state-default" style="width: 34%;">
+									<table class="tblcontractupload">
+										<tr>
+											<td class="ui-state-default uploadedfilebtn"><input type="button" function="upload" staffed="false" value="Attach" DocumentType="MarketResearch" /></td>
+											<td class="ui-state-default uploadedfile service supply"></td>
+										</tr>
+										<tr>
+											<td class="ui-state-active doctypetext" colspan="2"><strong>Market Research </strong>documentation (mandatory for services and supply/product contracts)</td>
+										</tr>
+									</table>
+								</td>
+								<td class="ui-state-default" style="width: 33%;">
+									<table class="tblcontractupload">
+										<tr>
+											<td class="ui-state-default uploadedfilebtn"><input type="button" function="upload" staffed="false" value="Attach" DocumentType="PWS" /></td>
+											<td class="ui-state-default uploadedfile service"></td>
+										</tr>
+										<tr>
+											<td class="ui-state-active doctypetext" colspan="2"><strong>Performance Work Statement </strong>(mandatory for services) or <strong>Supply/Product Description </strong>and/or <strong>Salient Characteristics</strong></td>
+										</tr>
+									</table>
+								</td>
+								<td class="ui-state-default" style="width: 33%;">
+									<table class="tblcontractupload">
+										<tr>
+											<td class="ui-state-default uploadedfilebtn"><input type="button" function="upload" staffed="false" value="Attach" DocumentType="QASP" /></td>
+											<td class="ui-state-default uploadedfile service"></td>
+										</tr>
+										<tr>
+											<td class="ui-state-active doctypetext" colspan="2"><strong>Quality Assurance Surveillance Plan </strong>(mandatory for services)</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">
+						<table style="width: 100%;">
+							<tr>
+								<td class="ui-state-default" style="width: 34%;">
+									<table class="tblcontractupload">
+										<tr>
+											<td class="ui-state-default uploadedfilebtn"><input type="button" function="upload" staffed="false" value="Attach" DocumentType="SIGE" /></td>
+											<td class="ui-state-default uploadedfile service"></td>
+										</tr>
+										<tr>
+											<td class="ui-state-active doctypetext" colspan="2"><strong>Signed Independent Government Estimate </strong><br />(mandatory for services); and/or vendor quotes for supply/product contracts (create a single .pdf file).</td>
+										</tr>
+									</table>
+								</td>
+								<td class="ui-state-default" style="width: 33%;">
+									<table class="tblcontractupload">
+										<tr>
+											<td class="ui-state-default uploadedfilebtn"><input type="button" function="upload" staffed="false" value="Attach" DocumentType="CORNomination" /></td>
+											<td class="ui-state-default uploadedfile service"></td>
+										</tr>
+										<tr>
+											<td class="ui-state-active doctypetext" colspan="2"><strong>Contracting Officer’s Representative (COR) nomination </strong>and/or appointment letter(s) and COR training certificates (mandatory for services) (create a single .pdf file).</td>
+										</tr>
+									</table>
+								</td>
+								<td class="ui-state-default" style="width: 33%;">
+									<table class="tblcontractupload">
+										<tr>
+											<td class="ui-state-default uploadedfilebtn"><input type="button" function="upload" staffed="false" value="Attach" DocumentType="OPSEC" /></td>
+											<td class="ui-state-default uploadedfile service"></td>
+										</tr>
+										<tr>
+											<td class="ui-state-active doctypetext" colspan="2"><strong>Antiterrorism/OPSEC </strong>(Mandatory for Services and Product/Supplies over the Simplified Acquisition Threshold, $150K)</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">
+						<table style="width: 100%;">
+							<tr>
+								<td class="ui-state-default" style="width: 34%;">
+									<table class="tblcontractupload">
+										<tr>
+											<td class="ui-state-default uploadedfilebtn"><input type="button" function="upload" staffed="false" value="Attach" DocumentType="SoleSource" /></td>
+											<td class="ui-state-default uploadedfile"></td>
+										</tr>
+										<tr>
+											<td class="ui-state-active doctypetext" colspan="2"><strong>Limited competition/sole source Justification and Authorization (J&amp;A) </strong>(mandatory for sole source requests for services and supply/product contracts</td>
+										</tr>
+									</table>
+								</td>
+								<td class="ui-state-default" style="width: 33%;">
+									<table class="tblcontractupload">
+										<tr>
+											<td class="ui-state-default uploadedfilebtn"><input type="button" function="upload" staffed="false" value="Attach" DocumentType="Form254" /></td>
+											<td class="ui-state-default uploadedfile"></td>
+										</tr>
+										<tr>
+											<td class="ui-state-active doctypetext" colspan="2"><strong>DD Form 254 </strong>(mandatory for services requiring security classifications)</td>
+										</tr>
+									</table>
+								</td>
+								<td class="ui-state-default" style="width: 33%;">
+									<table class="tblcontractupload">
+										<tr>
+											<td class="ui-state-default uploadedfilebtn"><input type="button" function="upload" staffed="false" value="Attach" DocumentType="Offload" /></td>
+											<td class="ui-state-default uploadedfile offload"></td>
+										</tr>
+										<tr>
+											<td class="ui-state-active doctypetext" colspan="2"><strong>Offload justification </strong>memorandum (mandatory for services and supply/product contracts executed by contracting agencies other than the Mission and Installation Contracting Command (MICC))</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">
+						<table style="width: 100%;">
+							<tr>
+								<td class="ui-state-default" style="width: 34%;">
+									<table class="tblcontractupload">
+										<tr>
+											<td class="ui-state-default uploadedfilebtn"><input type="button" function="upload" staffed="false" value="Attach" DocumentType="Findings" /></td>
+											<td class="ui-state-default uploadedfile"></td>
+										</tr>
+										<tr>
+											<td class="ui-state-active doctypetext" colspan="2"><strong>Determination &amp; Findings (D&amp;F)</strong> justification (as applicable, ref: TR 5-14, page 71, Table B1)</td>
+										</tr>
+									</table>
+								</td>
+								<td class="ui-state-default" style="width: 33%;">
+									<table class="tblcontractupload">
+										<tr>
+											<td class="ui-state-default uploadedfilebtn"><input type="button" function="upload" staffed="false" value="Attach" DocumentType="Form1144" /></td>
+											<td class="ui-state-default uploadedfile"></td>
+										</tr>
+										<tr>
+											<td class="ui-state-active doctypetext" colspan="2"><strong>DD Form 1144 </strong>or other Support Agreement (MOU or MOA) (as applicable, ref: TR 5-14, page 71, Table B1)</td>
+										</tr>
+									</table>
+								</td>
+								<td class="ui-state-default" style="width: 33%;">
+									<table class="tblcontractupload">
+										<tr>
+											<td class="ui-state-default uploadedfilebtn"><input type="button" function="upload" staffed="false" value="Attach" DocumentType="CostAssessment" /></td>
+											<td class="ui-state-default uploadedfile offload"></td>
+										</tr>
+										<tr>
+											<td class="ui-state-active doctypetext" colspan="2"><strong>Cost assessment </strong>(mandatory for offloaded services and supply/product contracts [executed by contracting agencies other than the MICC])</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">
+						<table style="width: 100%;">
+							<tr>
+								<td class="ui-state-default" style="width: 34%;">
+									<table class="tblcontractupload">
+										<tr>
+											<td class="ui-state-default uploadedfilebtn"><input type="button" function="upload" staffed="false" value="Attach" DocumentType="Block16" /></td>
+											<td class="ui-state-default uploadedfile totalcost25k"></td>
+										</tr>
+										<tr>
+											<td class="ui-state-active doctypetext" colspan="2"><strong>Reporting and Acquisition Decision (RAD) </strong>approval (mandatory for IT services and supply/product contracts &gt;$25K)</td>
+										</tr>
+									</table>
+								</td>
+								<td class="ui-state-default" style="width: 33%;">
+									<table class="tblcontractupload">
+										<tr>
+											<td class="ui-state-default uploadedfilebtn"><input type="button" function="upload" staffed="false" value="Attach" DocumentType="OSD1" /></td>
+											<td class="ui-state-default uploadedfile"></td>
+										</tr>
+										<tr>
+											<td class="ui-state-active doctypetext" colspan="2">Other Supporting Document</td>
+										</tr>
+									</table>
+								</td>
+								<td class="ui-state-default" style="width: 33%;">
+									<table class="tblcontractupload">
+										<tr>
+											<td class="ui-state-default uploadedfilebtn"><input type="button" function="upload" staffed="false" value="Attach" DocumentType="OSD2" /></td>
+											<td class="ui-state-default uploadedfile"></td>
+										</tr>
+										<tr>
+											<td class="ui-state-active doctypetext" colspan="2">Other Supporting Document</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr><td class="ui-state-active" style="height: 20px;">&nbsp;</td></tr>
+				<tr>
+					<td class="ui-state-default">
+						<table style="width: 100%;">
+							<tr>
+								<td class="ui-state-default" colspan="3">
+									<strong>Attach Additional Documents Here (i.e., Scanned Signature Pages if not Digitally Signed)</strong><input type="text" id="AdditionalDocCount" value="3" style="display: none;" />
+								</td>
+							</tr>
+							<tr>
+								<td class="ui-state-default" style="width: 34%;">
+									<table class="tblcontractupload">
+										<tr>
+											<td class="ui-state-default uploadedfilebtn"><input type="button" function="upload" staffed="false" value="Attach" DocumentType="AD1" /></td>
+											<td class="ui-state-default uploadedfile"></td>
+										</tr>
+									</table>
+								</td>
+								<td class="ui-state-default" style="width: 33%;">
+									<table class="tblcontractupload">
+										<tr>
+											<td class="ui-state-default uploadedfilebtn"><input type="button" function="upload" staffed="false" value="Attach" DocumentType="AD2" /></td>
+											<td class="ui-state-default uploadedfile"></td>
+										</tr>
+									</table>
+								</td>
+								<td class="ui-state-default" style="width: 33%;">
+									<table class="tblcontractupload">
+										<tr>
+											<td class="ui-state-default uploadedfilebtn"><input type="button" function="upload" staffed="false" value="Attach" DocumentType="AD3" /></td>
+											<td class="ui-state-default uploadedfile"></td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+							<tr id="AdditionalDocLastRow">
+								<td class="ui-state-default" colspan="3">
+									<input type="button" value="Click to insert additional row" id="AddAdditionalRow" />
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">
+						<table style="width: 100%;">
+							<tr>
+								<td class="ui-state-default">
+									<input type="checkbox" class="PTS" value="Contract requirement is withdrawn/cancelled" id="ContractCancelled" ifname="Cancelled" checkedvalue="true" uncheckedvalue="false" onchange="changeme(this)" function="username" control="CancelledBy" />Cancelled
+								</td>
+							</tr>
+							<tr>
+								<td class="ui-state-default">
+									Reason for withdrawal/cancellation:<br />
+									<textarea class="PTS" ifname="Cancel_x0020_Reason" id="CancelledReason" name="CancelledReason" rows="3" cols="100" style="width: 98%; height: 60px;"></textarea>
+								</td>
+							</tr>
+							<tr>
+								<td class="ui-state-default">
+									<input type="text" class="AMOData" id="CancelledBy" />
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div class="page-break"></div>        
+		<!-- TAB 5 ----------------------------------------------------------------------------------------------------------------------------------------------------------------->
+		<div id="tabs-5" class="tabcontent">
+			<table class="formWrapper">
+				<tr>
+					<td class="ui-state-default">
+						<table style="width: 100%;"><tr>
+							<td class="ui-state-default" style="width: 25%; text-align: center;"><strong>POST APPROVAL / AWARD DATA</strong></td>
+							<td class="ui-state-default" style="width: 50%; text-align: center;"><strong></strong></td>
+							<td class="ui-state-default amo" style="width: 25%; text-align: center;"></td>
+						</tr></table>
+					</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">Complete after contract award:</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">
+						A. If this is for a new contract award and Section C.3 Page 1., Contract # is blank or was originally marked "to be determined"/"TBD," please enter the new contract number here and if applicable, add the new task/delivery order number.
+					</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">
+						<table style="width: 100%;">
+							<tr>
+								<td class="ui-state-default" style="width: 32%; text-align: center;">Contract #:</td>
+								<td class="ui-state-default" style="width: 32%; text-align: center;">Vendor Name:</td>
+								<td class="ui-state-default" style="width: 32%; text-align: center;">Task Order# or Delivery Order#:</td>
+							</tr>
+							<tr>
+								<td class="ui-state-default" style="text-align: center;">
+									<input type="text" class="AMOData" onchange="format(this, 'contractnumber')" modified="false" id="ContractNumber2" title="Must match this format - W91QUZ-06-D-0004" style="width: 98%;" />
+								</td>
+								<td class="ui-state-default" style="text-align: center;">
+									<input type="text" class="AMOData" id="VendorName" style="width: 98%;" />
+								</td>
+								<td class="ui-state-default" style="text-align: center;"><input type="text" class="AMOData" onchange="changeme(this)" modified="false" id="TaskOrder2" style="width: 98%;" /></td>
+							</tr> 
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">
+						<table style="width: 100%;" id="ClassificationTable"></table>
+					</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default" style="text-align: left;">
+						<input type="button" id="AddNewClassification" value="Add New Classification" />
+					</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default" style="text-align: center;">
+						<table>
+							<tr>
+								<td class="ui-state-default" style="text-align: left;">C. Contractual Award Amounts</td>
+								<td class="ui-state-default" style="text-align: center;" id="FCFY"></td>
+							</tr>
+							<tr>
+								<td class="ui-state-default" style="text-align: left;">1. Actual Labor Cost</td>
+								<td class="ui-state-default" style="text-align: center;"><input type="text" class="currency PTS" totalfield="ActualTotalCost" onchange="changeme(this)" modified="false"  ifname="ActualLaborCost" id="ActualLaborCost" style="width: 94px;" /></td>
+							</tr>
+							<tr>
+								<td class="ui-state-default" style="text-align: left;">2. Actual Supply/Product Cost</td>
+								<td class="ui-state-default" style="text-align: center;"><input type="text" class="currency PTS" totalfield="ActualTotalCost" onchange="changeme(this)" modified="false"  ifname="ActualSupplyProductCost" id="ActualSupplyProductCost" style="width: 94px;" /></td>
+							</tr>
+							<tr>
+								<td class="ui-state-default" style="text-align: left;">3. Actual Travel Cost</td>
+								<td class="ui-state-default" style="text-align: center;"><input type="text" class="currency PTS" totalfield="ActualTotalCost" onchange="changeme(this)" modified="false"  ifname="ActualTravelCost" id="ActualTravelCost" style="width: 94px;" /></td>
+							</tr>
+							<tr>
+								<td class="ui-state-default" style="text-align: left;">4. Actual IT Labor Cost</td>
+								<td class="ui-state-default" style="text-align: center;"><input type="text" class="currency PTS" totalfield="ActualTotalCost" onchange="changeme(this)" modified="false"  ifname="ActualITLaborCost" id="ActualITLaborCost" style="width: 94px;" /></td>
+							</tr>
+							<tr>
+								<td class="ui-state-default" style="text-align: left;">4a. Actual IT Supply/Product Cost</td>
+								<td class="ui-state-default" style="text-align: center;"><input type="text" class="currency PTS" totalfield="ActualTotalCost" onchange="changeme(this)" modified="false"  ifname="ActualITSPCost" id="ActualITSPCost" style="width: 94px;" /></td>
+							</tr>
+							<tr>
+								<td class="ui-state-default" style="text-align: left;">5. Actual Other Cost</td>
+								<td class="ui-state-default" style="text-align: center;"><input type="text" class="currency PTS" totalfield="ActualTotalCost" onchange="changeme(this)" modified="false"  ifname="ActualOtherCost" id="ActualOtherCost" style="width: 94px;" /></td>
+							</tr>
+							<tr>
+								<td class="ui-state-default" style="text-align: left;">6. Actual Total Cost (FY)</td>
+								<td class="ui-state-default" style="text-align: center;"><input type="text" class="currency PTS" onchange="format(this, 'currency')" modified="false" ifname="ActualTotalCost" id="ActualTotalCost" style="width: 94px;" readonly="readonly" /></td>
+							</tr>
+							<tr>
+								<td class="ui-state-default" style="text-align: left;">7. Actual CMEs</td>
+								<td class="ui-state-default" style="text-align: center;"><input type="text" class="PTS" onchange="changeme(this)" modified="false"  ifname="ActualCMEs" id="ActualCMEs" style="width: 94px;" /></td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div class="page-break"></div>        
+		<!-- TAB 6 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
+		<div id="tabs-6" class="tabcontent noprint">
+			<table class="formWrapper">
+				<tr>
+					<td class="ui-state-default">
+						<table style="width: 100%;"><tr>
+							<td class="ui-state-default" style="width: 15%; text-align: center;"></td>
+							<td class="ui-state-default" style="width: 70%; text-align: center;"><strong>RSCA FORM</strong></td>
+							<td class="ui-state-default amo" style="width: 15%; text-align: center;"></td>
+						</tr></table>
+					</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">
+						A. Use the below link to get a copy of the latest RSCA form. Then upload using the controls below
+					</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">
+						<a href="http://www.asamra.army.mil/scra/documents/ServicesContractApprovalForm.pdf">Latest RSCA Form</a>
+					</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">
+						<table style="width: 300px;">
+							<tr>
+								<td class="ui-state-default" style="text-align: center; width: 25%;"><input type="button" function="upload" staffed="false" value="Attach" DocumentType="RSCA" /></td>
+								<td class="ui-state-default uploadedfile"></td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</div>
+				
+		<!-- TAB 7 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
+		<div id="tabs-7" class="tabcontent noprint">
+			<table class="formWrapper">
+				<tr>
+					<td class="ui-state-default" style="text-align: center;">
+						<strong>Administrative Contract Review Board/Executive Contract Approval Board Contract Staffing</strong>
+					</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default amo" style="text-align:left;"></td>
+				</tr>
+				<tr>
+					<td class="ui-state-default" style="text-align: center;">Requiring Activity:</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default" style="text-align: center;">
+						<input type="text" style="width: 98%;" id="RequiringActivity" readonly="readonly" /> 
+					</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">
+						<table style="width: 100%;">
+							<tr>
+								<td class="ui-state-default" style="width: 25%; height: 10px; text-align: center;">Requiring Activity POC:</td>
+								<td class="ui-state-default" style="width: 25%; height: 10px; text-align: center;">Phone:</td>
+								<td class="ui-state-default" style="width: 25%; height: 10px; text-align: center;">Suspense:</td>
+								<td class="ui-state-default" style="width: 25%; height: 10px; text-align: center;">Requested Start Date:</td>
+							</tr>
+							<tr>
+								<td class="ui-state-active" style="text-align: center;">
+									<input type="text" style="width: 98%; height: 12px;" id="RAPOCName" readonly="readonly" />
+								</td>                  
+								<td class="ui-state-active" style="text-align: center;">
+									<input type="text" style="width: 98%; height: 12px;" id="RAPOCPhone" readonly="readonly" />
+								</td>
+								<td class="ui-state-active" style="text-align: center;">
+									<input type="text" class="date PTS" style="width: 80%; height: 12px;" ifname="Suspense" onchange="changeme(this)" modified="false" id="Suspense" />
+								</td>                   
+								<td class="ui-state-active" style="width: 25%; text-align: center;">
+									<input type="text" class="date PTS" style="width: 80%; height: 12px;" ifname="Requested_x0020_Start_x0020_Date" onchange="changeme(this)" modified="false" id="StartDate" />
+									<input type="text" style="display: none;" ifname="Req_x002e__x0020_Start" onchange="HandleMe(this, 'StartDate')" modified="false" id="StartDate2" />
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">
+						<table style="width: 100%;">
+							<tr><td class="ui-state-default">Contract Title:</td></tr>
+							<tr>
+								<td class="ui-state-default"><input type="text" class="StaffingData title" id="AMOTitle2" readonly="readonly" style="width: 98%; height: 12px;" /></td> 
+							</tr>
+							<tr><td class="ui-state-default">Description:</td></tr>
+							<tr>
+								<td class="ui-state-default">
+									<textarea class="PTS" ifname="Staffing_x0020_Description" id="StaffingDescription" rows="3" cols="100" style="width: 98%; height: 60px;"></textarea>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">
+						<table style="width: 100%;">
+							<tr>
+								<td class="ui-state-default" style="width: 50%; height: 10px; text-align: center;">Amount:</td>
+								<td class="ui-state-default" style="width: 50%; height: 10px; text-align: center;">Action Officer:</td>
+							</tr>
+							<tr>
+								<td class="ui-state-active" style="text-align: center;">
+									<input type="text" class="StaffingData PTS" style="width: 50%; height: 12px;" ifname="Amount" onchange="format(this, 'currency')" modified="false" id="Amount" />
+								</td>
+								<td class="ui-state-active" style="text-align: center;">
+									<input type="text" class="PTS peoplepicker" modified="false" style="width: 50%; height: 12px;" ifname="Action_x0020_Officer" id="ActionOfficer" />
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">THIS SECTION IS FOR VIEWING FILES ONLY. CLICK TO OPEN.</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">
+						<strong>B. CONTRACT DOCUMENTS</strong>
+					</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">
+						<table style="width: 100%;">
+							<tr>
+								<td class="ui-state-default" style="width: 34%;">
+									<table class="tblcontractupload">
+										<tr>
+											<td class="ui-state-default uploadedfilebtn"><input type="button" function="uploadstaffing" value="Attach" DocumentType="RSCAF" /></td>
+											<td class="ui-state-default uploadedfile service" style="height: 20px;"></td>
+										</tr>
+										<tr>
+											<td class="ui-state-active doctypetext" style="color: #000000;" colspan="2"><strong>Request for Service Contract Approval Form (RSCAF)</strong> a(mandatory for services)</td>
+										</tr>
+									</table>
+								</td>
+								<td class="ui-state-default" style="width: 33%;">
+									<table class="tblcontractupload">
+										<tr>
+											<td class="ui-state-default uploadedfilebtn"><input type="button" function="uploadstaffing" value="Attach" DocumentType="RSCAFWorksheet" /></td>
+											<td class="ui-state-default uploadedfile" style="height: 20px;"></td>
+										</tr>
+										<tr>
+											<td class="ui-state-active doctypetext" style="color: #000000;" colspan="2"><strong>RSCAF Worksheet Explanations</strong> for "yes" answers.</td>
+										</tr>
+									</table>
+								</td>
+								<td class="ui-state-default" style="width: 33%;">
+									<table class="tblcontractupload">
+										<tr>
+											<td class="ui-state-default uploadedfilebtn"><input type="button" function="uploadstaffing" value="Attach" DocumentType="FRB" /></td>
+											<td class="ui-state-default uploadedfile service supply" style="height: 20px;"></td>
+										</tr>
+										<tr>
+											<td class="ui-state-active doctypetext" style="color: #000000;" colspan="2"><strong>Functional Review Board (FRB) </strong>memo<br />(mandatory for services and supply/product contracts)</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">
+						<table style="width: 100%;">
+							<tr>
+								<td class="ui-state-default" style="width: 34%;">
+									<table class="tblcontractupload">
+										<tr>
+											<td class="ui-state-default uploadedfilebtn"><input type="button" function="uploadstaffing" value="Attach" DocumentType="MarketResearch" /></td>
+											<td class="ui-state-default uploadedfile service supply" style="height: 20px;"></td>
+										</tr>
+										<tr>
+											<td class="ui-state-active doctypetext" style="color: #000000;" colspan="2"><strong>Market Research </strong>documentation (mandatory for services and supply/product contracts)</td>
+										</tr>
+									</table>
+								</td>
+								<td class="ui-state-default" style="width: 33%;">
+									<table class="tblcontractupload">
+										<tr>
+											<td class="ui-state-default uploadedfilebtn"><input type="button" function="uploadstaffing" value="Attach" DocumentType="PWS" /></td>
+											<td class="ui-state-default uploadedfile service" style="height: 20px;"></td>
+										</tr>
+										<tr>
+											<td class="ui-state-active doctypetext" style="color: #000000;" colspan="2"><strong>Performance Work Statement </strong>(mandatory for services) or <strong>Supply/Product Description </strong>and/or <strong>Salient Characteristics</strong></td>
+										</tr>
+									</table>
+								</td>
+								<td class="ui-state-default" style="width: 33%;">
+									<table class="tblcontractupload">
+										<tr>
+											<td class="ui-state-default uploadedfilebtn"><input type="button" function="uploadstaffing" value="Attach" DocumentType="QASP" /></td>
+											<td class="ui-state-default uploadedfile service" style="height: 20px;"></td>
+										</tr>
+										<tr>
+											<td class="ui-state-active doctypetext" style="color: #000000;" colspan="2"><strong>Quality Assurance Surveillance Plan </strong>(mandatory for services)</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">
+						<table style="width: 100%;">
+							<tr>
+								<td class="ui-state-default" style="width: 34%;">
+									<table class="tblcontractupload">
+										<tr>
+											<td class="ui-state-default uploadedfilebtn"><input type="button" function="uploadstaffing" value="Attach" DocumentType="SIGE" /></td>
+											<td class="ui-state-default uploadedfile service" style="height: 20px;"></td>
+										</tr>
+										<tr>
+											<td class="ui-state-active doctypetext" style="color: #000000;" colspan="2"><strong>Signed Independent Government Estimate </strong><br />(mandatory for services); and/or vendor quotes for supply/product contracts (create a single .pdf file).</td>
+										</tr>
+									</table>
+								</td>
+								<td class="ui-state-default" style="width: 33%;">
+									<table class="tblcontractupload">
+										<tr>
+											<td class="ui-state-default uploadedfilebtn"><input type="button" function="uploadstaffing" value="Attach" DocumentType="CORNomination" /></td>
+											<td class="ui-state-default uploadedfile service" style="height: 20px;"></td>
+										</tr>
+										<tr>
+											<td class="ui-state-active doctypetext" style="color: #000000;" colspan="2"><strong>Contracting Officer’s Representative (COR) nomination </strong>and/or appointment letter(s) and COR training certificates (mandatory for services) (create a single .pdf file).</td>
+										</tr>
+									</table>
+								</td>
+								<td class="ui-state-default" style="width: 33%;">
+									<table class="tblcontractupload">
+										<tr>
+											<td class="ui-state-default uploadedfilebtn"><input type="button" function="uploadstaffing" value="Attach" DocumentType="OPSEC" /></td>
+											<td class="ui-state-default uploadedfile service" style="height: 20px;"></td>
+										</tr>
+										<tr>
+											<td class="ui-state-active doctypetext" style="color: #000000;" colspan="2"><strong>Antiterrorism/OPSEC </strong>(Mandatory for Services and Product/Supplies over the Simplified Acquisition Threshold, $150K)</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">
+						<table style="width: 100%;">
+							<tr>
+								<td class="ui-state-default" style="width: 34%;">
+									<table class="tblcontractupload">
+										<tr>
+											<td class="ui-state-default uploadedfilebtn"><input type="button" function="uploadstaffing" value="Attach" DocumentType="SoleSource" /></td>
+											<td class="ui-state-default uploadedfile" style="height: 20px;"></td>
+										</tr>
+										<tr>
+											<td class="ui-state-active doctypetext" style="color: #000000;" colspan="2"><strong>Limited competition/sole source Justification and Authorization (J&amp;A) </strong>(mandatory for sole source requests for services and supply/product contracts</td>
+										</tr>
+									</table>
+								</td>
+								<td class="ui-state-default" style="width: 33%;">
+									<table class="tblcontractupload">
+										<tr>
+											<td class="ui-state-default uploadedfilebtn"><input type="button" function="uploadstaffing" value="Attach" DocumentType="Form254" /></td>
+											<td class="ui-state-default uploadedfile" style="height: 20px;"></td>
+										</tr>
+										<tr>
+											<td class="ui-state-active doctypetext" style="color: #000000;" colspan="2"><strong>DD Form 254 </strong>(mandatory for services requiring security classifications)</td>
+										</tr>
+									</table>
+								</td>
+								<td class="ui-state-default" style="width: 33%;">
+									<table class="tblcontractupload">
+										<tr>
+											<td class="ui-state-default uploadedfilebtn"><input type="button" function="uploadstaffing" value="Attach" DocumentType="Offload" /></td>
+											<td class="ui-state-default uploadedfile offload" style="height: 20px;"></td>
+										</tr>
+										<tr>
+											<td class="ui-state-active doctypetext" style="color: #000000;" colspan="2"><strong>Offload justification </strong>memorandum (mandatory for services and supply/product contracts executed by contracting agencies other than the Mission and Installation Contracting Command (MICC))</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">
+						<table style="width: 100%;">
+							<tr>
+								<td class="ui-state-default" style="width: 34%;">
+									<table class="tblcontractupload">
+										<tr>
+											<td class="ui-state-default uploadedfilebtn"><input type="button" function="uploadstaffing" value="Attach" DocumentType="Findings" /></td>
+											<td class="ui-state-default uploadedfile" style="height: 20px;"></td>
+										</tr>
+										<tr>
+											<td class="ui-state-active doctypetext" style="color: #000000;" colspan="2"><strong>Determination &amp; Findings (D&amp;F)</strong> justification (as applicable, ref: TR 5-14, page 71, Table B1)</td>
+										</tr>
+									</table>
+								</td>
+								<td class="ui-state-default" style="width: 33%;">
+									<table class="tblcontractupload">
+										<tr>
+											<td class="ui-state-default uploadedfilebtn"><input type="button" function="uploadstaffing" value="Attach" DocumentType="Form1144" /></td>
+											<td class="ui-state-default uploadedfile" style="height: 20px;"></td>
+										</tr>
+										<tr>
+											<td class="ui-state-active doctypetext" style="color: #000000;" colspan="2"><strong>DD Form 1144 </strong>or other Support Agreement (MOU or MOA) (as applicable, ref: TR 5-14, page 71, Table B1)</td>
+										</tr>
+									</table>
+								</td>
+								<td class="ui-state-default" style="width: 33%;">
+									<table class="tblcontractupload">
+										<tr>
+											<td class="ui-state-default uploadedfilebtn"><input type="button" function="uploadstaffing" value="Attach" DocumentType="CostAssessment" /></td>
+											<td class="ui-state-default uploadedfile offload" style="height: 20px;"></td>
+										</tr>
+										<tr>
+											<td class="ui-state-active doctypetext" style="color: #000000;" colspan="2"><strong>Cost assessment </strong>(mandatory for offloaded services and supply/product contracts [executed by contracting agencies other than the MICC])</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">
+						<table style="width: 100%;">
+							<tr>
+								<td class="ui-state-default" style="width: 34%;">
+									<table class="tblcontractupload">
+										<tr>
+											<td class="ui-state-default uploadedfilebtn"><input type="button" function="uploadstaffing" value="Attach" DocumentType="Block16" /></td>
+											<td class="ui-state-default uploadedfile totalcost25k" style="height: 20px;"></td>
+										</tr>
+										<tr>
+											<td class="ui-state-active doctypetext" style="color: #000000;" colspan="2"><strong>Reporting and Acquisition Decision (RAD) </strong>approval (mandatory for IT services and supply/product contracts &gt;$25K)</td>
+										</tr>
+									</table>
+								</td>
+								<td class="ui-state-default" style="width: 33%;">
+									<table class="tblcontractupload">
+										<tr>
+											<td class="ui-state-default uploadedfilebtn"><input type="button" function="uploadstaffing" value="Attach" DocumentType="OSD1" /></td>
+											<td class="ui-state-default uploadedfile" style="height: 20px;"></td>
+										</tr>
+										<tr>
+											<td class="ui-state-active doctypetext" style="color: #000000;" colspan="2">Other Supporting Document</td>
+										</tr>
+									</table>
+								</td>
+								<td class="ui-state-default" style="width: 33%;">
+									<table class="tblcontractupload">
+										<tr>
+											<td class="ui-state-default uploadedfilebtn"><input type="button" function="uploadstaffing" value="Attach" DocumentType="OSD2" /></td>
+											<td class="ui-state-default uploadedfile" style="height: 20px;"></td>
+										</tr>
+										<tr>
+											<td class="ui-state-active doctypetext" style="color: #000000;" colspan="2">Other Supporting Document</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr><td class="ui-state-active" style="height: 20px;">&nbsp;</td></tr>
+				<tr>
+					<td class="ui-state-default">
+						<table style="width: 100%;">
+							<tr>
+								<td class="ui-state-default" colspan="3">
+									<strong>Additional Documents</strong><input type="text" id="AdditionalDocCountStaffing" value="3" style="display: none;" />
+								</td>
+							</tr>
+							<tr>
+								<td class="ui-state-default" style="width: 34%;">
+									<table class="tblcontractupload">
+										<tr>
+											<td class="ui-state-default uploadedfilebtn"><input type="button" function="uploadstaffing" value="Attach" DocumentType="AD1" /></td>
+											<td class="ui-state-default uploadedfile" style="height: 20px;"></td>
+										</tr>
+									</table>
+								</td>
+								<td class="ui-state-default" style="width: 33%;">
+									<table class="tblcontractupload">
+										<tr>
+											<td class="ui-state-default uploadedfilebtn"><input type="button" function="uploadstaffing" value="Attach" DocumentType="AD2" /></td>
+											<td class="ui-state-default uploadedfile" style="height: 20px;"></td>
+										</tr>
+									</table>
+								</td>
+								<td class="ui-state-default" style="width: 33%;">
+									<table class="tblcontractupload">
+										<tr>
+											<td class="ui-state-default uploadedfilebtn"><input type="button" function="uploadstaffing" value="Attach" DocumentType="AD3" /></td>
+											<td class="ui-state-default uploadedfile" style="height: 20px;"></td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+							<tr id="AdditionalDocLastRowStaffing" style="display: none;">
+								<td class="ui-state-default" colspan="3">
+									<input type="button" value="Click to insert additional row" id="AddAdditionalRowStaffing" />
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">
+						<table style="width: 100%;">
+							<tr>
+								<td class="ui-state-default">
+									<input type="checkbox" class="StaffingData" checked="checked" value="Staffing" onchange="changeme(this)" id="cbStaffing" control="tdStaffing" function="toggletable" />Staffing&nbsp;&nbsp;
+									<input type="checkbox" class="StaffingData" checked="checked" value="ACRB/ECAB" onchange="changeme(this)" id="cbACRB" control="tdACRB" function="toggletable" />ACRB/ECAB
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">
+						<table style="width: 100%;">
+							<tr>
+								<td class="ui-state-default" id="tdStaffing" style="width: 50%;">
+									<table style="width: 100%;">
+										<tr>
+											<td class="ui-state-default" colspan="2">Staffing Reviewers:</td>
+										</tr>
+										<tr>
+											<td class="ui-state-default" style="width: 13px; text-align: center;">
+												<input type="checkbox" class="StaffingData" checked="checked" id="CheckBox0" onchange="changeme(this)" text="Budget 1" control="trStaffingBudget1" function="togglerow" preface="Budget1" style="padding-top: 1px; padding-bottom: 1px;"/>
+											</td>
+											<td class="ui-state-default">Budget 1<input type="text" readonly="readonly" class="PTS" ifname="BUD_x0020_1" cbid="CheckBox0" /></td> 
+										</tr>
+										<tr>
+											<td class="ui-state-default" style="width: 13px; text-align: center;">
+												<input type="checkbox" class="StaffingData" checked="checked" id="CheckBox1" onchange="changeme(this)" text="Budget 2" control="trStaffingBudget2" function="togglerow" preface="Budget2" style="padding-top: 1px; padding-bottom: 1px;" />
+											</td>
+											<td class="ui-state-default">Budget 2<input type="text" readonly="readonly" class="PTS" ifname="BUD_x0020_2" cbid="CheckBox1" /></td> 
+										</tr>
+										<tr>
+											<td class="ui-state-default" style="width: 13px; text-align: center;">
+												<input type="checkbox" class="StaffingData" checked="checked" id="CheckBox2" onchange="changeme(this)" text="SJA" control="trStaffingSJA" function="togglerow" preface="SJA" style="padding-top: 1px; padding-bottom: 1px;" />
+											</td>
+											<td class="ui-state-default">SJA<input type="text" readonly="readonly" class="PTS"  ifname="SJA" cbid="CheckBox2" /></td> 
+										</tr>
+										<tr>
+											<td class="ui-state-default" style="width: 13px; text-align: center;">
+												<input type="checkbox" class="StaffingData" checked="checked" id="CheckBox3" onchange="changeme(this)" text="Manpower" control="trStaffingManpower" function="togglerow" preface="Manpower" style="padding-top: 1px; padding-bottom: 1px;" />
+											</td>
+											<td class="ui-state-default">Manpower<input type="text" readonly="readonly" class="PTS"  ifname="MPWR" cbid="CheckBox3" /></td> 
+										</tr>
+										<tr>
+											<td class="ui-state-default" style="width: 13px; text-align: center;">
+												<input type="checkbox" class="StaffingData" checked="checked" id="CheckBox4" onchange="changeme(this)" text="Information Management" control="trStaffingInformationManagement" function="togglerow" preface="IMO" style="padding-top: 1px; padding-bottom: 1px;" />
+											</td>
+											<td class="ui-state-default">Information Management<input type="text" readonly="readonly" class="PTS"  ifname="IM" cbid="CheckBox4" /></td> 
+										</tr>
+										<tr>
+											<td class="ui-state-default" style="width: 13px; text-align: center;">
+												<input type="checkbox" class="StaffingData" checked="checked" id="CheckBox5" onchange="changeme(this)" text="Intel/Security" control="trStaffingIntel" function="togglerow" preface="Intel" style="padding-top: 1px; padding-bottom: 1px;" />
+											</td>
+											<td class="ui-state-default">Intel/Security<input type="text" readonly="readonly" class="PTS"  ifname="INTEL" cbid="CheckBox5" /></td> 
+										</tr>
+										<tr>
+											<td class="ui-state-default" style="width: 13px; text-align: center;">
+												<input type="checkbox" class="StaffingData" checked="checked" id="CheckBox6" onchange="changeme(this)" text="Antiterrorism" control="trStaffingAntiterrorism" function="togglerow" preface="AT" style="padding-top: 1px; padding-bottom: 1px;" />
+											</td>
+											<td class="ui-state-default">Antiterrorism<input type="text" readonly="readonly" class="PTS"  ifname="AT" cbid="CheckBox6" /></td> 
+										</tr>
+										<tr>
+											<td class="ui-state-default" style="width: 13px; text-align: center;">
+												<input type="checkbox" class="StaffingData" checked="checked" id="CheckBox7" onchange="changeme(this)" text="OPSEC" control="trStaffingOPSEC" function="togglerow" preface="OPSEC" style="padding-top: 1px; padding-bottom: 1px;" />
+											</td>
+											<td class="ui-state-default">OPSEC<input type="text" readonly="readonly" class="PTS"  ifname="OPSEC" cbid="CheckBox7" /></td> 
+										</tr>
+										<tr>
+											<td class="ui-state-default" style="width: 13px; text-align: center;">
+												<input type="checkbox" class="StaffingData" checked="checked" id="CheckBox8" onchange="changeme(this)" text="Contracting" control="trStaffingContracting" function="togglerow" preface="Contracting" style="padding-top: 1px; padding-bottom: 1px;" />
+											</td>
+											<td class="ui-state-default">Contracting<input type="text" readonly="readonly" class="PTS"  ifname="MICC" cbid="CheckBox8" /></td> 
+										</tr>
+										<tr>
+											<td class="ui-state-default" style="width: 13px; text-align: center;">
+												<input type="checkbox" class="StaffingData" checked="checked" id="CheckBox9" onchange="changeme(this)" text="Admin/Logistics" control="trStaffingAdmin" function="togglerow" preface="AdminLog" style="padding-top: 1px; padding-bottom: 1px;" />
+											</td>
+											<td class="ui-state-default">Admin/Logistics<input type="text" readonly="readonly" class="PTS"  ifname="LOG" cbid="CheckBox9" /></td> 
+										</tr>
+										<tr>
+											<td class="ui-state-default" style="width: 13px; text-align: center;">
+												<input type="checkbox" class="StaffingData" checked="checked" id="CheckBox10" onchange="changeme(this)" text="Training" control="trStaffingTraining" function="togglerow" preface="Training" style="padding-top: 1px; padding-bottom: 1px;" />
+											</td>
+											<td class="ui-state-default">Training<input type="text" readonly="readonly" class="PTS"  ifname="TNG" cbid="CheckBox10" /></td> 
+										</tr>
+										<tr>
+											<td class="ui-state-default" style="width: 13px; text-align: center;">
+												<input type="checkbox" class="StaffingData" checked="checked" id="CheckBox11" onchange="changeme(this)" text="Internal Review/Audit" control="trStaffingAudit" function="togglerow" preface="IRAC" style="padding-top: 1px; padding-bottom: 1px;" />
+											</td>
+											<td class="ui-state-default">Internal Review/Audit<input type="text" readonly="readonly" class="PTS"  ifname="AUDIT" cbid="CheckBox11" /></td> 
+										</tr>
+										<tr>
+											<td class="ui-state-default" style="width: 13px; text-align: center;">
+												<input type="checkbox" class="StaffingData" id="CheckBox12" onchange="changeme(this)" text="Other" control="trStaffingOther1" function="togglerow" preface="Other1" style="padding-top: 1px; padding-bottom: 1px;" />
+											</td>
+											<td class="ui-state-default"><input type="text" id="txtStaffingOther1" ifname="Other_x0020_1" class="PTS" cbid="CheckBox12" style="width: 200px; height: 12px;" /></td> 
+										</tr>
+										<tr>
+											<td class="ui-state-default" style="width: 13px; text-align: center;">
+												<input type="checkbox" class="StaffingData" id="CheckBox13" onchange="changeme(this)" text="Other" control="trStaffingOther2" function="togglerow" preface="Other2" style="padding-top: 1px; padding-bottom: 1px;" />
+											</td>
+											<td class="ui-state-default"><input type="text" id="txtStaffingOther2" ifname="Other_x0020_2" class="PTS" cbid="CheckBox13" style="width: 200px; height: 12px;" /></td> 
+										</tr>
+										<tr>
+											<td class="ui-state-default" style="width: 13px; text-align: center;">
+												<input type="checkbox" class="StaffingData" id="CheckBox14" onchange="changeme(this)" text="Other" control="trStaffingOther3" function="togglerow" preface="Other3"  style="padding-top: 1px; padding-bottom: 1px;"/>
+											</td>
+											<td class="ui-state-default"><input type="text" id="txtStaffingOther3" ifname="Other_x0020_3" class="PTS" cbid="CheckBox14" style="width: 200px; height: 12px;" /></td> 
+										</tr>
+										<tr>
+											<td class="ui-state-default" style="width: 13px; text-align: center;">
+												<input type="checkbox" class="StaffingData" id="CheckBox15" onchange="changeme(this)" text="Other" control="trStaffingOther4" function="togglerow" preface="Other4" style="padding-top: 1px; padding-bottom: 1px;" />
+											</td>
+											<td class="ui-state-default"><input type="text" id="txtStaffingOther4" ifname="Other_x0020_4" class="PTS" cbid="CheckBox15" style="width: 200px; height: 12px;" /></td> 
+										</tr>
+										<tr>
+											<td class="ui-state-default" style="width: 13px; text-align: center;">
+												<input type="checkbox" class="StaffingData" id="CheckBox16" onchange="changeme(this)" text="Other" control="trStaffingOther5" function="togglerow" preface="Other5" style="padding-top: 1px; padding-bottom: 1px;" />
+											</td>
+											<td class="ui-state-default"><input type="text" id="txtStaffingOther5" ifname="Other_x0020_5" class="PTS" cbid="CheckBox16" style="width: 200px; height: 12px;" /></td> 
+										</tr>
+										<tr>
+											<td class="ui-state-default" style="width: 13px; text-align: center;">
+												<input type="checkbox" class="StaffingData" id="CheckBox17" onchange="changeme(this)" text="Other" control="trStaffingOther6" function="togglerow" preface="Other6" style="padding-top: 1px; padding-bottom: 1px;" />
+											</td>
+											<td class="ui-state-default"><input type="text" id="txtStaffingOther6" ifname="Other_x0020_6" class="PTS" cbid="CheckBox17" style="width: 200px; height: 12px;" /></td> 
+										</tr>
+									</table>
+								</td>
+								<td class="ui-state-default" id="tdACRB" style="width: 50%;">
+									<table style="width: 100%;">
+										<tr>
+											<td class="ui-state-default" colspan="2">ACRB/ECAB Reviewers:</td>
+										</tr>
+										<tr>
+											<td class="ui-state-default" style="width: 13px; text-align: center;">
+												<input type="checkbox" class="StaffingData" checked="checked" id="CheckBox18" onchange="changeme(this)" text="Budget 1 ACRB/ECAB" control="trACRBBudget1" function="togglerow" preface="Budget1_ACRB" style="padding-top: 1px; padding-bottom: 1px;" />
+											</td>
+											<td class="ui-state-default">Budget 1<input type="text" readonly="readonly" class="PTS"  ifname="_x0028_BUD_x0020_1_x0029_" cbid="CheckBox18" /></td> 
+										</tr>
+										<tr>
+											<td class="ui-state-default" style="width: 13px; text-align: center;">
+												<input type="checkbox" class="StaffingData" checked="checked" id="CheckBox19" onchange="changeme(this)" text="Budget 2 ACRB/ECAB" control="trACRBBudget2" function="togglerow" preface="Budget2_ACRB" style="padding-top: 1px; padding-bottom: 1px;" />
+											</td>
+											<td class="ui-state-default">Budget 2<input type="text" readonly="readonly" class="PTS"  ifname="_x0028_BUD_x0020_2_x0029_" cbid="CheckBox19" /></td> 
+										</tr>
+										<tr>
+											<td class="ui-state-default" style="width: 13px; text-align: center;">
+												<input type="checkbox" class="StaffingData" checked="checked" id="CheckBox20" onchange="changeme(this)" text="SJA ACRB/ECAB" control="trACRBSJA" function="togglerow" preface="SJA_ACRB" style="padding-top: 1px; padding-bottom: 1px;" />
+											</td>
+											<td class="ui-state-default">SJA<input type="text" readonly="readonly" class="PTS"  ifname="_x0028_SJA_x0029_" cbid="CheckBox20" /></td> 
+										</tr>
+										<tr>
+											<td class="ui-state-default" style="width: 13px; text-align: center;">
+												<input type="checkbox" class="StaffingData" checked="checked" id="CheckBox21" onchange="changeme(this)" text="Manpower ACRB/ECAB" control="trACRBManpower" function="togglerow" preface="Manpower_ACRB" style="padding-top: 1px; padding-bottom: 1px;" />
+											</td>
+											<td class="ui-state-default">Manpower<input type="text" readonly="readonly" class="PTS"  ifname="_x0028_MPWR_x0029_" cbid="CheckBox21" /></td> 
+										</tr>
+										<tr>
+											<td class="ui-state-default" style="width: 13px; text-align: center;">
+												<input type="checkbox" class="StaffingData" checked="checked" id="CheckBox22" onchange="changeme(this)" text="Information Management ACRB/ECAB" control="trACRBInformationManagement" function="togglerow" preface="IMO_ACRB" style="padding-top: 1px; padding-bottom: 1px;" />
+											</td>
+											<td class="ui-state-default">Information Management<input type="text" readonly="readonly" class="PTS"  ifname="_x0028_IM_x0029_" cbid="CheckBox22" /></td> 
+										</tr>
+										<tr>
+											<td class="ui-state-default" style="width: 13px; text-align: center;">
+												<input type="checkbox" class="StaffingData" checked="checked" id="CheckBox23" onchange="changeme(this)" text="Intel/Security ACRB/ECAB" control="trACRBIntel" function="togglerow" preface="Intel_ACRB" style="padding-top: 1px; padding-bottom: 1px;" />
+											</td>
+											<td class="ui-state-default">Intel/Security<input type="text" readonly="readonly" class="PTS"  ifname="_x0028_INTEL_x0029_" cbid="CheckBox23" /></td> 
+										</tr>
+										<tr>
+											<td class="ui-state-default" style="width: 13px; text-align: center;">
+												<input type="checkbox" class="StaffingData" checked="checked" id="CheckBox24" onchange="changeme(this)" text="Antiterrorism ACRB/ECAB" control="trACRBAntiterrorism" function="togglerow" preface="AT_ACRB" style="padding-top: 1px; padding-bottom: 1px;" />
+											</td>
+											<td class="ui-state-default">Antiterrorism<input type="text" readonly="readonly" class="PTS"  ifname="_x0028_AT_x0029_" cbid="CheckBox24" /></td> 
+										</tr>
+										<tr>
+											<td class="ui-state-default" style="width: 13px; text-align: center;">
+												<input type="checkbox" class="StaffingData" checked="checked" id="CheckBox25" onchange="changeme(this)" text="OPSEC ACRB/ECAB" control="trACRBOPSEC" function="togglerow" preface="OPSEC_ACRB" style="padding-top: 1px; padding-bottom: 1px;" />
+											</td>
+											<td class="ui-state-default">OPSEC<input type="text" readonly="readonly" class="PTS"  ifname="_x0028_OPSEC_x0029_" cbid="CheckBox25" /></td> 
+										</tr>
+										<tr>
+											<td class="ui-state-default" style="width: 13px; text-align: center;">
+												<input type="checkbox" class="StaffingData" checked="checked" id="CheckBox26" onchange="changeme(this)" text="Contracting ACRB/ECAB" control="trACRBContracting" function="togglerow" preface="Contracting_ACRB" style="padding-top: 1px; padding-bottom: 1px;" />
+											</td>
+											<td class="ui-state-default">Contracting<input type="text" readonly="readonly" class="PTS"  ifname="_x0028_MICC_x0029_" cbid="CheckBox26" /></td> 
+										</tr>
+										<tr>
+											<td class="ui-state-default" style="width: 13px; text-align: center;">
+												<input type="checkbox" class="StaffingData" checked="checked" id="CheckBox27" onchange="changeme(this)" text="Admin/Logistics ACRB/ECAB" control="trACRBAdmin" function="togglerow" preface="AdminLog_ACRB" style="padding-top: 1px; padding-bottom: 1px;" />
+											</td>
+											<td class="ui-state-default">Admin/Logistics<input type="text" readonly="readonly" class="PTS"  ifname="_x0028_LOG_x0029_" cbid="CheckBox27" /></td> 
+										</tr>
+										<tr>
+											<td class="ui-state-default" style="width: 13px; text-align: center;">
+												<input type="checkbox" class="StaffingData" checked="checked" id="CheckBox28" onchange="changeme(this)" text="Training ACRB/ECAB" control="trACRBTraining" function="togglerow" preface="Training_ACRB" style="padding-top: 1px; padding-bottom: 1px;" />
+											</td>
+											<td class="ui-state-default">Training<input type="text" readonly="readonly" class="PTS"  ifname="_x0028_TNG_x0029_" cbid="CheckBox28" /></td> 
+										</tr>
+										<tr>
+											<td class="ui-state-default" style="width: 13px; text-align: center;">
+												<input type="checkbox" class="StaffingData" checked="checked" id="CheckBox29" onchange="changeme(this)" text="Internal Review/Audit ACRB/ECAB" control="trACRBAudit" function="togglerow" preface="IRAC_ACRB" style="padding-top: 1px; padding-bottom: 1px;" />
+											</td>
+											<td class="ui-state-default">Internal Review/Audit<input type="text" readonly="readonly" class="PTS"  ifname="_x0028_AUDIT_x0029_" cbid="CheckBox29" /></td> 
+										</tr>
+										<tr>
+											<td class="ui-state-default" style="width: 13px; text-align: center;">
+												<input type="checkbox" class="StaffingData" id="CheckBox30" onchange="changeme(this)" text="Other ACRB/ECAB" control="trACRBOther1" function="togglerow" preface="Other1_ACRB" style="padding-top: 1px; padding-bottom: 1px;" />
+											</td>
+											<td class="ui-state-default"><input type="text" id="txtACRBOther1" class="PTS" ifname="_x0028_Other_x0020_1_x0029_" cbid="CheckBox30" style="width: 200px; height: 12px;" /></td> 
+										</tr>
+										<tr>
+											<td class="ui-state-default" style="width: 13px; text-align: center;">
+												<input type="checkbox" class="StaffingData" id="CheckBox31" onchange="changeme(this)" text="Other ACRB/ECAB" control="trACRBOther2" function="togglerow" preface="Other2_ACRB" style="padding-top: 1px; padding-bottom: 1px;" />
+											</td>
+											<td class="ui-state-default"><input type="text" id="txtACRBOther2" class="PTS" ifname="_x0028_Other_x0020_2_x0029_" cbid="CheckBox31" style="width: 200px; height: 12px;" /></td> 
+										</tr>
+										<tr>
+											<td class="ui-state-default" style="width: 13px; text-align: center;">
+												<input type="checkbox" class="StaffingData" id="CheckBox32" onchange="changeme(this)" text="Other ACRB/ECAB" control="trACRBOther3" function="togglerow" preface="Other3_ACRB" style="padding-top: 1px; padding-bottom: 1px;" />
+											</td>
+											<td class="ui-state-default"><input type="text" id="txtACRBOther3" class="PTS" ifname="_x0028_Other_x0020_3_x0029_" cbid="CheckBox32" style="width: 200px; height: 12px;" /></td> 
+										</tr>
+										<tr>
+											<td class="ui-state-default" style="width: 13px; text-align: center;">
+												<input type="checkbox" class="StaffingData" id="CheckBox33" onchange="changeme(this)" text="Other ACRB/ECAB" control="trACRBOther4" function="togglerow" preface="Other4_ACRB" style="padding-top: 1px; padding-bottom: 1px;" />
+											</td>
+											<td class="ui-state-default"><input type="text" id="txtACRBOther4" class="PTS" ifname="_x0028_Other_x0020_4_x0029_" cbid="CheckBox33" style="width: 200px; height: 12px;" /></td> 
+										</tr>
+										<tr>
+											<td class="ui-state-default" style="width: 13px; text-align: center;">
+												<input type="checkbox" class="StaffingData" id="CheckBox34" onchange="changeme(this)" text="Other ACRB/ECAB" control="trACRBOther5" function="togglerow" preface="Other5_ACRB" style="padding-top: 1px; padding-bottom: 1px;" />
+											</td>
+											<td class="ui-state-default"><input type="text" id="txtACRBOther5" class="PTS" ifname="_x0028_Other_x0020_5_x0029_" cbid="CheckBox34" style="width: 200px; height: 12px;" /></td> 
+										</tr>
+										<tr>
+											<td class="ui-state-default" style="width: 13px; text-align: center;">
+												<input type="checkbox" class="StaffingData" id="CheckBox35" onchange="changeme(this)" text="Other ACRB/ECAB" control="trACRBOther6" function="togglerow" preface="Other6_ACRB" style="padding-top: 1px; padding-bottom: 1px;" />
+											</td>
+											<td class="ui-state-default"><input type="text" id="txtACRBOther6" class="PTS" ifname="_x0028_Other_x0020_6_x0029_" cbid="CheckBox35" style="width: 200px; height: 12px;" /></td> 
+										</tr>
+									</table>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td class="ui-state-default">
+						<table style="width: 100%;">
+							<tr><td class="ui-state-default">Action Officer Comments:</td></tr>
+							<tr>
+								<td class="ui-state-default">
+									<textarea class="PTS" ifname="Action_x0020_Officer_x0020_Comments" id="ActionOfficerComments" rows="3" cols="100" style="width: 98%; height: 60px;"></textarea>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>	
+				<tr>
+					<td class="ui-state-default">
+						<table style="width: 100%;">
+							<tr>
+								<td class="ui-state-default" id="tdStaffingLeft" style="width: 50%; vertical-align: top;">
+									<table style="width: 100%;" id="tblStaffingLeft">
+										<tr id="trStaffingButton"><td class="ui-state-default" style="text-align: center;"><input type="button" id="btnLeftColumn" value="Print Column" /></td></tr>
+										<tr id="trStaffingBudget1"></tr>
+										<tr id="trStaffingBudget2"></tr>
+										<tr id="trStaffingSJA"></tr>
+										<tr id="trStaffingManpower"></tr>
+										<tr id="trStaffingInformationManagement"></tr>
+										<tr id="trStaffingIntel"></tr>
+										<tr id="trStaffingAntiterrorism"></tr>
+										<tr id="trStaffingOPSEC"></tr>
+										<tr id="trStaffingContracting"></tr>
+										<tr id="trStaffingAdmin"></tr>
+										<tr id="trStaffingTraining"></tr>
+										<tr id="trStaffingAudit"></tr>
+										<tr id="trStaffingOther1" style="display: none;"></tr>
+										<tr id="trStaffingOther2" style="display: none;"></tr>
+										<tr id="trStaffingOther3" style="display: none;"></tr>
+										<tr id="trStaffingOther4" style="display: none;"></tr>
+										<tr id="trStaffingOther5" style="display: none;"></tr>
+										<tr id="trStaffingOther6" style="display: none;"></tr>
+									</table>
+								</td>
+								<td class="ui-state-default" id="tdStaffingRight" style="width: 50%; vertical-align: top;">
+									<table style="width: 100%;" id="tblStaffingRight">
+										<tr id="trACRBButton"><td class="ui-state-default" style="text-align: center;"><input type="button" id="btnRightColumn" value="Print Column" /></td></tr>
+										<tr id="trACRBBudget1"></tr>
+										<tr id="trACRBBudget2"></tr>
+										<tr id="trACRBSJA"></tr>
+										<tr id="trACRBManpower"></tr>
+										<tr id="trACRBInformationManagement"></tr>
+										<tr id="trACRBIntel"></tr>
+										<tr id="trACRBAntiterrorism"></tr>
+										<tr id="trACRBOPSEC"></tr>
+										<tr id="trACRBContracting"></tr>
+										<tr id="trACRBAdmin"></tr>
+										<tr id="trACRBTraining"></tr>
+										<tr id="trACRBAudit"></tr>
+										<tr id="trACRBOther1" style="display: none;"></tr>
+										<tr id="trACRBOther2" style="display: none;"></tr>
+										<tr id="trACRBOther3" style="display: none;"></tr>
+										<tr id="trACRBOther4" style="display: none;"></tr>
+										<tr id="trACRBOther5" style="display: none;"></tr>
+										<tr id="trACRBOther6" style="display: none;"></tr>
+									</table>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<div id="tabsbottom">
+		<ul class="tabs bottomtabs">
+			<li class="tab"><a href="#tabs-1">Organization Input</a></li>
+			<li class="tab"><a href="#tabs-2">5-14 Page 1</a></li>
+			<li class="tab"><a href="#tabs-3">5-14 Page 2</a></li>
+			<li class="tab"><a href="#tabs-4">5-14 Page 3</a></li>
+			<li class="tab"><a href="#tabs-5">Post Approval Data</a></li>
+			<!-- <li class="tab"><a href="#tabs-6">SCAF</a></li> -->
+			<li class="tab"><a href="#tabs-7">Staffing Page</a></li>
+		</ul>
+	</div>
+	<div>
+		<table style="width: 100%;">
+			<tr>
+				<td align="right" colspan="2" class="ui-state-default">
+					<input type="button" id="btnPrint12" value="Print Pages 1 and 2" /> &nbsp;
+					<input type="button" id="btnSubmit" value="Submit" /> &nbsp;
+					<input type="button" id="btnSave" value="Save" /> &nbsp;         
+					<input type="button" id="btnCancel" value="Cancel" />
+				</td>
+			</tr>
+			<tr id="hiddenstaffingdata" style="display: none;">
+				<td>
+					<textarea id="txtStaffingResults" name="txtStaffingResults" rows="50" cols="100"></textarea>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>

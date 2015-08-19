@@ -1,0 +1,12 @@
+
+Rating of Rec: diidSort Rating_x0020_of_x0020_Rec
+			Rating_x0020_of_x0020_Rec
+
+TDY Cost(OIP): diidSort TDY_x0020_Cost_x0020__x0028_OIP_
+			TDY_x0020_Cost_x0020__x0028_OIP_
+
+TDY Cost(QA):  diidSort TDY_x0020_Cost_x0020__x0028_QA_x
+			TDY_x0020_Cost_x0020__x0028_QA_x
+
+TDY Cost(RC):  diidSort TDY_x0020_Cost_x0020__x0028_RC_x
+			TDY_x0020_Cost_x0020__x0028_RC_x

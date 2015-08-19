@@ -1,0 +1,76 @@
+ParticipantsPicker
+CategoryPicker
+Category
+CategoryTitle
+Overbook
+Created
+Author
+DateTBD
+Description
+DummyField
+
+EndDate
+EventDeleted
+Title
+EventPOC
+EventPOCDSN
+FormSelector
+FreeBusy
+EventVTC
+Location
+Modified
+Editor
+
+OldCategories
+OriginalCalendarUrl
+PersonalNotes
+PromoteArmyMaster
+CalendarLocationData
+PurposeNotes
+NominateFurther
+Facilities
+EventDate
+TECPOC
+TECPOCDSN
+
+EventTimeZone
+TMACID
+
+<FieldRef Name=\'ParticipantsPicker\'/>
+<FieldRef Name=\'CategoryPicker\'/>
+<FieldRef Name=\'Category\'/>
+<FieldRef Name=\'CategoryTitle\'/>
+<FieldRef Name=\'Overbook\'/>
+<FieldRef Name=\'Created\'/>
+<FieldRef Name=\'Author\'/>
+<FieldRef Name=\'DateTBD\'/>
+<FieldRef Name=\'Description\'/>
+<FieldRef Name=\'DummyField\'/>
+
+<FieldRef Name=\'EndDate\'/>
+<FieldRef Name=\'EventDeleted\'/>
+<FieldRef Name=\'Title\'/>
+<FieldRef Name=\'EventPOC\'/>
+<FieldRef Name=\'EventPOCDSN\'/>
+<FieldRef Name=\'FormSelector\'/>
+<FieldRef Name=\'FreeBusy\'/>
+<FieldRef Name=\'EventVTC\'/>
+<FieldRef Name=\'Location\'/>
+<FieldRef Name=\'Modified\'/>
+<FieldRef Name=\'Editor\'/>
+
+
+<FieldRef Name=\'OldCategories\'/>
+<FieldRef Name=\'OriginalCalendarUrl\'/>
+<FieldRef Name=\'PersonalNotes\'/>
+<FieldRef Name=\'PromoteArmyMaster\'/>
+<FieldRef Name=\'CalendarLocationData\'/>
+<FieldRef Name=\'PurposeNotes\'/>
+<FieldRef Name=\'NominateFurther\'/>
+<FieldRef Name=\'Facilities\'/>
+<FieldRef Name=\'EventDate\'/>
+<FieldRef Name=\'TECPOC\'/>
+<FieldRef Name=\'TECPOCDSN\'/>
+
+<FieldRef Name=\'EventTimeZone\'/>
+<FieldRef Name=\'TMACID\'/>

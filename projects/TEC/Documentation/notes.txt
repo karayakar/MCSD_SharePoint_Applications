@@ -1,0 +1,2 @@
+CAC_CDID do not have distinguish calendar ---> Calendar
+59th Ordinance Brigade have custom calendar but is missing regular calendar
