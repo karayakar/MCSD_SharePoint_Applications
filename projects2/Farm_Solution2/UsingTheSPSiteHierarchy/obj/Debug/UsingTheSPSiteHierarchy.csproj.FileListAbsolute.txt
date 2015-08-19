@@ -1,7 +1,0 @@
-C:\Users\Administrator\documents\visual studio 2015\Projects\Farm_Solution2\UsingTheSPSiteHierarchy\bin\Debug\UsingTheSPSiteHierarchy.exe.config
-C:\Users\Administrator\documents\visual studio 2015\Projects\Farm_Solution2\UsingTheSPSiteHierarchy\bin\Debug\UsingTheSPSiteHierarchy.exe
-C:\Users\Administrator\documents\visual studio 2015\Projects\Farm_Solution2\UsingTheSPSiteHierarchy\bin\Debug\UsingTheSPSiteHierarchy.pdb
-C:\Users\Administrator\documents\visual studio 2015\Projects\Farm_Solution2\UsingTheSPSiteHierarchy\obj\Debug\UsingTheSPSiteHierarchy.csproj.UsingTheSPSiteHierarchy.exe.config
-C:\Users\Administrator\documents\visual studio 2015\Projects\Farm_Solution2\UsingTheSPSiteHierarchy\obj\Debug\UsingTheSPSiteHierarchy.exe
-C:\Users\Administrator\documents\visual studio 2015\Projects\Farm_Solution2\UsingTheSPSiteHierarchy\obj\Debug\UsingTheSPSiteHierarchy.pdb
-C:\Users\Administrator\documents\visual studio 2015\Projects\Farm_Solution2\UsingTheSPSiteHierarchy\obj\Debug\UsingTheSPSiteHierarchy.csprojResolveAssemblyReference.cache

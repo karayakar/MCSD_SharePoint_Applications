@@ -1,6 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Feature xmlns="http://schemas.microsoft.com/sharepoint/" Title="Farm_Solution2 Feature1" Id="0f3c8174-2a18-4ee1-9430-3599215f6cfc" Scope="Web">
-  <ElementManifests>
-    <ElementManifest Location="ChemicalChangeEventReceiver\Elements.xml" />
-  </ElementManifests>
-</Feature>

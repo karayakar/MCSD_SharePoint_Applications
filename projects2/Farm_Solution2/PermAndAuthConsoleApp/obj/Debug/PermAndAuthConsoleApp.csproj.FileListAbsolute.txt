@@ -1,7 +1,0 @@
-C:\Users\Administrator\documents\visual studio 2015\Projects\Farm_Solution2\PermAndAuthConsoleApp\bin\Debug\PermAndAuthConsoleApp.exe.config
-C:\Users\Administrator\documents\visual studio 2015\Projects\Farm_Solution2\PermAndAuthConsoleApp\bin\Debug\PermAndAuthConsoleApp.exe
-C:\Users\Administrator\documents\visual studio 2015\Projects\Farm_Solution2\PermAndAuthConsoleApp\bin\Debug\PermAndAuthConsoleApp.pdb
-C:\Users\Administrator\documents\visual studio 2015\Projects\Farm_Solution2\PermAndAuthConsoleApp\obj\Debug\PermAndAuthConsoleApp.csprojResolveAssemblyReference.cache
-C:\Users\Administrator\documents\visual studio 2015\Projects\Farm_Solution2\PermAndAuthConsoleApp\obj\Debug\PermAndAuthConsoleApp.csproj.PermAndAuthConsoleApp.exe.config
-C:\Users\Administrator\documents\visual studio 2015\Projects\Farm_Solution2\PermAndAuthConsoleApp\obj\Debug\PermAndAuthConsoleApp.exe
-C:\Users\Administrator\documents\visual studio 2015\Projects\Farm_Solution2\PermAndAuthConsoleApp\obj\Debug\PermAndAuthConsoleApp.pdb

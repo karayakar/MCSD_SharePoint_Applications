@@ -1,6 +1,0 @@
-C:\Users\Administrator\documents\visual studio 2015\Projects\Farm_Solution2\Farm_Solution2\bin\Debug\Farm_Solution2.dll
-C:\Users\Administrator\documents\visual studio 2015\Projects\Farm_Solution2\Farm_Solution2\bin\Debug\Farm_Solution2.pdb
-C:\Users\Administrator\documents\visual studio 2015\Projects\Farm_Solution2\Farm_Solution2\obj\Debug\Farm_Solution2.csprojResolveAssemblyReference.cache
-C:\Users\Administrator\documents\visual studio 2015\Projects\Farm_Solution2\Farm_Solution2\obj\Debug\Farm_Solution2.dll
-C:\Users\Administrator\documents\visual studio 2015\Projects\Farm_Solution2\Farm_Solution2\obj\Debug\Farm_Solution2.pdb
-C:\Users\Administrator\documents\visual studio 2015\Projects\Farm_Solution2\Farm_Solution2\bin\Debug\Microsoft.SharePoint.DesignTime.Activities.dll

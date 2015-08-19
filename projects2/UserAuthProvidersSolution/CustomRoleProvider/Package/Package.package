@@ -1,8 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<package dslVersion="1.0.0.0" 
-        Id="948bec0b-e573-46c9-bd83-353d21930c18" 
-        solutionId="948bec0b-e573-46c9-bd83-353d21930c18" 
-        xmlns="http://schemas.microsoft.com/VisualStudio/2008/SharePointTools/PackageModel" 
-        name="CustomRoleProvider"
-        sharePointProductVersion="15.0">
-</package>
