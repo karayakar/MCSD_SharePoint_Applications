@@ -1,4 +1,4 @@
-﻿#These Links Do Not Work. These Are Just Examples of the Queries.
+﻿#Example REST/oDATA Calla
 
 #Query Web
 
