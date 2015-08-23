@@ -1,0 +1,8 @@
+﻿Use Case 1: Allow Management of Content Types List (Content Type= AMOFormListContentType)
+
+Use Case 2: Create New Contract --> Save Contract Successful (Status=Draft, Level 5 Name=HQ G8 PAED)
+
+Use Case 3: Add Attachment to Contract --> Save Contract Successful (Status=Draft, Level 5 Name=HQ G8 PAED)
+
+
+

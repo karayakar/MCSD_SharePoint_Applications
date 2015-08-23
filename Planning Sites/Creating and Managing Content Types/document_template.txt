@@ -1,0 +1,8 @@
+1. Create custom content type that inherits from parent type 'Document'
+
+2. Click 'Advance Settings' and add document template(docx,xlsx,etc)
+
+3. 'Create document library and 'Allow Management of Content Types.'
+
+4. Add custom content type as default content type (may have to delete 'Document' content type).
+

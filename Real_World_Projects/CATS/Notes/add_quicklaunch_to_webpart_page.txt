@@ -1,0 +1,19 @@
+When you create a webpart page on SharePoint 2010 or 2007 for that matter, the quick launch will vanish.
+
+With SharePoint 2007 all you needed to do was edit the page in SharePoint Designer and remove the following 2 lines:
+
+< asp:Content ContentPlaceHolderId="PlaceHolderNavSpacer" runat="server"></asp:Content>
+< asp:Content ContentPlaceHolderId="PlaceHolderLeftNavBar" runat="server"></asp:Content>
+
+With SharePoint 2010 you also need to delete the following:
+
+< style type="text/css">
+body #s4-leftpanel {
+display:none;
+}
+.s4-ca {
+margin-left:0px;
+}
+</style>
+
+The quick launch will now display on the web part page. 

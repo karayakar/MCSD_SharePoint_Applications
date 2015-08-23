@@ -1,0 +1,3 @@
+﻿1)	What did I accomplish since the last scrum ?
+2)	What do I plan to work on by the next scrum ?
+3)	What are the obstacles or impediments that are preventing me from making progress ?

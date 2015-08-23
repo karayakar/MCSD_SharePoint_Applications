@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Templates xmlns:ows="Microsoft SharePoint">
+  <Template Name="SiteDefsandWebTemps" ID="10002">
+    <Configuration ID="0" 
+                   Title="SiteDefsandWebTemps" 
+                   Hidden="FALSE" 
+                   ImageUrl="/_layouts/images/CPVW.gif" 
+                   Description="SiteDefsandWebTemps" 
+                   DisplayCategory="SharePoint Customizations">
+    </Configuration>
+  </Template>
+</Templates>

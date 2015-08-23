@@ -1,0 +1,1931 @@
+var itemid, amo, li, qs, zidx;
+var tab = 99;
+var saving = false;
+var filename, fileid, tp1, tp2, tp3, tp4;
+var btn, step, timer;
+var waitmsg;
+var printframe;
+var listflds;
+var defarr = [];
+var filearr = [];
+var adfilearr = [];
+var loadstaffing = true;
+var loadamo = true;
+var loaderrors = true;
+var error = false;
+var errorstring;
+var staffed = "false";
+var doctype = "";
+var mode, doccnt;
+var tdate, tdstring;
+var amodata, staffingdata;
+var status;
+var siteurl;
+var openforms, ofid;
+
+function closeit(dialogResult, returnValue) {
+    if (returnValue == "Save") {
+        $("#btnSave").click();
+    }
+    else {
+        SP.UI.ModalDialog.commonModalDialogClose(SP.UI.DialogResult.cancel);
+    }
+}
+
+function fValidateBeforeClose(event) {
+    event.preventDefault();
+    logit("Validate Close");
+    var mc = document.createElement('div');
+    $(mc).html($("#ConfirmPopup").html());
+    var options = {
+        html: mc,
+        width: 375,
+        height: 150,
+        title: "Save or Close?",
+        dialogReturnValueCallback: closeit,
+        allowMaximize: false,
+        showClose: true
+    };
+    SP.UI.ModalDialog.showModalDialog(options);
+}
+
+function fAddOnCloseHandler() {
+    //var oCloseButton = $("a[title='Close']", window.parent.document);
+    //$clearHandlers($(oCloseButton).get(0));
+    //$(oCloseButton).on("click", function (event) { fValidateBeforeClose(event) });
+    $("a[title='Close']", window.parent.document).remove();
+}
+
+$(document).ready(function () {
+    var $ribbon = jQuery("#s4-ribbonrow");
+    if ($ribbon.is(":hidden")) {
+        $ribbon.css({ "min-height": "0px", "height": "0px" }).show().children().hide().filter("#notificationArea").show();
+    }
+    ExecuteOrDelayUntilScriptLoaded(function () { ExecuteOrDelayUntilScriptLoaded(function () { waitmsg = SP.UI.Notify.addNotification("Getting Data...Please Wait.", true); }, 'core.js') }, 'sp.js');
+    logit("Edit Form Loaded");
+    test = new String(window.location);
+    if (test.indexOf("sites/amo") > 0) {
+        siteurl = '/sites/amo';
+    }
+    if (test.indexOf("sites/AMO") > 0) {
+        siteurl = '/sites/AMO';
+    }
+    logit("test = " + test);
+    qs = $().SPServices.SPGetQueryString();
+    itemid = new String(qs["ItemID"]);
+    tab = qs["tab"];
+    mode = qs["mode"];
+    loaderrors = qs["errors"];
+    printframe = $('<iframe id="PrintDialogFrame" name="PrintDialogFrame" width="100%" height="100%" scrolling="auto" />');
+    printframe.appendTo($("#UploadDialog"));
+    logit("Test Point 1");
+    $(".tabcontent").hide();
+    $("ul.toptabs li:first").addClass("active");
+    $("ul.bottomtabs li:first").addClass("active");
+    $(".tabcontent:first").show();  // TODO: Update to use the passed in tab from the querystring
+
+    $("ul.toptabs li").click(function (e) {
+        e.preventDefault();
+        $("ul.toptabs li").removeClass("active");
+        $("ul.bottomtabs li").removeClass("active");
+        $(this).addClass("active");
+        $(".tabcontent").hide();
+        var activetab = $(this).find("a").attr("href");
+        $(".bottomtabs").find("a[href='" + activetab + "']").parent().addClass("active"); // Need to also add active class to the bottom tab
+        $(activetab).show();
+    });
+
+    $("ul.bottomtabs li").click(function (e) {
+        e.preventDefault();
+        $("ul.toptabs li").removeClass("active");
+        $("ul.bottomtabs li").removeClass("active");
+        $(this).addClass("active");
+        $(".tabcontent").hide();
+        var activetab = $(this).find("a").attr("href");
+        $(".toptabs").find("a[href='" + activetab + "']").parent().addClass("active"); // Need to also add active class to the top tab
+        $(activetab).show();
+    });
+    logit("Test Point 2");
+    $("#EndorserSign").button().click(function () {
+        logit("EndorserSign");
+        //$(this).prop('disabled', true);
+        $("#EndorserSignature").removeAttr("readonly");
+        $("#EndorserSignature").val($("#txtUser").val());
+    });
+
+    $("#EndorserClear").button().click(function () {
+        $("#EndorserUserName").val("");
+        $("#EndorsedDate").val("");
+        $("#EndorserConcurYes").prop('checked', false);
+        $("#EndorserConcurNo").prop('checked', false);
+    });
+
+    $("#RMSign").button().click(function () {
+        logit("RMSign");
+        //$(this).prop('disabled', true);
+        $("#RMSignature").removeAttr("readonly");
+        $("#RMSignature").val($("#txtUser").val());
+    });
+
+    $("#RMClear").button().click(function () {
+        $("#RMUserName").val("");
+        $("#RMDate").val("");
+        $("#RMConcurYes").prop('checked', false);
+        $("#RMConcurNo").prop('checked', false);
+    });
+
+    $("#ApproverSign").button().click(function () {
+        logit("ApproverSign");
+        //$(this).prop('disabled', true);
+        $("#ApproverSignature").removeAttr("readonly");
+        $("#ApproverSignature").val($("#txtUser").val());
+    });
+
+    $("#ApproverClear").button().click(function () {
+        $("#ApproverName").val("");
+        $("#ApprovedDate").val("");
+        $("#ApprovalNumber").val("");
+        $("#ApproverConcurYes").prop('checked', false);
+        $("#ApproverConcurNo").prop('checked', false);
+    });
+
+    $("#AddNewClassification").button().click(function () {
+        var zurl = fixurl('/Pages/NewClassificationForm.aspx?amo=' + li.get_item("AMO_x0020_No_x002e_"));
+        TRADOCDialog(zurl, 'New Classification', '1010', '800', 'NotificationCallback');
+    });
+
+    $("#ClassificationTable").on('click', 'a', function (e) {
+        e.preventDefault();
+        var zurl = fixurl('/Pages/EditClassificationForm.aspx?ItemId=' + $(this).attr("itemid"));
+        TRADOCDialog(zurl, 'Edit Classification', '1010', '800', 'NotificationCallback');
+    });
+
+    $(".date").each(function () {
+        $(this).datepicker({
+            showOn: "button",
+            dateFormat: "yymmdd",
+            buttonImage: "../_layouts/images/calendar.gif",
+            buttonImageOnly: true
+        }).attr("readonly", true);
+    });
+    logit("Test Point 3");
+
+    $("#AddAdditionalRow").button().click(function () {
+        var ct = parseInt($("#AdditionalDocCount").val());
+        ct += 1;
+        var rowhtml = '<tr><td class="ui-state-default" style="width: 34%;"><table class="tblcontractupload">';
+        rowhtml += '<tr><td class="ui-state-default uploadedfilebtn">';
+        rowhtml += '<input type="button" class="upload" staffed="false" function="upload" value="Attach" DocumentType="AD' + ct + '" /></td>';
+        ct += 1;
+        rowhtml += '<td class="ui-state-default uploadedfile"></td></tr></table></td><td class="ui-state-default" style="width: 33%;">';
+        rowhtml += '<table class="tblcontractupload"><tr><td class="ui-state-default uploadedfilebtn">';
+        rowhtml += '<input type="button" class="upload" staffed="false" function="upload" value="Attach" DocumentType="AD' + ct + '" /></td>';
+        ct += 1;
+        rowhtml += '<td class="ui-state-default uploadedfile"></td></tr></table></td><td class="ui-state-default" style="width: 33%;">';
+        rowhtml += '<table class="tblcontractupload"><tr><td class="ui-state-default uploadedfilebtn">';
+        rowhtml += '<input type="button" class="upload" staffed="false" function="upload" value="Attach" DocumentType="AD' + ct + '" /></td>';
+        rowhtml += '<td class="ui-state-default uploadedfile"></td></tr></table></td></tr>';
+        $("#AdditionalDocCount").val(ct);
+        $("#AdditionalDocLastRow").before(rowhtml);
+        $(".upload").each(function () { // set each button to run upload function to upload file and pass the doctype, amo, and control to update
+            $(this).button().click(function () {
+                var label = $(this).val();
+                if (label == "Attach") {
+                    staffed = $(this).attr("staffed");
+                    doctype = $(this).attr("DocumentType");
+                    var zurl = fixurl("/Documents/Forms/Upload.aspx?IsDlg=1&AMOAttach=1&amo=" + amo + "&staffed=" + staffed + "&doctype=" + doctype);
+                    TRADOCDialog(zurl, 'Attach', '800', '500', 'NotificationCallback');
+                }
+                else {
+                    btn = $(this);
+                    filename = new String(btn.parent().parent().find(".uploadedfilelink").html());
+                    if (filename == "undefined") {
+                        filename = new String(btn.parent().parent().find(".aduploadedfilelink").html());
+                    }
+                    btn.parent().next().html("");
+                    btn.parent().next().css({ border: '1px solid #c5dbec' }); // Set back to ui-state-default border color
+                    btn.val("Attach");
+                    RemoveFiles(filename);
+                }
+            });
+        });
+    });
+    //logit("Test Point 4");
+    $("#AddAdditionalRowStaffing").button().click(function () {
+        var ct = parseInt($("#AdditionalDocCountStaffing").val());
+        ct += 1;
+        var rowhtml = '<tr><td class="ui-state-default" style="width: 34%;"><table class="tblcontractupload">';
+        rowhtml += '<tr><td class="ui-state-default uploadedfilebtn">';
+        rowhtml += '<input type="button" class="uploadstaffingpage" staffed="false" function="uploadstaffing" value="Attach" DocumentType="AD' + ct + '" /></td>';
+        ct += 1;
+        rowhtml += '<td class="ui-state-default uploadedfile"></td></tr></table></td><td class="ui-state-default" style="width: 33%;">';
+        rowhtml += '<table class="tblcontractupload"><tr><td class="ui-state-default uploadedfilebtn">';
+        rowhtml += '<input type="button" class="uploadstaffingpage" staffed="false" function="uploadstaffing" value="Attach" DocumentType="AD' + ct + '" /></td>';
+        ct += 1;
+        rowhtml += '<td class="ui-state-default uploadedfile"></td></tr></table></td><td class="ui-state-default" style="width: 33%;">';
+        rowhtml += '<table class="tblcontractupload"><tr><td class="ui-state-default uploadedfilebtn">';
+        rowhtml += '<input type="button" class="uploadstaffingpage" staffed="false" function="uploadstaffing" value="Attach" DocumentType="AD' + ct + '" /></td>';
+        rowhtml += '<td class="ui-state-default uploadedfile"></td></tr></table></td></tr>';
+        $("#AdditionalDocCountStaffing").val(ct);
+        $("#AdditionalDocLastRowStaffing").before(rowhtml);
+        $(".uploadstaffingpage").each(function () {
+            $(this).parent().hide();
+        });
+    });
+
+    $("input[cbid*='CheckBox']").each(function () {
+        var tx = new String($(this).attr("ifname"));
+        if (tx.indexOf("Other") >= 0) {
+            $(this).val("---");
+            $(this).attr("readonly", true);
+            $(this).css("color", "#ff0000");
+        }
+        else {
+            $(this).val("[]");
+            $(this).hide();
+        }
+    });
+    //logit("Test Point 5");
+    $("input[function='togglerow']").each(function (tidx) {
+        //build the staffing table for this element
+        var preface = new String($(this).attr("preface"));
+        var control = $(this).attr("control");
+        var cbid = $(this).attr("id");
+        var tblhtml = '';
+        tblhtml += '<td class="ui-state-default"><table style="width: 100%; border: 1px solid black;"><tr><td class="ui-state-default"><div style="float:left;" class="divLabel">';
+        tblhtml += $(this).attr("text");
+        tblhtml += '</div><div style="float:right;" class="amo"></div></td></tr><tr><td class="ui-state-default" style="border: 2px solid black;">';
+        tblhtml += '<table style="width:100%;"><tr><td class="ui-state-default" style="text-align: center; width: 50%;">POC:</td>';
+        tblhtml += '<td class="ui-state-default" style="text-align: center; width: 50%;">Phone:</td></tr><tr>';
+        tblhtml += '<td class="ui-state-default" style="text-align: center;">';
+        tblhtml += '<input type="text" style="width: 75%; height: 12px;" id="' + preface + 'POC" class="StaffingData" /></td>';
+        tblhtml += '<td class="ui-state-default" style="text-align: center;">';
+        tblhtml += '<input type="text" style="width: 75%; height: 12px;" id="' + preface + 'Phone"class="StaffingData" /></td>';
+        tblhtml += '</tr><tr><td class="ui-state-default" colspan="2">';
+        if (preface.indexOf("Budget") >= 0) {
+            tblhtml += '<input type="radio" onclick="staffingresponse(\'' + cbid + '\', \'[FA]\')" name="radio' + tidx + '" id="' + preface + 'Response1" class="StaffingData" value="Funds Available" />Funds Available&nbsp;';
+            tblhtml += '<input type="radio" onclick="staffingresponse(\'' + cbid + '\', \'[SAF]\')" name="radio' + tidx + '" id="' + preface + 'Response2" class="StaffingData" value="Subject To Availability" />Subject To Availability&nbsp;';
+            tblhtml += '<input type="radio" onclick="staffingresponse(\'' + cbid + '\', \'[Other]\')" name="radio' + tidx + '" id="' + preface + 'Response3" class="StaffingData" value="Other" />Other';
+        }
+        else if (preface.indexOf("SJA") >= 0) {
+            tblhtml += '<input type="radio" onclick="staffingresponse(\'' + cbid + '\', \'[Yes]\')" name="radio' + tidx + '" id="' + preface + 'Response1" class="StaffingData" value="No legal objection" />No legal objection&nbsp;';
+            tblhtml += '<input type="radio" onclick="staffingresponse(\'' + cbid + '\', \'[No]\')" name="radio' + tidx + '" id="' + preface + 'Response2" class="StaffingData" value="Non-concur" />Non-concur&nbsp;';
+            tblhtml += '<input type="radio" onclick="staffingresponse(\'' + cbid + '\', \'[Other]\')" name="radio' + tidx + '" id="' + preface + 'Response3" class="StaffingData" value="Other" />Other';
+        }
+        else {
+            tblhtml += '<input type="radio" onclick="staffingresponse(\'' + cbid + '\', \'[Yes]\')" name="radio' + tidx + '" id="' + preface + 'Response1" class="StaffingData" value="Concur" />Concur&nbsp;';
+            tblhtml += '<input type="radio" onclick="staffingresponse(\'' + cbid + '\', \'[No]\')" name="radio' + tidx + '" id="' + preface + 'Response2" class="StaffingData" value="Non-concur" />Non-concur&nbsp;';
+            tblhtml += '<input type="radio" onclick="staffingresponse(\'' + cbid + '\', \'[Other]\')" name="radio' + tidx + '" id="' + preface + 'Response3" class="StaffingData" value="Other" />Other';
+        }
+        tblhtml += '</td></tr><tr><td class="ui-state-default" colspan="2">';
+        tblhtml += '<textarea style="width: 98%; height: 60px;" rows="3" cols="100" id="' + preface + 'Comments" class="StaffingData"></textarea>';
+        tblhtml += '</td></tr><tr><td class="ui-state-default" colspan="2">Document Attachments (if needed)&nbsp;';
+        tblhtml += '<input type="button" value="Attach" function="attachstaffing" staffed="true" documenttype="' + preface + '" tableid="' + preface + 'docs" id="' + preface + 'btnup" /></td>';
+        tblhtml += '</tr><tr><td class="ui-state-default" colspan="2"><table style="width: 100%;" class="staffingattachmenttable" id="' + preface + 'docs"></table>';
+        tblhtml += '</td></tr></table></td></tr><tr><td class="ui-state-default"><table style="width: 100%;"><tr>';
+        tblhtml += '<td class="ui-state-default" style="width: 10%; text-align: center;"><input type="button" value="Submit" function="usernamedate" /></td>';
+        tblhtml += '<td class="ui-state-default" style="width: 40%; text-align: center;">';
+        tblhtml += '<input type="text" class="username StaffingData" style="width: 98%; text-align: center;" id="' + preface + 'Username" /></td>';
+        tblhtml += '<td class="ui-state-default" style="width: 40%; text-align: center;">';
+        tblhtml += '<input type="text" class="userdate StaffingData" style="width: 98%; text-align: center;" id="' + preface + 'Date" /></td>';
+        tblhtml += '<td class="ui-state-default" style="width: 10%; text-align: center;"><input type="button" value="Unlock" function="clearusernamedate" /></td>';
+        tblhtml += '</tr></table></td></tr></table></td>';
+        $("#" + control).html(tblhtml);
+    });
+    //logit("Test Point 6");
+    $("input[function='usernamedate']").each(function (und) {
+        $(this).button();
+    });
+
+    $("input[function='usernamedate']").click(function () {
+        $(this).parent().parent().find(".username").val($("#txtUser").val());
+        var tdate = new Date();
+        var tdstring = tdate.getFullYear() + ("0" + (tdate.getMonth() + 1)).slice(-2) + ("0" + (tdate.getDate())).slice(-2);
+        $(this).parent().parent().find(".userdate").val(tdstring);
+    });
+
+    $("input[function='clearusernamedate']").each(function (cund) {
+        $(this).button();
+    });
+
+    $("input[function='clearusernamedate']").click(function () {
+        $(this).parent().parent().find(".username").val("");
+        $(this).parent().parent().find(".userdate").val("");
+    });
+
+    $("input[function='uploadstaffing']").each(function (zidx) {
+        $(this).button();
+        if ($(this).val() == "Attach") { // Need to leave button there to ensure that code works. just hide the td.
+            $(this).parent().hide();
+        }
+    });
+    //logit("Test Point 7");
+    $("input[function='upload']").each(function (zidx) { // set each button to run upload function to upload file and pass the doctype, amo, and control to update
+        var label = $(this).val();
+        var cid = "file" + zidx;
+        $(this).attr("id", cid);
+        $(this).button();
+    });
+
+    $("input[function='attachstaffing']").each(function (zidx) { // set each button to run upload function to upload file and pass the doctype, amo, and control to update
+        $(this).button();
+    });
+
+    $("#btnLeftColumn").button().click(function () {
+        ExecuteOrDelayUntilScriptLoaded(function () { ExecuteOrDelayUntilScriptLoaded(function () { SP.UI.Notify.addNotification("Printing...This will take a few seconds.", false); }, 'core.js') }, 'sp.js');
+        var zurl = fixurl('/Pages/PrintColumn.aspx?IsDlg=1&ItemID=' + itemid + "&Column=tdStaffingLeft");
+        var pwin = window.open(zurl, "AMOPRINT", "left=10,top=10,width=1010,height=800,scrolling=auto");
+    });
+
+    $("#btnRightColumn").button().click(function () {
+        ExecuteOrDelayUntilScriptLoaded(function () { ExecuteOrDelayUntilScriptLoaded(function () { SP.UI.Notify.addNotification("Printing...This will take a few seconds.", false); }, 'core.js') }, 'sp.js');
+        var zurl = fixurl('/Pages/PrintColumn.aspx?IsDlg=1&ItemID=' + itemid + "&Column=tdStaffingRight");
+        var pwin = window.open(zurl, "AMOPRINT", "left=10,top=10,width=1010,height=800,scrolling=auto");
+    });
+
+    $("#btnPrint12").button().click(function () {
+        ExecuteOrDelayUntilScriptLoaded(function () { ExecuteOrDelayUntilScriptLoaded(function () { SP.UI.Notify.addNotification("Printing...This will take a few seconds.", false); }, 'core.js') }, 'sp.js');
+        var zurl = fixurl('/Pages/PrintPages12.aspx?IsDlg=1&ItemID=' + itemid);
+        var pwin = window.open(zurl, "AMOPRINT", "left=10,top=10,width=1010,height=800,scrollbars=1,resizable=1");
+        //TRADOCDialog(zurl, 'Print Pages', '1000', '800', 'SilentCallback');
+    });
+    //logit("Test Point 8");
+    if (mode != "view") {
+        $("input[function='upload']").click(function () {
+            var label = $(this).val();
+            if (label == "Attach") {
+                staffed = $(this).attr("staffed");
+                doctype = $(this).attr("DocumentType");
+                var zurl = fixurl("/Documents/Forms/Upload.aspx?IsDlg=1&AMOAttach=1&amo=" + amo + "&staffed=" + staffed + "&doctype=" + doctype);
+                TRADOCDialog(zurl, 'Attach', '800', '500', 'NotificationCallback');
+            }
+            else {
+                btn = $(this);
+                filename = new String(btn.parent().parent().find(".uploadedfilelink").html());
+                if (filename == "undefined") {
+                    filename = new String(btn.parent().parent().find(".aduploadedfilelink").html());
+                }
+                btn.parent().next().html("");
+                btn.parent().next().css({ border: '1px solid #c5dbec' }); // Set back to ui-state-default border color
+                btn.val("Attach");
+                RemoveFiles(filename);
+            }
+        });
+
+        $("input[function='attachstaffing']").click(function () {
+            var label = $(this).val();
+            if (label == "Attach") {
+                staffed = $(this).attr("staffed");
+                doctype = $(this).attr("DocumentType");
+                var zurl = fixurl("/Documents/Forms/Upload.aspx?IsDlg=1&AMOAttach=2&amo=" + amo + "&staffed=" + staffed + "&doctype=" + doctype);
+                TRADOCDialog(zurl, 'Attach', '800', '500', 'NotificationCallback');
+            }
+        });
+
+        $("#btnCancel").button().click(function () {
+            RemoveReadOnly();
+        });
+
+        $("#btnSave").button().click(function () {
+            if (saving == false) {
+                saving = true;
+                SaveContract();
+            }
+        });
+
+        $("#btnSubmit").button().click(function () {
+            if (saving == false) {
+                saving = true;
+                $("#Status").val("Submitted");
+                SaveContract();
+            }
+        });
+
+    }
+    else {
+        $("#btnSave").hide();
+        $("#btnSubmit").hide();
+        $("#btnCancel").button().click(function () {
+            SP.UI.ModalDialog.commonModalDialogClose(SP.UI.DialogResult.cancel);
+        });
+    }
+
+    $().TRADOC_PeoplePicker({ operation: "picker", control: "ActionOfficer" });
+
+    //logit("Test Point 9");
+    ExecuteOrDelayUntilScriptLoaded(fAddOnCloseHandler, "SP.js");
+    //fAddOnCloseHandler();
+    //logit("Test Point 10");
+    ExecuteOrDelayUntilScriptLoaded(Loadme, "SP.js");
+    //FakeIt();
+});
+
+function Loadme() {
+    logit("Test Point 10.1");
+    var def = GetData();
+    $.when.apply(null, def).done(function () {
+        TabsLoaded();
+    });
+}
+
+function FakeIt() {
+    logit("Test Point 10.2");
+}
+
+function GetData() {
+    logit("GetData");
+    defarr.push( $.when(TRADOC.csom.GetLookupData.getvalues(siteurl, "TRADOCValuesList", "Level4Name")).then(function (items) { TRADOC.csom.FillDropdowns(items, "Level4Name", ["Level4Organization"]); }, function (sender, args) { logit("GetLookupData Failed 1, " + args.get_message()); }));
+    defarr.push( $.when(TRADOC.csom.GetLookupData.getvalues(siteurl, "ddl514", "BaseOptionYr")).then(function (items) { TRADOC.csom.FillDropdowns(items, "BaseOptionYr", ["Period2", "Period3", "Period4", "Period5",]); }, function (sender, args) { logit("GetLookupData Failed 2, " + args.get_message()); }));
+    defarr.push( $.when(TRADOC.csom.GetLookupData.getvalues(siteurl, "ddl514", "FundsAvailable")).then(function (items) { TRADOC.csom.FillDropdowns(items, "FundsAvailable", ["FundsAvailable"]); }, function (sender, args) { logit("GetLookupData Failed 3, " + args.get_message()); }));
+    defarr.push( $.when(TRADOC.csom.GetLookupData.getvalues(siteurl, "ddl514", "FundSource")).then(function (items) { TRADOC.csom.FillDropdowns(items, "FundSource", ["SourceofFunds"]); }, function (sender, args) { logit("GetLookupData Failed 4, " + args.get_message()); }));
+    defarr.push( $.when(TRADOC.csom.GetLookupData.getvalues(siteurl, "ddl514", "ContractingOffice")).then(function (items) { TRADOC.csom.FillDropdowns(items, "ContractingOffice", ["ContractingOffice"]); }, function (sender, args) { logit("GetLookupData Failed 5, " + args.get_message()); }));
+    defarr.push( $.when(TRADOC.csom.GetLookupData.getvalues(siteurl, "ddl514", "Appropriation")).then(function (items) { TRADOC.csom.FillDropdowns(items, "Appropriation", ["Appropriation", "Appropriation2", "Appropriation3"]); }, function (sender, args) { logit("GetLookupData Failed 6, " + args.get_message()); }));
+    defarr.push( $.when(TRADOC.csom.GetLookupData.getvalues(siteurl, "ddl514", "FSCLong")).then(function (items) { TRADOC.csom.FillDropdowns(items, "FSCLong", ["FSC"]); }, function (sender, args) { logit("GetLookupData Failed 7, " + args.get_message()); }));
+    defarr.push( $.when(TRADOC.csom.GetLookupData.getvalues(siteurl, "ddl514", "EOR_Description")).then(function (items) { TRADOC.csom.FillDropdowns(items, "EOR_Description", ["EOR"]); }, function (sender, args) { logit("GetLookupData Failed 8, " + args.get_message()); }));
+    defarr.push( $.when(TRADOC.csom.GetLookupData.getvalues(siteurl, "ddl514", "ServiceSupply")).then(function (items) { TRADOC.csom.FillDropdowns(items, "ServiceSupply", ["ServiceSupply"]); }, function (sender, args) { logit("GetLookupData Failed 9, " + args.get_message()); }));
+    defarr.push( $.when(TRADOC.csom.GetLookupData.getvalues(siteurl, "ddl514", "ContractType")).then(function (items) { TRADOC.csom.FillDropdowns(items, "ContractType", ["ContractType"]); }, function (sender, args) { logit("GetLookupData Failed 10, " + args.get_message()); }));
+    defarr.push( $.when(TRADOC.csom.GetLookupData.getvalues(siteurl, "ddl514", "Function")).then(function (items) { TRADOC.csom.FillDropdowns(items, "Function", ["CGPriority"]); }, function (sender, args) { logit("GetLookupData Failed 11, " + args.get_message()); }));
+    defarr.push( $.when(TRADOC.csom.GetLookupData.getvalues(siteurl, "ddl514", "Rank")).then(function (items) { TRADOC.csom.FillDropdowns(items, "Rank", ["NRPRank"]); }, function (sender, args) { logit("GetLookupData Failed 12, " + args.get_message()); }));
+    defarr.push( $.when(TRADOC.csom.GetLookupData.getvalues(siteurl, "ddl514", "ITRMDesciption")).then(function (items) { TRADOC.csom.FillDropdowns(items, "ITRMDesciption", ["CostCatDesc"]); }, function (sender, args) { logit("GetLookupData Failed 13, " + args.get_message()); }));
+    defarr.push( $.when(TRADOC.csom.GetLookupData.getvalues(siteurl, "ddl514", "MDEP")).then(function (items) { TRADOC.csom.FillDropdowns(items, "MDEP", ["OtherMDEP", "MDEP", "MDEP2", "MDEP3"]); }, function (sender, args) { logit("GetLookupData Failed 14, " + args.get_message()); }));
+    defarr.push( $.when(TRADOC.csom.GetLookupData.getvalues(siteurl, "ddl514", "ContractingStatus")).then(function (items) { TRADOC.csom.FillDropdowns(items, "ContractingStatus", ["AMOPacketStatus"]); }, function (sender, args) { logit("GetLookupData Failed 15, " + args.get_message()); }));
+    defarr.push( $.when(TRADOC.csom.GetLookupData.getvalues(siteurl, "ddl514", "Priority")).then(function (items) { TRADOC.csom.FillDropdowns(items, "Priority", ["PriorityType"]); }, function (sender, args) { logit("GetLookupData Failed 16, " + args.get_message()); }));
+    defarr.push( $.when(TRADOC.csom.GetLookupData.getvalues(siteurl, "ddl514", "Limitation1")).then(function (items) { TRADOC.csom.FillDropdowns(items, "Limitation1", ["Limitation1"]); }, function (sender, args) { logit("GetLookupData Failed 17, " + args.get_message()); }));
+    defarr.push( $.when(TRADOC.csom.GetLookupData.getvalues(siteurl, "ddl514", "Limitation2")).then(function (items) { TRADOC.csom.FillDropdowns(items, "Limitation2", ["Limitation2"]); }, function (sender, args) { logit("GetLookupData Failed 18, " + args.get_message()); }));
+    defarr.push( $.when(TRADOC.csom.GetLookupData.getvalues(siteurl, "ddl514", "OPTIONPERIOD2")).then(function (items) { TRADOC.csom.FillDropdowns(items, "OPTIONPERIOD2", ["WhatOptionYear"]); }, function (sender, args) { logit("GetLookupData Failed 19, " + args.get_message()); }));
+    return defarr;
+};
+
+function TabsLoaded() {
+    TRADOC.csom.GetListItemByID.getitem("AMOFormsList", itemid).then(
+        function (item) {
+            li = item;
+            UpdateFields();
+        },
+        function (sender, args) { logit("Get Contract Failed: " + args.get_message()); }
+    );
+}
+
+function UpdateFields() {
+    errorstring = "<h3>Contract Data Errors</h3><br/><ul>";
+    try {
+        // This will set the Level 4 value and then cascade the UIC and Cost Center
+        $("#Level4Organization").val(li.get_item("Level4Organization")).change(); // will call change here!
+        $("#Organization").val(li.get_item("Organization"));
+        $("#OrganizationName").html(li.get_item("Organization"));
+        $("#RequiringActivity").val(li.get_item("Organization"));
+        amo = li.get_item("AMO_x0020_No_x002e_");
+        $(".amo").each(function () {
+            $(this).html("<strong>AMO No. " + amo + "</strong>");
+        });
+        if ($("#txtCanDelete").val() == "true") {
+            $("#hiddenamo").show();
+        }
+        if (li.get_item("AMOStatus") == "Approved") {
+            $("#btnSubmit").hide();
+        }
+        logit("txtCanDelete val = " + $("#txtCanDelete").val());
+    }
+    catch (e) { error = true; errorstring += "<li>Error in the Organization Tab: " + e.Message + "</li>"; logit("Error in Organization Tab: " + e.Message); }
+    try {
+        // Test that there is a value first then start the cascading for that set
+        if (li.get_item("MDEP") != null) {
+            $("#MDEP option").filter(function () { return $(this).html() == li.get_item("MDEP"); }).prop('selected', true).change(); // will call change here!
+        }
+        if (li.get_item("MDEP_x0020_2") != null) {
+            $("#MDEP2 option").filter(function () { return $(this).html() == li.get_item("MDEP_x0020_2"); }).prop('selected', true).change(); // will call change here!
+        }
+        if (li.get_item("MDEP_x0020_3") != null) {
+            $("#MDEP3 option").filter(function () { return $(this).html() == li.get_item("MDEP_x0020_3"); }).prop('selected', true).change(); // will call change here!
+        }
+        if (li.get_item("ITRM_x0020_Cost_x0020_Cat_x002e_") != null) {
+            $("#CostCatDesc option").filter(function () { return $(this).html() == li.get_item("ITRM_x0020_Cost_x0020_Cat_x002e_"); }).prop('selected', true).change(); // will call change here!
+        }
+    }
+    catch (e) { error = true; errorstring += "<li>Error: " + e.Message + "</li>"; }
+    // Go through the text boxes first
+    $("input[type='text']").each(function (tc) {
+        if ($(this).attr("ifname")) {
+            try {
+                if (li.get_item($(this).attr("ifname")) != null || li.get_item($(this).attr("ifname")) != undefined) {
+                    if ($(this).attr("cbid")) { // This is a staffing reviewer hidden text that controls the checkboxes
+                        // Check the checkbox if it does not contain (---)
+                        var d = new String(li.get_item($(this).attr("ifname")));
+                        var t = $("#" + $(this).attr("cbid")).attr("text");
+                        $(this).val(d);
+                        if (d.indexOf("---") >= 0) {
+                            // This has 1 scenarios
+                            // 1: it was not selected [so it should be hidden (unchecked and table hidden)]
+                            // Due to the intial setting of having the "Other" values default to unchecked...
+                            // we need to keep them unchecked so do not run the click event on them...
+                            if (t.indexOf("Other") < 0) {
+                                // Not an "Other" option
+                                $("#" + $(this).attr("cbid")).click();
+                                $("#" + $(this).attr("cbid")).prop("checked", false);
+                            }
+                            else {
+                                // "Other"
+                                $("#" + $(this).attr("cbid")).prop("checked", false);
+                            }
+                        }
+                        else {
+                            // This has 1 scenario
+                            // 1: it was selected [so it should be visible]
+                            if (t.indexOf("Other") >= 0) {
+                                // Some migrated data will not contain a / character so these should be checked but not have the click event run
+                                if (d.indexOf("/") > 0) {
+                                    // split the d variable on the / character
+                                    var g = d.split("/");
+                                    $("#" + $(this).attr("cbid")).attr("savedtext", g[1]); // store the text in the savedtext attribute so it can be updated on change
+                                    $("#" + $(this).attr("cbid")).click();
+                                    $("#" + $(this).attr("cbid")).prop("checked", true);
+                                }
+                                else {
+                                    $("#" + $(this).attr("cbid")).attr("savedtext", ""); // store the text in the savedtext attribute so it can be updated on change
+                                    $("#" + $(this).attr("cbid")).prop("checked", true);
+                                }
+                            }
+                            else {
+                                $("#" + $(this).attr("cbid")).prop("checked", true);
+                            }
+                        }
+                    }
+                    else {
+                        if ($(this).attr("id") == "RecurringContractValue") {
+                            tp1 = new String(li.get_item($(this).attr("ifname")));
+                            if (tp1.indexOf("Recurring") >= 0) {
+                                $("#RecurringContractValue1").prop("checked", true);
+                            }
+                            else {
+                                $("#RecurringContractValue2").prop("checked", true);
+                            }
+                        }
+                        if ($(this).hasClass('peoplepicker')) {
+                            logit("People Picker - Control: " + $(this).attr("ifname"));
+                            tp1 = li.get_item($(this).attr("ifname")).get_lookupValue();
+                            logit("People Picker - Value: " + tp1);
+                            $(this).val(tp1);
+                        }
+                        else {
+                            $(this).val(li.get_item($(this).attr("ifname"))).change();
+                        }
+                    }
+                }
+            }
+            catch (e) {
+                error = true;
+                tp1 = $(this).attr("ifname");
+                errorstring += "<li>Error in input controls with : " + tp1 + " Message: " + e.Message + "</li>";
+            }
+        }
+    });
+    // Go through the select boxes next
+    $("select").each(function (sc) {
+        if ($(this).attr("ifname") && $(this).attr("function") != "cascadeselect" && $(this).attr("function") != "cascadetext" && $(this).attr("function") != "costcenter") {
+            try {
+                var ifname = $(this).attr("ifname");
+                var id = $(this).attr("id");
+                var value = new String(li.get_item(ifname));
+                if (value == "null" || value == "undefined") { }
+                else {
+                    if (id == "EOR") {
+                        var value = new String(li.get_item(ifname));
+                        $("#EOR option").each(function () {
+                            tp1 = new String($(this).html());
+                            tp2 = tp1.substring(0, 4);
+                            if (value.indexOf(tp2) >= 0) {
+                                $(this).prop('selected', true);
+                            }
+                        });
+                    }
+                    else {
+                        var value = li.get_item(ifname);
+                        if (value == true || value == false) {
+                            if (value == false) {
+                                $("#" + id + " option:contains(No)").prop('selected', true);
+                            }
+                            else {
+                                $("#" + id + " option:contains(Yes)").prop('selected', true);
+                            }
+                        }
+                        else {
+                            $(this).val(li.get_item(ifname));
+                        }
+                    }
+                    $(this).change();
+                }
+            }
+            catch (e) {
+                error = true;
+                tp1 = $(this).attr("ifname");
+                errorstring += "<li>Error in dropdown controls with : " + tp1 + " Message: " + e.Message + "</li>";
+            }
+        }
+    });
+    // Then do the text areas
+    $("textarea").each(function (tac) {
+        if ($(this).attr("ifname")) {
+            if ($(this).attr("name") != "txtResults") {
+                try {
+                    var ifname = $(this).attr("ifname");
+                    var id = $(this).attr("id");
+                    var value = new String(li.get_item(ifname));
+                    if (value == "null" || value == "undefined") { }
+                    else if (value != "<div><\/div>") {
+                        $(this).val(value);
+                    }
+                }
+                catch (e) {
+                    error = true;
+                    tp1 = $(this).attr("ifname");
+                    errorstring += "<li>Error in textarea controls with : " + tp1 + " Message: " + e.Message + "</li>";
+                }
+            }
+        }
+    });
+    // Next do the radio/checkboxes
+    $("input[type='checkbox']").each(function (cc) {
+        if ($(this).attr("ifname")) {
+            try {
+                if (li.get_item($(this).attr("ifname")) != null || li.get_item($(this).attr("ifname")) !== undefined) {
+                    if (li.get_item($(this).attr("ifname")) == true || li.get_item($(this).attr("ifname")) == "true") {
+                        this.checked = true;
+                    }
+                }
+            }
+            catch (e) {
+                error = true;
+                tp1 = $(this).attr("ifname");
+                errorstring += "<li>Error in checkbox controls with : " + tp1 + " Message: " + e.Message + "</li>";
+            }
+        }
+    });
+    $("input[type='radio']").each(function (rc) {
+        if ($(this).attr("ifname")) {
+            try {
+                if (li.get_item($(this).attr("ifname")) != null || li.get_item($(this).attr("ifname")) !== undefined) {
+                    if (li.get_item($(this).attr("ifname")) == $(this).val()) {
+                        this.checked = true;
+                    }
+                }
+            }
+            catch (e) {
+                error = true;
+                tp1 = $(this).attr("ifname");
+                errorstring += "<li>Error in radio button controls with : " + tp1 + " Message: " + e.Message + "</li>";
+            }
+        }
+    });
+    // Get the data stored in AMOData and update the form
+
+    amodata = li.get_item("AMOData");
+    //logit("AMOData: " + amodata);
+    try {
+        amodata = amodata.replace(/&quot;/g, '"');
+        amodata = amodata.replace(/\n/g, "");
+        amodata = JSON.parse(amodata);
+    }
+    catch (e) {
+        error = false; // Just to prevent the user from seeing this
+        logit("AMOData JSON Error: " + e.Message);
+        loadamo = false;
+        errorstring += "<li>Error in Parsing AMO JSON Data ErrorMessage: " + e.Message + "</li>";
+    }
+    if (loadamo == true) {
+        $(".AMOData").each(function () {
+            try {
+                var id = $(this).attr("id");
+                var value = amodata[id];
+                if ($(this).is("input") && value !== '') {
+                    switch ($(this).attr("type")) {
+                        case "text":
+                            $(this).val(value).change();
+                            break;
+
+                        case "radio":
+                            if (value == "true") { $((this)).prop('checked', true); }
+                            break;
+
+                        case "checkbox":
+                            if (value == "true") { $((this)).prop('checked', true); }
+                            break;
+                    }
+                }
+                if ($((this)).is("select")) {
+                    $((this)).val(value); // TODO. MAy need to set selected using filter. Are there any lookups with this?? (Rank?)
+                }
+                if ($((this)).is("textarea")) {
+                    $((this)).val(DecodeHTML(value));
+                }
+            }
+            catch (e) {
+                error = true;
+                tp1 = $(this).attr("id");
+                errorstring += "<li>Error in AMOData with : " + tp1 + " Message: " + e.Message + "</li>";
+            }
+        });
+    }
+
+    // End AMOData now get StaffingData
+    staffingdata = new String(li.get_item("StaffingData"));
+    //logit("StaffingData: " + staffingdata);
+    
+    if ($("#txtUser").val() == "daniel.r.walker5.ctr") {
+        //$("#hiddenstaffingdata").show();
+        //$("#txtStaffingResults").val(staffingdata);
+    }
+
+    try {
+        staffingdata = staffingdata.replace(/&amp;quot;/g, '--:quot:--'); // fix encoded values from migration. New encoding function fixes this [3/5/2105]
+        staffingdata = staffingdata.replace(/&quot;/g, '"');
+        staffingdata = staffingdata.replace(/\t/g, "--:tab:--"); // fix encoded values from migration. New encoding function fixes this [3/5/2105]
+        staffingdata = staffingdata.replace(/\n/g, "--:newline:--"); // fix encoded values from migration. New encoding function fixes this [3/5/2105]
+        staffingdata = JSON.parse(staffingdata);
+    }
+    catch (e) {
+        error = false; // Just to prevent the user from seeing this
+        logit("StaffingData JSON Error: " + e.Message);
+        loadstaffing = false;
+        tp1 = $(this).attr("id");
+        errorstring += "<li>Error in StaffingData with : " + tp1 + " Message: " + e.Message + "</li>";
+    }
+    if (loadstaffing == true) {
+        $(".StaffingData").each(function () {
+            try {
+                var id = $(this).attr("id");
+                var value = staffingdata[id];
+                if ($(this).is("input")) {
+                    switch ($(this).attr("type")) {
+                        case "text":
+                            $(this).val(value);
+                            break;
+
+                        case "radio":
+                            if (value == "true") { $((this)).prop('checked', true).click(); }
+                            break;
+
+                        case "checkbox":
+                            if (value == "true") { $((this)).prop('checked', true); }
+                            break;
+                    }
+                }
+                if ($((this)).is("select")) {
+                    $((this)).val(value); // TODO. MAy need to set selected using filter. Are there any lookups with this?? (Rank?)
+                }
+                if ($((this)).is("textarea")) {
+                    $((this)).val(DecodeHTML(value));
+                }
+            }
+            catch (e) {
+                error = true;
+                tp1 = $(this).attr("id");
+                errorstring += "<li>Error in StaffingData with : " + tp1 + " Message: " + e.Message + "</li>";
+            }
+        });
+    }
+
+    // Set the title fields here because the get overwritten if set earlier
+    $("#AMOTitle").val(li.get_item("Title"));
+    $("#AMOTitle2").val(li.get_item("Title"));
+    $("#ContractTitle").html(li.get_item("Title"));
+
+    try {
+        // If all the checkboxes for Staffing or ACRB/ECAB are not checked, then the whole section should be hidden
+        // Loop through the controls in each section to see if they are checked and if so show the section or hide it if not
+        var staffingchecked = false;
+        var acrbchecked = false;
+        $("input[function='togglerow']").each(function (tidx) {
+            if ($(this).is(":checked")) {
+                var ctrl = new String($(this).attr("control"));
+                if (ctrl.indexOf("Staffing") > 0) { staffingchecked = true; }
+                if (ctrl.indexOf("ACRB") > 0) { acrbchecked = true; }
+            }
+        });
+        if (staffingchecked == false) { $("#cbStaffing").click(); $("#cbStaffing").prop("checked", false); }
+        if (acrbchecked == false) { $("#cbACRB").click(); $("#cbACRB").prop("checked", false); }
+        // End StaffingData
+    }
+    catch (e) {
+        error = true;
+        errorstring += "<li>Error with Staffing Boxes Message: " + e.Message + "</li>";
+    }
+
+    try {
+        // Update the Financial Classification table
+        UpdateClassifications();
+    }
+    catch (e) {
+        error = true;
+        errorstring += "<li>Error with UpdateClassifications Message: " + e.Message + "</li>";
+    }
+    errorstring += "</ul>";
+    //SP.UI.Notify.removeNotification(waitmsg);
+    if (error == true) {
+        if (loaderrors == true) {
+            TRADOCError(errorstring);
+        }
+    }
+}
+
+function UpdateClassifications() {
+    // Get all the classifications for this amo #
+    var n = 0;
+    var tblhtml = "";
+    tblhtml += '<tr><td class="ui-state-active" style="text-align: center; width: 7%;">Action</td>';
+    tblhtml += '<td class="ui-state-default" style="text-align: center; width: 8%;">GFEBS PR No.</td>';
+    tblhtml += '<td class="ui-state-default" style="text-align: center; width: 8%;">GFEBS PO No.</td>';
+    tblhtml += '<td class="ui-state-default" style="text-align: center; width: 8%;">Appropriation</td>';
+    tblhtml += '<td class="ui-state-default" style="text-align: center; width: 7%;">MDEP</td>';
+    tblhtml += '<td class="ui-state-default" style="text-align: center; width: 7%;">AMSCO</td>';
+    tblhtml += '<td class="ui-state-default" style="text-align: center; width: 9%;">Mission Category</td>';
+    tblhtml += '<td class="ui-state-default" style="text-align: center; width: 14%;">FSC</td>';
+    tblhtml += '<td class="ui-state-default" style="text-align: center; width: 14%;">EOR</td>';
+    tblhtml += '<td class="ui-state-default" style="text-align: center; width: 9%;">Cost Category</td>';
+    tblhtml += '<td class="ui-state-default" style="text-align: center; width: 9%;">Amount</td></tr>';
+    $.when(TRADOC.csom.GetListItems.getitemsfiltered("FinancialClassification", "AMO_x0020_No_x002e_", li.get_item("AMO_x0020_No_x002e_"))).then(function (items) {
+        var qq = items.getEnumerator();
+        while (qq.moveNext()) {
+            var ci = qq.get_current();
+            n += 1;
+            tblhtml += '<tr><td class="ui-state-default" style="text-align: center;"><a href="#" itemid="' + ci.get_id() + '" class="classificationanchor">edit</a></td>';
+            if (ci.get_item("GFEBS_x0020_PR_x0020_No") != null) { tblhtml += '<td class="ui-state-active" style="text-align: center;">' + ci.get_item("GFEBS_x0020_PR_x0020_No") + '</td>'; } else { tblhtml += '<tr><td class="ui-state-active"></td>'; }
+            if (ci.get_item("GFEBS_x0020_PO_x0020_No") != null) { tblhtml += '<td class="ui-state-active" style="text-align: center;">' + ci.get_item("GFEBS_x0020_PO_x0020_No") + '</td>'; } else { tblhtml += '<td class="ui-state-active"></td>'; }
+            if (ci.get_item("Appropriation") != null) { tblhtml += '<td class="ui-state-active" style="text-align: center;">' + ci.get_item("Appropriation") + '</td>'; } else { tblhtml += '<td class="ui-state-active"></td>'; }
+            if (ci.get_item("MDEP") != null) { tblhtml += '<td class="ui-state-active" style="text-align: center;">' + ci.get_item("MDEP") + '</td>'; } else { tblhtml += '<td class="ui-state-active"></td>'; }
+            if (ci.get_item("AMSCO") != null) { tblhtml += '<td class="ui-state-active" style="text-align: center;">' + ci.get_item("AMSCO") + '</td>'; } else { tblhtml += '<td class="ui-state-active"></td>'; }
+            if (ci.get_item("Mission_x0020_Category") != null) { tblhtml += '<td class="ui-state-active" style="text-align: center;">' + ci.get_item("Mission_x0020_Category") + '</td>'; } else { tblhtml += '<td class="ui-state-active"></td>'; }
+            if (ci.get_item("FSC") != null) { tblhtml += '<td class="ui-state-active" title="' + ci.get_item("FSC") + '" style="text-align: center; font-size: 8px;">' + ci.get_item("FSC") + '</td>'; } else { tblhtml += '<td class="ui-state-active"></td>'; }
+            if (ci.get_item("EOR") != null) { tblhtml += '<td class="ui-state-active" title="' + ci.get_item("EOR") + '" style="text-align: center; font-size: 8px;">' + ci.get_item("EOR") + '</td>'; } else { tblhtml += '<td class="ui-state-active"></td>'; }
+            if (ci.get_item("Cost_x0020_Category") != null) { tblhtml += '<td class="ui-state-active" style="text-align: center;">' + ci.get_item("Cost_x0020_Category") + '</td>'; } else { tblhtml += '<td class="ui-state-active"></td>'; }
+            if (ci.get_item("Amount") != null) { tblhtml += '<td class="ui-state-active" style="text-align: center;">' + formatCurrency(ci.get_item("Amount")) + '</td></tr>'; } else { tblhtml += '<td class="ui-state-active"></td></tr>'; }
+        }
+        $("#ClassificationTable").html(tblhtml);
+        resizeModalDialog();
+        UpdateFiles();
+    }, function (sender, args) {
+        logit("Update Classification Table Failed, " + args.get_message());
+        $("#ClassificationTable").html(tblhtml);
+        UpdateFiles();
+    });
+}
+
+function UpdateFiles() {    
+    $.when(TRADOC.csom.GetLibraryItems.getfilesfiltered("current", "Documents", ["FileLeafRef", "Title", "LinkFilename", "DocumentType", "Staffing", "DocIcon"], "AMONumber", amo)).then(function (files) {
+        var enumerator = files.getEnumerator();
+        while (enumerator.moveNext()) {
+            var file = enumerator.get_current();
+            var d = file.get_item("DocumentType");
+            var f = file.get_item("FileLeafRef");
+            var z = file.get_item("FileLeafRef");
+            var s = file.get_item("Staffing");
+            if (d.indexOf("AD") < 0) {
+                // filter out additional docs
+                if (s == false || s == "false") {
+                    var durl = fixurl("/Documents/" + f);
+                    var ico;
+                    $.when(TRADOC.csom.GetLibraryItems.getcontractfileicon(f, ico, d, durl)).then(function (icon, d, f, durl) {
+                        var iconurl = "/_layouts/images/" + icon.m_value;
+                        btn = $("input[DocumentType='" + d + "']");
+                        if (btn.attr("staffed") == "false") { // just to be sure it is not staffing
+                            btn.val("Remove");
+                            btn.parent().next().css({ border: '1px solid #00ff00' });
+                            var nhtml = "<table style='width: 100%;'><tr><td style='border: none;width: 20px;'><img src='" + iconurl + "' alt='docicon' /></td><td ";
+                            nhtml += " style='vertical-align: middle; padding: 5px 0px;'>";
+                            nhtml += "<a modified='true' href='" + durl + "' class='uploadedfilelink' target='_blank'>" + f + "</a></td></tr></table>";
+                            btn.parent().next().html(nhtml);
+                        }
+                    }, function (sender, args) { logit("Get File Icon Failed, " + args.get_message()); });
+                }
+            }
+        };
+        UpdateADFilesStart(amo);
+        UpdateStaffingFilesStart(amo);
+    }, function (sender, args) { logit("UpdateFiles Failed, " + args.get_message()); });
+}
+
+function UpdateADFilesStart(amo) {
+    logit("UpdateADFilesStart " + amo);
+    var def = UpdateADFiles(amo);
+    $.when.apply(null, def).done(function () {
+        UpdateADFileIcons();
+    });
+}
+
+function UpdateADFiles(amo) {
+    // build the xml query
+    var inc = "Include(";
+    var xml = "<View><Method Name='Read List' /><Query><OrderBy><FieldRef Name='ID'/></OrderBy><Where><And><And><Eq><FieldRef Name='AMONumber' /><Value Type='Text'>" + amo + "</Value></Eq>";
+    xml += "<BeginsWith><FieldRef Name='DocumentType' /><Value Type='Text'>AD</Value></BeginsWith></And><Eq><FieldRef Name='Staffing' /><Value Type='Text'>false</Value></Eq></And></Where></Query>";
+    var fields = ["FileLeafRef", "Title", "LinkFilename", "AMONumber", "DocumentType", "Staffing", "DocIcon"];
+    xml += "<ViewFields>";
+    for (var z = 0; z <= fields.length - 1; z++) {
+        xml += "<FieldRef Name='" + fields[z] + "'/>";
+        if (z == fields.length - 1) {
+            inc += fields[z] + ")";
+        }
+        else {
+            inc += fields[z] + ", ";
+        }
+    }
+    xml += "<FieldRef Name='ID'/>";
+    xml += "</ViewFields>";
+    xml += "</View>";
+    adfilearr.push($.when(TRADOC.csom.GetLibraryItems.getfilesfilteredcomplex("Documents", xml, inc)).then(function (files) {
+        var enumerator = files.getEnumerator();
+        var cnt = files.get_count(); // This returns the number of files from the query
+        if (cnt > 3) {
+            // make cnt evenly divisible by 3
+            tp1 = cnt % 3
+            if (tp1 == 0) { }
+            else if (tp1 == 1) { cnt += 2; }
+            else if (tp1 == 2) { cnt += 1; }
+            // cnt should be divisible by 3 now
+            var totalclicks = cnt / 3; // To ensure that there are a sufficient number of rows to house the attachments
+            totalclicks = totalclicks - 2; // 1 row will already exist and also the loop starts at 0 instead of 1 so need to subtract 2.
+            for (var z = 0; z <= totalclicks; z++) {
+                $("#AddAdditionalRow").click();  // If there are more than 3 additional documents the space needs to be there to put the link!
+                $("#AddAdditionalRowStaffing").click();
+            }
+        }
+        var tblhtml = "";
+        var loc = 1;
+        while (enumerator.moveNext()) {
+            var ci = enumerator.get_current();
+            var file = ci.get_item("FileLeafRef");
+            var durl = fixurl("/Documents/" + file);
+            tp1 = "AD" + loc;
+            loc += 1; // increment for next loop iteration
+            btn = $("input[DocumentType='" + tp1 + "']");
+            btn.val("Remove");
+            btn.parent().next().css({ border: '1px solid #00ff00' });
+            var nhtml = "<a modified='false' href='" + durl + "' class='aduploadedfilelink' target='_blank'>" + file + "</a>";
+            btn.parent().next().html(nhtml);
+        }
+    }, function (sender, args) { logit("GetFiles Failed, " + args.get_message()); }));
+    
+    return adfilearr;
+}
+
+function UpdateADFileIcons() {
+    $(".aduploadedfilelink").each(function (fidx) {
+        var file = $(this).html();
+        var $link = $(this);
+        var phtml = $(this).parent().html();
+        if (file != null || file != "") {
+            var ico;
+            $.when(TRADOC.csom.GetLibraryItems.getfileicon(file, ico)).then(function (icon) {
+                var iconurl = "/_layouts/images/" + icon.m_value;
+                var nhtml = "<table style='width: 100%;'><tr><td style='border: none;width: 20px;'><img src='" + iconurl + "' alt='docicon' /></td><td ";
+                nhtml += " style='vertical-align: middle; padding: 5px 0px;'>";
+                nhtml += phtml + "</td></tr></table>";
+                $link.parent().html(nhtml);
+            }, function (sender, args) { logit("Get File Icon Failed, " + args.get_message()); });
+        }
+    });
+}
+
+function UpdateFiles2(f, d) {
+    //set the link
+    btn = $("input[DocumentType='" + d + "']");
+    var durl = fixurl("/Documents/" + f);
+    btn.val("Remove");
+    btn.parent().next().css({ border: '1px solid #00ff00' });
+    btn.parent().next().html("<a href='" + durl + "' class='uploadedfilelink'>" + f + "</a>");
+    //update the link with the icon
+    var phtml = btn.parent().next().html();
+    if (f != null || f != "") {
+        var ico;
+        $.when(TRADOC.csom.GetLibraryItems.getfileicon(f, ico, d)).then(function (icon, d) {
+            var iconurl = "/_layouts/images/" + icon.m_value;
+            phtml = phtml.replace("<a", "<a modified='true'");
+            var nhtml = "<table style='width: 100%;'><tr><td style='border: none;width: 20px;'><img src='" + iconurl + "' alt='docicon' /></td><td ";
+            nhtml += " style='vertical-align: middle; padding: 5px 0px;'>";
+            nhtml += phtml + "</td></tr></table>";
+            btn.parent().next().html(nhtml);
+        }, function (sender, args) { logit("Get File Icon Failed, " + args.get_message()); });
+    }
+}
+
+function UpdateStaffingFilesStart(amo) {
+    var def = UpdateStaffingFiles(amo);
+    $.when.apply(null, def).done(function () {
+        UpdateStaffingFileIcons();
+    });
+}
+
+function UpdateStaffingFiles(amo) {
+    // build the xml query
+    // loop through all the tables and get the DocumentType.
+    $("input[function='attachstaffing']").each(function (zidx) {
+        var table = $(this).attr("tableid");
+        var inc = "Include(";
+        var xml = "<View><Method Name='Read List' /><Query><OrderBy><FieldRef Name='ID'/></OrderBy><Where><And><And><Eq><FieldRef Name='AMONumber' /><Value Type='Text'>" + amo + "</Value></Eq>";
+        xml += "<Eq><FieldRef Name='DocumentType' /><Value Type='Text'>" + $(this).attr("documenttype") + "</Value></Eq></And><Eq><FieldRef Name='Staffing' /><Value Type='Text'>true</Value></Eq></And></Where></Query>";
+        var fields = ["FileLeafRef", "Title", "LinkFilename", "AMONumber", "DocumentType", "Staffing", "DocIcon"];
+        xml += "<ViewFields>";
+        for (var z = 0; z <= fields.length - 1; z++) {
+            xml += "<FieldRef Name='" + fields[z] + "'/>";
+            if (z == fields.length - 1) {
+                inc += fields[z] + ")";
+            }
+            else {
+                inc += fields[z] + ", ";
+            }
+        }
+        xml += "<FieldRef Name='ID'/>";
+        xml += "</ViewFields>";
+        xml += "</View>";
+        filearr.push($.when(TRADOC.csom.GetLibraryItems.getfilesfilteredcomplex2("Documents", xml, inc, table)).then(function (files, table) {
+            var enumerator = files.getEnumerator();
+            var cnt = 0;
+            var tblhtml = "";
+            while (enumerator.moveNext()) {
+                var ci = enumerator.get_current();
+                var dt = ci.get_item("DocumentType");
+                var file = ci.get_item("FileLeafRef");
+                var durl = fixurl("/Documents/" + file);
+                var btnid = table + cnt;
+                tblhtml += "<tr><td style='width:25%;height:20px;'><input type='button' id='" + btnid + "' class='" + table + "staffingremove' value='Remove' onclick='removeit(this);'/></td>";
+                tblhtml += "<td style='width:75%;height:20px;'><a href='" + durl + "' class='staffinguploadedfilelink' target='_blank'>" + file + "</a></td></tr>";
+                cnt += 1;
+            }
+            $("#" + table).html(tblhtml);
+            $("." + table + "staffingremove").each(function () {
+                $(this).button();
+            });
+        }, function (sender, args) { logit("GetFiles Failed, " + args.get_message()); }));
+    });
+    return filearr;
+}
+
+function removeit(obj) {
+    //alert(obj.id);
+    btn = $("#" + obj.id);
+    filename = new String(btn.parent().parent().find(".staffinguploadedfilelink").html());
+    btn.parent().parent().hide();
+    RemoveFiles(filename);
+}
+
+function UpdateStaffingFileIcons() {
+    $(".staffinguploadedfilelink").each(function (fidx) {
+        var file = $(this).html();
+        var $link = $(this);
+        var phtml = $(this).parent().html();
+        if (file != null || file != "") {
+            var ico;
+            $.when(TRADOC.csom.GetLibraryItems.getfileicon(file, ico)).then(function (icon) {
+                var iconurl = "/_layouts/images/" + icon.m_value;
+                var nhtml = "<table style='width: 100%;'><tr><td style='border: none;width: 20px;'><img src='" + iconurl + "' alt='docicon' /></td><td ";
+                nhtml += " style='vertical-align: middle; padding: 5px 0px;'>";
+                nhtml += phtml + "</td></tr></table>";
+                $link.parent().html(nhtml);
+            }, function (sender, args) { logit("Get File Icon Failed, " + args.get_message()); });
+        }
+    });
+    SP.UI.Notify.removeNotification(waitmsg);
+}
+
+function RemoveFiles(file) { // Have to get the id of the item in the library and then delete using that id
+    var inc = "Include(";
+    var xml = "<View><Method Name='Read List' /><Query><OrderBy><FieldRef Name='ID'/></OrderBy><Where><And><Eq><FieldRef Name='AMONumber' /><Value Type='Text'>" + amo + "</Value></Eq>";
+    xml += "<Eq><FieldRef Name='FileLeafRef' /><Value Type='Text'>" + file + "</Value></Eq></And></Where></Query>";
+    var fields = ["FileLeafRef", "AMONumber", "ID"];
+    xml += "<ViewFields>";
+    for (var z = 0; z <= fields.length - 1; z++) {
+        xml += "<FieldRef Name='" + fields[z] + "'/>";
+        if (z == fields.length - 1) {
+            inc += fields[z] + ")";
+        }
+        else {
+            inc += fields[z] + ", ";
+        }
+    }
+    xml += "</ViewFields>";
+    xml += "</View>";
+    var fid;
+    $.when(TRADOC.csom.GetLibraryItems.getfilesfilteredcomplex("Documents", xml, inc)).then(function (files) {
+        var enumerator = files.getEnumerator();
+        while (enumerator.moveNext()) {
+            var ftd = enumerator.get_current();
+            fid = ftd.get_item("ID");
+        }
+        var ctx = new SP.ClientContext.get_current();
+        var lib = ctx.get_web().get_lists().getByTitle("Documents");
+        fid = parseInt(fid);
+        var ftr = lib.getItemById(fid);
+        ftr.deleteObject();
+        ctx.executeQueryAsync(RemoveFileSucceeded, RemoveFileFailed);
+    }, function (sender, args) { logit("Remove File Failed, " + args.get_message()); });
+}
+
+function RemoveFileSucceeded() {
+    //UpdateFiles();
+    errorstring = "Removing the attachment succeeded.";
+    if ($("#Level4Organization option:selected").val() == "TRADOC Jackson ATC") {
+        TRADOCError(errorstring);
+    }
+}
+
+function RemoveFileFailed(sender, args) {
+    errorstring = "There was an error removing the attachment. Please notify the AMOD.<br/>";
+    errorstring += "Error: " + args.get_message();
+    if ($("#Level4Organization option:selected").val() == "TRADOC Jackson ATC") {
+        TRADOCError(errorstring);
+    }
+    logit("RemoveFileFailed " + args.get_message());
+}
+
+function ReadItemsFailed(sender, args) {
+    logit(args.get_message());
+}
+
+function HandleMe(obj, control) {
+    $("#" + control).val($("#" + obj.id).val());
+}
+
+function staffingresponse(cbid, value) {
+    tp1 = new String($("input[cbid='" + cbid + "']").val()); // get current response
+    if (tp1.indexOf("/") > 0) {
+        tp2 = tp1.split("/"); // split on the slash so that we get what the other value is supposed to be
+        value = value + "/" + tp2[1];
+    }
+    $("input[cbid='" + cbid + "']").val(value);
+}
+
+function format(obj, format) {
+    switch (format) {
+        case "contractnumber":
+            /*var cn = new RegExp("[A-Z0-9]{6}-[0-9]{2}-[A-Z]{1}-[0-9]{4}");
+            if ($("#" + obj.id).val() != "") {
+            if (cn.test($("#" + obj.id).val())) { $("#" + obj.id).attr("modified", "true"); }
+            else {
+            alert("The contract number is not in the correct format.");
+            $("#" + obj.id).focus();
+            }
+            }*/
+            break;
+
+        case "currency":
+            $("#" + obj.id).val(formatCurrency($("#" + obj.id).val()));
+            $("#" + obj.id).attr("modified", "true");
+            break;
+
+        case "PDC":
+            var cn = new RegExp("[A-Z0-9]{6}");
+            if ($("#" + obj.id).val() != "") {
+                if (cn.test($("#" + obj.id).val())) { $("#" + obj.id).attr("modified", "true"); }
+                else {
+                    alert("The PDC number is not in the correct format.");
+                    $("#" + obj.id).focus();
+                }
+            }
+            break;
+
+        case "ServiceSupply":
+            var val = $("#" + obj.id).val();
+            if (val != "") {
+                // Some rules apply to both
+                $("#" + obj.id).attr("modified", "true");
+                if ($("#EstimatedTotalCost1").val() != "") {
+                    var v = $("#EstimatedTotalCost1").val();
+                    v = v.replace("$", "").replace(/,/g, "");
+                    v = parseInt(v);
+                    if (v >= 25000) {
+                        if ($("#ITSupport").val() == "Yes") {
+                            $(".totalcost25k").css({ "background-color": "#FFFF9C" });
+                        }
+                    }
+                }
+                if ($("#Offload").val() == "Yes") {
+                    $(".offload").css({ "background-color": "#FFFF9C" });
+                }
+                if (val == "Service") {
+                    $(".service").css({ "background-color": "#FFFF9C" });
+                }
+                else {
+                    $(".supply").css({ "background-color": "#FFFF9C" });
+                }
+            }
+            break;
+    }
+}
+
+function alertit(obj, msg) {
+    var f = obj.id;
+    $("#" + f).attr("modified", "true");
+    switch (f) {
+        case "EOR":
+            var val = new String($("#" + f).val());
+            tp1 = val.substring(0, 2);
+            tp2 = val.substring(0, 3);
+            if (tp1 == "25") {
+                if (tp2 != "253" && tp2 != "256") {
+                    alert(msg);
+                }
+            }
+            break;
+
+        default:
+            if ($("#" + f).val() == "Yes") {
+                alert(msg);
+            }
+            break;
+    }
+}
+
+function Concur(obj) {
+    switch (obj.id) {
+        case "EndorserConcurYes":
+//            $("#EndorserConcurYes").prop('disabled', true);
+//            $("#EndorserConcurNo").prop('disabled', true);
+//            $("#RMConcurYes").prop('disabled', false);
+//            $("#RMConcurNo").prop('disabled', false);
+//            $("#EndorserClear").prop('disabled', false);
+            $("#EndorserUserName").val($("#txtUser").val());
+            $("#EndorserConcurValue").val($("#" + obj.id).val()).attr("modified", "true");
+            var tdate = new Date();
+            var tdstring = tdate.getFullYear() + ("0" + (tdate.getMonth() + 1)).slice(-2) + ("0" + (tdate.getDate())).slice(-2);
+            $("#EndorsedDate").val(tdstring);
+            status = $("#Status").val();
+            $("#Status").val("Pending");
+            break;
+
+        case "EndorserConcurNo":
+//            $("#EndorserClear").prop('disabled', false);
+            $("#EndorserUserName").val($("#txtUser").val());
+            $("#EndorserConcurValue").val($("#" + obj.id).val()).attr("modified", "true");
+            $("#Status").val(status); // reset to previous status
+            break;
+
+        case "RMConcurYes":
+//            $("#RMConcurYes").prop('disabled', true);
+//            $("#RMConcurNo").prop('disabled', true);
+//            $("#RMClear").prop('disabled', false);
+//            $("#RMSign").prop('disabled', false);
+//            $("#ApproverConcurYes").prop('disabled', false);
+//            $("#ApproverConcurNo").prop('disabled', false);
+            $("#RMUserName").val($("#txtUser").val());
+            $("#RMConcurValue").val($("#" + obj.id).val()).attr("modified", "true");
+            var tdate = new Date();
+            var tdstring = tdate.getFullYear() + ("0" + (tdate.getMonth() + 1)).slice(-2) + ("0" + (tdate.getDate())).slice(-2);
+            $("#RMDate").val(tdstring);
+            break;
+
+        case "RMConcurNo":
+//            $("#RMClear").prop('disabled', false);
+            $("#RMUserName").val($("#txtUser").val());
+            $("#RMConcurValue").val($("#" + obj.id).val()).attr("modified", "true");
+            break;
+
+        case "ApproverConcurYes":
+//            $("#ApproverConcurYes").prop('disabled', true);
+//            $("#ApproverConcurNo").prop('disabled', true);
+//            $("#ApproverClear").prop('disabled', false);
+//            $("#ApproverClear").prop('disabled', false);
+            // Is this the Approval Action (Sets Status to Approved) and does it set the Approved Date and Approver Name?
+            $("#ApproverName").val($("#txtUser").val());
+            var tdate = new Date();
+            var tdstring = tdate.getFullYear() + ("0" + (tdate.getMonth() + 1)).slice(-2) + ("0" + (tdate.getDate())).slice(-2);
+            $("#ApprovedDate").val(tdstring);
+            $("#ApprovalNumber").val(amo + "-" + tdate.toString());
+            status = $("#Status").val();
+            $("#Status").val("Approved");
+            // Set all controls above this to disabled
+//            $(".disable").each(function () {
+//                $(this).prop('disabled', true);
+//            });
+            break;
+
+        case "ApproverConcurNo":
+//            $("#ApproverClear").prop('disabled', false);
+            $("#ApproverName").val($("#txtUser").val());
+            $("#Status").val("Disapproved"); // reset to previous status
+            // Should this be what re enables all controls or is that even allowed?
+            // Set all controls above this to enabled
+            $(".disable").each(function () {
+                $(this).prop('disabled', false);
+            });
+            break;
+    }
+}
+
+function changeme(obj) {
+    var f = $("#" + obj.id).attr("function");
+    switch (f) {
+
+        case "cascadeselect":
+            var cascadeto = $("#" + obj.id).attr("cascadeto");
+            TRADOC.csom.GetLookupData.getvaluesfiltered(siteurl, $("#" + obj.id).attr("lookuplist"), $("#" + obj.id).attr("field"), $("#" + obj.id).attr("filterfield"), obj.id).then(
+                function (items) {
+                    TRADOC.csom.FillDropdowns(items, $("#" + obj.id).attr("field"), [cascadeto]);
+                    try {
+                        //logit("Cascade Select value " + li.get_item($("#" + cascadeto).attr("ifname")));
+                        if (li.get_item($("#" + cascadeto).attr("ifname")) != null && $("#" + cascadeto).attr("modified") != "item") {
+                            //logit("Select update filter: " + $(this).html() == li.get_item($("#" + cascadeto).attr("ifname")));
+                            var lval = li.get_item($("#" + cascadeto).attr("ifname"));
+                            $("#" + cascadeto + " option").each(function () {
+                                if ($("#" + cascadeto).attr("ifname") == "Cost_x0020_Center_x0020_Name") {
+                                    // Cost Center Name contains the level 5 name which may contain special characters such as an ampersand or comma
+                                    // So, just getting the cost center number from the html and matching on that instead of the entire text.
+                                    tp1 = new String($(this).html());
+                                    tp2 = tp1.substring(0, 8);
+                                    if (lval.indexOf(tp2) >= 0) {
+                                        $(this).prop('selected', true);
+                                    }
+                                }
+                                else {
+                                    if ($(this).html() == li.get_item($("#" + cascadeto).attr("ifname"))) {
+                                        $(this).prop('selected', true);
+                                    }
+                                }
+                            });
+                            $("#" + obj.id).attr("modified", "item");
+                            if ($("#" + cascadeto).attr("function") == "cascadeselect") {
+                                $("#" + cascadeto).attr("modified", "true");
+                                $("#" + cascadeto).change();
+                            }
+                            if ($("#" + cascadeto).attr("function") == "cascadetext") {
+                                $("#" + cascadeto).attr("modified", "true");
+                                $("#" + cascadeto).change();
+                            }
+                        }
+                    }
+                    catch (e) {
+                        logit("Error with Cascade: " + e.Message);
+                    }
+                },
+                function (sender, args) { logit("Change Failed For: " + obj.id + ", message: " + args.get_message()); }
+            );
+            $("#" + obj.id).attr("modified", "true");
+            break;
+
+        case "cascadetext":
+            var cascadeto = $("#" + obj.id).attr("cascadeto");
+            var islookup = false;
+            if ($("#" + cascadeto).attr("lookup")) { // the control cascading to is a lookup even if it is a textbox
+                islookup = true;
+            }
+            TRADOC.csom.GetLookupData.getvaluesfiltered(siteurl, $("#" + obj.id).attr("lookuplist"), $("#" + obj.id).attr("field"), $("#" + obj.id).attr("filterfield"), obj.id).then(
+                function (items) {
+                    TRADOC.csom.FillTextboxes(items, $("#" + obj.id).attr("field"), [cascadeto], islookup);
+                    if ($("#" + cascadeto).attr("modified") == "false") { // has not been modified by the item or a user yet
+                        if (li.get_item($("#" + cascadeto).attr("ifname")) != null) {
+                            $("#" + obj.id).attr("modified", "item");
+                            $("#" + cascadeto).attr("modified", "item");
+                            $("#" + cascadeto).val(li.get_item($("#" + cascadeto).attr("ifname"))); // Overwrite from the Contract if present
+                        }
+                    }
+                    else {
+                        $("#" + obj.id).attr("modified", "true");
+                        $("#" + cascadeto).attr("modified", "true");
+                    }
+                },
+                function (sender, args) { logit("Change Failed For: " + obj.id + ", message: " + args.get_message()); }
+            );
+            $("#" + obj.id).attr("modified", "true");
+            break;
+
+        case "costcenter":
+            var org = $("#CostCenterPlusName option:selected").val();
+            tp5 = org;
+            tp1 = org.split(" ");
+            xml = "<View><Method Name='Read List' /><Query><Where><Eq><FieldRef Name='CostCenter' /><Value Type='Text'>" + tp1[0] + "</Value></Eq></Where><OrderBy><FieldRef Name='CostCenter' /></OrderBy></Query>";
+            xml += "<ViewFields>";
+            xml += "<FieldRef Name='CostCenter'/>";
+            xml += "<FieldRef Name='CostCenterPlusName'/>";
+            xml += "<FieldRef Name='Title'/>";
+            xml += "<FieldRef Name='LEVEL1FundCenter'/>";
+            xml += "<FieldRef Name='LEVEL1Name'/>";
+            xml += "<FieldRef Name='LEVEL2FundCenter'/>";
+            xml += "<FieldRef Name='Level2Name'/>";
+            xml += "<FieldRef Name='LEVEL3FundCenter'/>";
+            xml += "<FieldRef Name='Level3Name'/>";
+            xml += "<FieldRef Name='Level4FundCenter'/>";
+            xml += "<FieldRef Name='Level4Name'/>";
+            xml += "<FieldRef Name='Level5Name'/>";
+            xml += "<FieldRef Name='ID'/>";
+            xml += "</ViewFields>";
+            xml += "</View>";
+            ctx = new SP.ClientContext(siteurl);
+            list = ctx.get_web().get_lists().getByTitle("TRADOCValuesList");
+            caml = new SP.CamlQuery();
+            caml.set_viewXml(xml);
+            items = list.getItems(caml);
+            ctx.load(items, "Include(CostCenter, CostCenterPlusName, ID, Title, LEVEL1FundCenter, LEVEL1Name, LEVEL2FundCenter, Level2Name, LEVEL3FundCenter, Level3Name, Level4FundCenter, Level4Name, Level5Name)");
+            ctx.executeQueryAsync(ReadCostCenterItemsSucceeded, ReadItemsFailed);
+            break;
+
+        case "username":
+            var control = $("#" + obj.id).attr("control");
+            var ctnt = new String($("#" + obj.id).html());
+            if (ctnt.indexOf("Select") > 0) {
+                // this is the select box
+                if ($("#" + obj.id + " option:selected").val() == "Select...") {
+                    $("#" + control).val("");
+                    $("#" + obj.id).attr("modified", "false");
+                    $("#" + control).attr("modified", "false");
+                }
+                else {
+                    $("#" + control).val($("#txtUser").val());
+                    $("#" + obj.id).attr("modified", "true");
+                    $("#" + control).attr("modified", "true");
+                }
+            }
+            else {
+                if ($("#" + obj.id).attr("type") == "text") {
+                    if ($("#" + obj.id).val() != "") {
+                        $("#" + control).val($("#txtUser").val());
+                        $("#" + obj.id).attr("modified", "true");
+                        $("#" + control).attr("modified", "true");
+                    }
+                    else {
+                        $("#" + control).val("");
+                        $("#" + obj.id).attr("modified", "true");
+                        $("#" + control).attr("modified", "true");
+                    }
+                }
+                if ($("#" + obj.id).attr("type") == "checkbox") {
+                    if ($("#" + obj.id).is(":checked")) {
+                        $("#" + control).val($("#txtUser").val());
+                        $("#" + obj.id).attr("modified", "true");
+                        $("#" + control).attr("modified", "true");
+                        if ($("#" + obj.id).attr("id") == "ContractCancelled") {
+                            $("#Status").val("Cancelled");
+                        }
+                    }
+                    else {
+                        $("#" + control).val("");
+                        $("#" + obj.id).attr("modified", "true");
+                        $("#" + control).attr("modified", "true");
+                    }
+                }
+            }
+            break;
+
+        case "togglecontrol":
+            var control = $("#" + obj.id).attr("control");
+            if ($("#" + obj.id).is(":checked")) {
+                $("#" + control).show();
+            }
+            else {
+                $("#" + control).hide();
+            }
+            break;
+
+        case "toggletable": // For the staffing selection of Staffing and/or ACRB.
+            var control = $("#" + obj.id).attr("control");
+            if ($("#" + obj.id).is(":checked")) {
+                $("#" + control).show();
+            }
+            else {
+                $("#" + control).hide();
+                control = control.replace("td", "tr");
+                $("input[function='togglerow']").each(function (tidx) {
+                    var tblcontrol = new String($(this).attr("control"));
+                    if (tblcontrol.indexOf(control) >= 0) {
+                        if ($(this).is(":checked")) {
+                            $(this).click();
+                            $(this).prop("checked", false);
+                        }
+                    }
+                });
+            }
+            break;
+
+        case "togglerow":
+            var control = $("#" + obj.id).attr("control");
+            var text = $("#" + obj.id).attr("text");
+            if ($("#" + obj.id).is(":checked")) {
+                $("#" + control).show();
+                // Set the response so that it is required ([])
+                if (text.indexOf("Other") >= 0) {
+                    // Ensure that the user has given it a name and then add the []
+                    var txt;
+                    if ($("#" + obj.id).attr("savedtext")) {
+                        // this means that this one had been selected and needs to have the saved text used instead
+                        txt = $("#" + obj.id).attr("savedtext");
+                    }
+                    else {
+                        txt = window.prompt("What is the name of the reviewing organization?", "Other");
+                    }
+                    if (txt && txt.length > 0) {
+                        $("#" + control).find(".divLabel").html(txt);
+                        $("#" + obj.id).parent().parent().find("input[type='text']").val("[]/" + txt);
+                    }
+                    else {
+                        alert("Please provide a name for the reviewing organization");
+                        break;
+                    }
+                }
+                else {
+                    // Add the []
+                    $("#" + obj.id).parent().parent().find("input[type='text']").val("[]");
+                }
+            }
+            else {
+                $("#" + control).hide();
+                // Set the response so that it is not required (---)
+                $("#" + obj.id).parent().parent().find("input[type='text']").val("---");
+            }
+            break;
+
+        default:
+            $("#" + obj.id).attr("modified", "true");
+            if ($("#" + obj.id).attr("totalfield")) {
+                // Get the total of all the appropriate fields and update the total cost for that column
+                // SharePoint will also add them up on save, but the user would not see that.
+                var tf = $("#" + obj.id).attr("totalfield");
+                var sum = parseFloat("0.00");
+                $("input[totalfield='" + tf + "']").each(function () {
+                    if ($(this).val() == null) { }
+                    else {
+                        var v = $(this).val();
+                        v = v.replace("$", "").replace(/,/g, "");
+                        v = parseFloat(v);
+                        if (isNaN(v)) { }
+                        else {
+                            sum += v;
+                        }
+                    }
+                });
+                if ($("#" + tf).attr("totalfield")) {
+                    $("#" + tf).val(formatCurrency(sum.toFixed(2))).change();
+                }
+                else {
+                    $("#" + tf).val(formatCurrency(sum.toFixed(2)));
+                }
+                // Reformat the value as currency
+                $("#" + obj.id).val(formatCurrency($("#" + obj.id).val()));
+            }
+            break;
+    }
+}
+
+function ReadCostCenterItemsSucceeded(sender, args) {
+    var enumerator = items.getEnumerator();
+    while (enumerator.moveNext()) {
+        var li = enumerator.get_current();
+        $(".fundingdata").each(function () {
+            if (li.get_item($(this).attr("id")) != null) {
+                if ($(this).attr("id") == "CostCenter") {
+                    $(this).val(li.get_item($(this).attr("id")));
+                    $(this).attr("lookupval", li.get_item("ID") + ";#" + li.get_item($(this).attr("id")));
+                }
+                else {
+                    $(this).val(li.get_item($(this).attr("id")));
+                }
+            }
+        });
+        $("#Organization").val(li.get_item("Level2Name") + ", " + li.get_item("Level3Name") + ", " + li.get_item("Level4Name") + ", " + li.get_item("Level5Name"));
+        $("#Organization").attr("modified", "true");
+    }
+}
+
+function RemoveReadOnly() {
+    SP.UI.Notify.addNotification("Closing Contract...Please Wait.", false);
+    li.update();
+    ctxu.load(li);
+    ctxu.executeQueryAsync(SaveContractSucceeded, SaveContractFailed);
+}
+
+function SaveContract() {
+	
+    error = false;
+    errorstring = "<h3>Erros Updating The Contract</h3><br/><ul>";
+    SP.UI.Notify.addNotification("Saving Contract...Please Wait.", false);
+    var count = 0;
+    
+    
+    logit('ENTER INPUT');
+    // Go through the text boxes first
+    $("input").each(function () {
+        if ($(this).hasClass('PTS')) {
+            try {
+            	//logit($(this).attr("type") + ' : ' + $(this).attr("ifname"));
+                if ($(this).attr("type") == "text") {//validate textboxes
+					 // if it is a user then do it differently
+                    if ($(this).hasClass('peoplepicker') && $(this).attr("modified") == "true") {
+                        //logit("People Picker Found: " + $(this).attr("id"));
+                        tp1 = "hidden_" + $(this).attr("id");
+                        var login = $("#" + tp1).val();
+                        //logit("People Picker Set: " + login);
+                        li.set_item($(this).attr("ifname"), SP.FieldUserValue.fromUser(login));
+                        
+   
+                    }
+                    else {
+                    	logit("Setting text field: " + $(this).attr("ifname") + " to: " + $(this).val() + 'Count: ' + count);
+                        li.set_item($(this).attr("ifname"), $(this).val()); //Save Function Fails Here
+                        logit('SUCCEED PASSED ELSE BLOCK');
+                       
+                        //logit($(this).attr("ifname"));
+                        //logit(li.get_item()); 
+                    }
+ 
+                }//end if 
+                if ($(this).attr("type") == "checkbox") {//validate checkboxes
+                	
+                    if ($(this).is(":checked")) {
+                        li.set_item($(this).attr("ifname"), $(this).attr("checkedvalue"));
+                    }
+                    else {
+                        li.set_item($(this).attr("ifname"), $(this).attr("uncheckedvalue"));
+                    }
+                }
+                if ($(this).attr("type") == "radio") {//validate radio choices
+                	
+                    if ($(this).is(":checked")) {
+                        li.set_item($(this).attr("ifname"), $(this).val());
+                    }
+                }
+                
+                
+              count++;  
+            }//end try
+            
+            
+            catch (e) {
+                error = true;
+                tp1 = $(this).attr("ifname");
+                errorstring += "<li>Error with : " + tp1 + " Message: " + e.Message + "</li>";
+                logit("Saving Text Field Error: " + e.Message);
+                
+                
+                
+            }//end catch
+        }
+    }); 
+ 	
+    
+    
+      logit('ENTER FUNDINGDATA');
+    $(".fundingdata").each(function () {
+        li.set_item($(this).attr("ifname"), $(this).val());
+       
+        //logit($(this).attr("ifname"), $(this).val());
+    });
+    
+    
+    
+    logit('ENTER SELECT');
+    // Go through the select boxes next
+    $("select").each(function (sc) {
+        if ($(this).hasClass('PTS')) {
+            try {
+                var id = $(this).attr("id");
+                var stext = $("#" + id + " option:selected").text();
+                if ($(this).prop('disabled') == false) {
+                    // Do not need to save disabled elements
+                    if (stext != "Select...") {
+                        //logit("Select Should Save " + id + " Selected Value " + $("#" + id + " option:selected").val() + " Selected Text " + stext);
+                        if ($(this).hasClass('YesNo')) {
+                            if (stext == "Yes") {
+                                li.set_item($(this).attr("ifname"), 1);
+                            }
+                            else {
+                                li.set_item($(this).attr("ifname"), 0);
+                            }
+                        }
+                        else {
+                            li.set_item($(this).attr("ifname"), $("#" + id + " option:selected").text());
+                        }
+                    }
+                    else {
+                        // TODO: This might not work but try to add an empty value to clear any bad data or "Select..." values
+                        li.set_item($(this).attr("ifname"), "");
+                    }
+                }
+            }
+            catch (e) {
+                error = true;
+                tp1 = $(this).attr("ifname");
+                errorstring += "<li>Error with : " + tp1 + " Message: " + e.Message + "</li>";
+            }
+        }
+    });
+    
+    
+    
+     logit('ENTER TEXTAREA');
+    // Then do the text areas
+    $("textarea").each(function (tac) {
+        if ($(this).hasClass('PTS')) {
+            try {
+                if ($(this).prop('disabled') == false) {
+                    if ($(this).attr("name") != "txtResults") {
+                        //if ($(this).attr("id") == "CancelledReason") { logit("Cancelled Reason = " + $(this).val()); }
+                        tp1 = $.trim($(this).val());
+                        if (tp1 != "null" || tp1 != "" || tp1 != "undefined") {
+                            li.set_item($(this).attr("ifname"), $(this).val());
+                        }
+                        else {
+                            li.set_item($(this).attr("ifname"), "<div></div>");
+                        }
+                    }
+                }
+            }
+            catch (e) {
+                logit("textarea error: " + e.message);
+                error = true;
+                tp1 = $(this).attr("ifname");
+                errorstring += "<li>Error with : " + tp1 + " Message: " + e.Message + "</li>";
+            }
+        }
+    });
+    
+    
+    
+     //logit('ENTER AMODATA');
+    // Now setup the AMOData and Staffing Data values
+    // AMOdata
+    $(".AMOData").each(function (idx) {
+        try {
+            if ($(this).prop('disabled') == true) {
+                $(this).prop('disabled', false);
+            }
+            if (idx == 0) {
+                amodata = "{";
+            }
+            else {
+                amodata += ',';
+            }
+            if ($(this).is("input")) {
+                switch ($(this).attr("type")) {
+                    case "text":
+                        amodata += '"' + $(this).attr("id") + '":"' + $(this).val() + '"';
+                        break;
+
+                    case "radio":
+                        amodata += '"' + $(this).attr("id") + '":"' + $(this).is(":checked") + '"';
+                        break;
+
+                    case "checkbox":
+                        amodata += '"' + $(this).attr("id") + '":"' + $(this).is(":checked") + '"';
+                        break;
+                }
+            }
+            if ($(this).is("select")) {
+                if ($(this).val() != "Select...") {
+                    amodata += '"' + $(this).attr("id") + '":"' + $(this).val() + '"';
+                }
+                else {
+                    amodata += '"' + $(this).attr("id") + '":""';
+                }
+            }
+            if ($(this).is("textarea")) {
+                amodata += '"' + $(this).attr("id") + '":"' + EncodeHTML($(this).val()) + '"';
+            }
+        }
+        catch (e) {
+            error = true;
+            tp1 = $(this).attr("id");
+            errorstring += "<li>Error with : " + tp1 + " Message: " + e.Message + "</li>";
+        }
+    });
+    amodata += "}";
+    li.set_item("AMOData", amodata);
+	//logit(amodata);
+    
+     logit('ENTER STAFFINGDATA');
+    // Staffingdata
+    $(".StaffingData").each(function (idx) {
+        try {
+            if ($(this).prop('disabled') == true) {
+                $(this).prop('disabled', false);
+            }
+            if (idx == 0) {
+                staffingdata = '{';
+            }
+            else {
+                staffingdata += ',';
+            }
+            if ($(this).is("input")) {
+                switch ($(this).attr("type")) {
+                    case "text":
+                        staffingdata += '"' + $(this).attr("id") + '":"' + $(this).val() + '"';
+                        break;
+
+                    case "radio":
+                        staffingdata += '"' + $(this).attr("id") + '":"' + $(this).is(":checked") + '"';
+                        break;
+
+                    case "checkbox":
+                        staffingdata += '"' + $(this).attr("id") + '":"' + $(this).is(":checked") + '"';
+                        break;
+                }
+            }
+            if ($(this).is("select")) {
+                if ($(this).val() != "Select...") {
+                    staffingdata += '"' + $(this).attr("id") + '":"' + $(this).val() + '"';
+                }
+                else {
+                    staffingdata += '"' + $(this).attr("id") + '":""';
+                }
+            }
+            if ($(this).is("textarea")) {
+                staffingdata += '"' + $(this).attr("id") + '":"' + EncodeHTML($(this).val()) + '"';
+            }
+        }
+        catch (e) {
+            error = true;
+            tp1 = $(this).attr("id");
+            errorstring += "<li>Error with : " + tp1 + " Message: " + e.Message + "</li>";
+        }
+    });
+    staffingdata += "}";
+    li.set_item("StaffingData", staffingdata);
+    logit(staffingdata);
+    // Remove read only state
+    //li.set_item("Open", 0);
+    li.set_item("Open", 1);
+
+
+	logit('PREPARING TO COMMIT');
+    if (error == true) {
+        errorstring += "</ul>";
+        TRADOCError(errorstring);
+    }
+    else {
+        li.update();
+        ctxu.load(li);
+        ctxu.executeQueryAsync(SaveContractSucceeded, SaveContractFailed);
+    }
+    
+    
+    
+    
+    
+    
+}//end
+
+
+
+
+
+
+function SaveContractSucceeded() {
+    setTimeout(function () {
+        var zurl = fixurl('/Lists/AMOFormsList/AllItems.aspx');
+        var returndata = [];
+        returndata[0] = "Refresh";
+        returndata[1] = zurl;
+        SP.UI.ModalDialog.commonModalDialogClose(SP.UI.DialogResult.OK, returndata);
+    }, 1000);
+}
+
+function OpenFormSucceeded() {
+    setTimeout(function () {
+        var zurl = fixurl('/Lists/AMOFormsList/AllItems.aspx');
+        var returndata = [];
+        returndata[0] = "Refresh";
+        returndata[1] = zurl;
+        SP.UI.ModalDialog.commonModalDialogClose(SP.UI.DialogResult.OK, returndata);
+    }, 1000);
+}
+
+function OpenFormFailed(sender, args) {
+    formopen = false;
+    errorstring = "<h3>Error Removing Read Only State. Notifiy the Helpdesk.</h3>";
+    errorstring += "<br/>" + args.get_message();
+    TRADOCError(errorstring);
+    logit("DeleteOFItemFailed: " + args.get_message());
+}
+
+function SaveContractFailed(sender, args) {
+    errorstring = "<h3>Error Updating The Contract. Notifiy the Helpdesk.</h3>";
+    errorstring += "<br/>" + args.get_message();
+    TRADOCError(errorstring);
+    logit("SaveContractFailed: " + args.get_message());
+
+}
+
+function EncodeHTML(str) {
+    return String(str).replace(/"/g, '--:quot:--').replace(/&/g, '&amp;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\t/g, '--:tab:--').replace(/\n/g, '--:newline:--');
+}
+
+function DecodeHTML(str) {
+    return String(str).replace(/&amp;/g, '&').replace(/&#39;/g, "'").replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/--:quot:--/g, '"').replace(/--:tab:--/g, '\t').replace(/--:newline:--/g, '\n');
+}
+
+function CDataWrap(value) {
+    return "<![CDATA[" + value + "]]>";
+}
+
+function formatCurrency(total) {
+    //logit("FormatCurrency total: " + total);
+    total = new String(total);
+    if (total.indexOf('$') >= 0) {
+        total = total.replace("$", "").replace(/,/g, "");
+    }
+    var neg = false;
+    if (total < 0) {
+        neg = true;
+        total = Math.abs(total);
+    }
+    var result = (neg ? "-$" : '$') + parseFloat(total, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString();
+    //logit("Result of indexOf: " + result.indexOf('$NaN') + " , " + result.indexOf('$0.00'));
+    if (result.indexOf('$NaN') >= 0 || result.indexOf('$0.00') >= 0) { }
+    else {
+        return result;
+    }
+}

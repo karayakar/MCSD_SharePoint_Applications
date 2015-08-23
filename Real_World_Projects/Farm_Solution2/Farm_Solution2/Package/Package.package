@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" dslVersion="1.0.0.0" Id="7fca7bd4-86a3-4feb-80e0-37d21e548210" solutionId="7fca7bd4-86a3-4feb-80e0-37d21e548210" resetWebServer="false" sharePointProductVersion="15.0" name="Farm_Solution2" xmlns="http://schemas.microsoft.com/VisualStudio/2008/SharePointTools/PackageModel">
+  <features>
+    <featureReference itemId="89d97c11-940f-448a-a796-1dda9e2e961b" />
+    <featureReference itemId="e9b76505-ac68-4a3a-8a90-4c08c3d9a162" />
+  </features>
+  <projectItems>
+    <projectItemReference itemId="5d8fb8df-2329-4fa6-9dd4-5badfb4cc138" />
+    <projectItemReference itemId="d4403e2e-c8aa-4296-81d1-cff63b94c393" />
+  </projectItems>
+</package>

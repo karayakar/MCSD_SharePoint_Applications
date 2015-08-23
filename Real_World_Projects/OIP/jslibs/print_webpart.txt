@@ -1,0 +1,58 @@
+﻿ <script src="../../SiteAssets/list_colors.js"></script>
+  
+  <script>
+  	function print_this() {//test script to print calendar webpart
+			'use strict'
+			var bolWebPartFound = false;
+			
+		    if (document.getElementById('WebPartWPQ2') != null) {
+				//Create html to print in new window
+				var PrintingHTML = '<HTML>\n<HEAD>\n';
+		        
+				        //Take data from Head Tag
+				        if (document.getElementsByTagName != null) {
+				            var HeadData = document.getElementsByTagName("HEAD");
+				           
+				            if (HeadData.length > 0){
+				                PrintingHTML += HeadData[0].innerHTML;
+				               	
+				            }
+				        }//end if
+		        
+		        PrintingHTML += '\n</HEAD>\n<BODY>\n';
+		        
+		        
+		        var WebPartData = document.getElementById('WebPartWPQ2');
+		         
+		        
+		        if (WebPartData != null) {
+		            PrintingHTML += WebPartData.innerHTML;
+		            bolWebPartFound = true;
+		        } else {
+		            bolWebPartFound = false;
+		            alert('Cannot Find Web Part');
+		        }
+		        
+		        
+		    }//end if
+		    
+		    PrintingHTML += '\n</BODY>\n</HTML>';
+		    //Open new window to print
+		    
+		    
+		    
+		    if (bolWebPartFound) {
+		        var PrintingWindow = window.open("", "print_this"/*,
+		            "toolbar,width=800,height=600,scrollbars,resizable,menubar" */);
+		        PrintingWindow.document.open();
+		        PrintingWindow.document.write(PrintingHTML);
+		        // Open Print Window
+		        //PrintingWindow.print();
+		    }
+		    
+		    
+				    
+	}//end ()
+  	
+  
+  </script>

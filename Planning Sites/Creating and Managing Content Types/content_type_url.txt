@@ -1,0 +1,8 @@
+http://abcuniversity/_layouts/15/start.aspx#/_layouts/15/
+	ManageContentType.aspx?ctype=0x ->Inherits System
+					01 -> Inherits Item
+						00F6E1F64CAD91A345A50619EC13468B20 -> Custom ID
+							01, 02, n -> Add these if custom content type inherits from another
+									custom content type to prevent hexidecimal extensions.
+			& 
+		Source=http%3A%2F%2Fabcuniversity%2F%5Flayouts%2F15%2Fmngctype%2Easpx

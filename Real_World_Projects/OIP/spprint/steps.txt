@@ -1,0 +1,9 @@
+﻿1. Attach Update,Copy,Delete Events.
+
+2. Set timer for all list items to copy.
+
+3. Create modal box to ensure user actions are frozen until all items are successfully copied, updated, and deleted.
+
+4. Unique Title
+
+

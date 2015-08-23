@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Elements xmlns="http://schemas.microsoft.com/sharepoint/">
+  <!-- Parent ContentType: Item (0x01) -->
+  <ContentType ID="0x01002C5A637F020147518B644C0B31F675DB" Name="ChemicalContent" Group="Custom Content Types" Description="My Content Type" Inherits="TRUE" Version="0">
+    <FieldRefs>
+      <FieldRef ID="{255a83a9-c5cc-48a8-be79-102aad99a3b9}" DisplayName="Chemical Name" Required="FALSE" Name="ChemicalName" />
+      <FieldRef ID="{9372f04b-5408-4db7-ab8e-e01dfaa9d017}" DisplayName="Chemical Atomic Number" Required="FALSE" Name="ChemicalAtomicNumber" />
+      <FieldRef ID="{2d0da9c5-0b9b-42b3-be33-681353e97ab5}" DisplayName="Chemical Atomic Mass" Required="FALSE" Name="ChemicalAtomicMass" />
+    </FieldRefs>
+  </ContentType>
+</Elements>

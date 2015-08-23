@@ -1,0 +1,1264 @@
+var test = null;
+var prefix = "";
+var looper;
+var ctx, list, web, perm, perms, user, lnk, waitDialog, CanEdit, CanDelete, title;
+var CanMark, CanReview, groups;
+var ctxz, ctxy, ctxu, zurl;
+var listItem
+var tp1, tp2, tp3, tp4, tp5;
+var qs, itemid, doctype, staffed, amo, name, ctrl, icon;
+var UploadDialog, EditFormDialog;
+var attach, filename;
+var timer;
+var step = 0;
+var maxsteps = 0;
+var msg;
+var width, maxwidth, stepwidth, spinner;
+var reason;
+var SLASH = "/";
+var ctxa, lista, cola;
+var mi1, mi2, mi3;
+var editor, modified, amoid, ofid;
+var site;
+var oitem;
+var formopen = false;
+var oamo1, oamo2, oldsite;
+var notify;
+var farr = [];
+var excluded = "Id, AMO_x0020_No_x002e_, ContentType, Attachment, Attachments, Created, Modified, Author, Editor"; // list of fields by internal name to exclude in copy
+
+function logit(msg) {
+    if (typeof console != "undefined") {
+        console.log(msg + " AT: " + new Date());
+    }
+}
+
+function fixurl(burl) {
+    tp1 = new String(window.location.protocol);
+    tp2 = new String(window.location.host);
+    tp3 = L_Menu_BaseUrl;
+    var nurl = tp1 + SLASH + SLASH + tp2 + tp3 + burl;
+    return nurl;
+}
+
+function RTE_DD_GetMenuFrame() {
+    var ifmMenu = null;
+    var elemMenu = RTE_DD_GetMenuElement();
+    if (null != elemMenu) {
+        if (document.frames.length > 0) {
+            ifmMenu = document.frames[g_strRTETextEditorPullDownMenuID];
+        }
+        else {
+            if ((document.parentWindow != null) && (document.parentWindow.frames != null)) {
+                ifmMenu = document.parentWindow.parent.document.frames[g_strRTETextEditorPullDownMenuID];
+            }
+        }
+    }
+    if (null == ifmMenu) {
+        if (g_fRTEFirstCallToGetMenu) {
+            g_fRTEFirstCallToGetMenu = false;
+            return null;
+        }
+    }
+    return ifmMenu;
+}
+
+function RTE_GetEditorIFrame(strBaseElementID) {
+    var ifmEditor = null;
+    var doc = document;
+    if ((null != doc.frames) && (doc.frames.length == 0) && (doc.parentWindow.parent != null)) {
+        doc = doc.parentWindow.parent.document;
+    }
+    if ((null != doc.frames) && (doc.frames.length > 0)) {
+        var ifmContainer = doc.getElementById(RTE_GetEditorIFrameID(strBaseElementID));
+        if (ifmContainer != null) {
+            ifmEditor = doc.frames[RTE_GetEditorIFrameID(strBaseElementID)];
+        }
+    }
+    return ifmEditor;
+}
+
+function resizeModalDialog() {  
+    SP.SOD.executeOrDelayUntilScriptLoaded(_resizeModalDialog, 'sp.ui.dialog.js');
+} 
+
+function _resizeModalDialog () {   
+    var dlg = SP.UI.ModalDialog.get_childDialog();   
+    if (dlg != null) {       
+        if (!dlg.$S_0 && dlg.get_$Z_0()) {           
+            dlg.autoSize();
+            var xPos, yPos, //x & y co-ordinates to move modal to...      
+            win = SP.UI.Dialog.get_$1(), // the very bottom browser window object      
+            xScroll = SP.UI.Dialog.$24(win), // browser x-scroll pos      
+            yScroll = SP.UI.Dialog.$26(win); // browser y-scroll pos      
+            xPos = ((SP.UI.Dialog.$1d(win) - dlg.$2_0.offsetWidth) / 2) + xScroll;    
+            if (xPos < xScroll + 10) {        
+                xPos = xScroll + 10;      
+            }        
+            yPos = ((SP.UI.Dialog.$1c(win) - dlg.$2_0.offsetHeight) / 2) + yScroll;           
+            if (yPos < yScroll + 10) {        
+                yPos = yScroll + 10;      
+            }           
+            dlg.$T_0 = xPos;      
+            dlg.$U_0 = yPos;           
+            dlg.$m_0(dlg.$T_0, dlg.$U_0);
+            dlg.$H_0.style.width = Math.max(dlg.$6_0.offsetWidth - 64, 0) + 'px';
+            logit("WIDTH CALCULATION = " + Math.max(dlg.$6_0.offsetWidth - 64, 0) + "px");  
+            dlg.$2B_0();
+        }
+    }
+}
+
+function CloseError() {
+    SP.UI.Notify.addNotification('Error Closed', false);
+}
+
+function TRADOCError(msghtml) {
+    $("#errormessage").html(msghtml);
+    $("#ErrorOK").button();
+    var mc = document.createElement('div');
+    $(mc).html($("#errorcontainer").html());
+    var options = {
+        html: mc,
+        width: 510,
+        height: 510,
+        title: "Error",
+        dialogReturnValueCallback: CloseError,
+        allowMaximize: false,
+        showClose: true
+    };
+    SP.UI.ModalDialog.showModalDialog(options);
+}
+
+function TRADOCDialog(url, title, width, height, callbackType) {
+    var options = SP.UI.$create_DialogOptions();
+    options.url = url;
+    options.title = title;
+    options.width = width;
+    options.height = height;
+    if (callbackType == 'NotificationCallback') {
+        options.dialogReturnValueCallback = NotificationCallback;
+    }
+    else if (callbackType == 'SilentCallback') {
+        options.dialogReturnValueCallback = SilentCallback;
+    }
+    else if (callbackType == 'RefreshCallback') {
+        options.dialogReturnValueCallback = RefreshCallback;
+    }
+    formopen = true;
+    SP.UI.ModalDialog.showModalDialog(options);
+}
+
+function NotificationCallback(dialogResult, returnValue) {
+    if (dialogResult == SP.UI.DialogResult.OK) {
+        SP.UI.Notify.addNotification('Operation Succeeded', false);
+        switch (returnValue[0]) {
+            case "Draft":
+                window.location = returnValue[1];
+                break;
+
+            case "Continue":
+                TRADOCDialog(returnValue[1], 'Edit Contract', '980', '800', 'NotificationCallback');
+                break;
+
+            case "Refresh": // This is used if save and continue was used from the home page to go to the AMOFormsList list
+                window.location = returnValue[1];
+                break;
+
+            case "Classification":
+                UpdateClassifications();
+                break;
+
+            case "Files":
+                UpdateFiles2(returnValue[1], returnValue[2]);
+                break;
+
+            case "StaffingFiles":
+                UpdateStaffingFilesStart(returnValue[1]);
+                break;
+        }
+    }
+    else if (dialogResult == SP.UI.DialogResult.cancel) {
+        SP.UI.Notify.addNotification('Operation Canceled', false);
+    }
+    else if (dialogResult == SP.UI.DialogResult.invalid) {
+        SP.UI.Notify.addNotification('Operation invalid', false);
+    }
+}
+
+function SilentCallback(dialogResult, returnValue) { }
+
+function RefreshCallback(dialogResult, returnValue) {
+    SP.UI.Notify.addNotification('Operation Succeeded', false);
+    if (test.indexOf("?") > 0) {
+        tp1 = test.substring(0, test.indexOf("?"));
+        window.location = tp1;
+    }
+    else {
+        SP.UI.ModalDialog.RefreshPage(SP.UI.DialogResult.OK);
+    }
+}
+
+function GetWebTitle() {
+    ctxy = new SP.ClientContext.get_current();
+    web = ctxy.get_web();
+    ctxy.load(web);
+    ctxy.executeQueryAsync(GetWebTitleSucceeded, GetWebTitleFailed);
+}
+
+function GetWebTitleSucceeded(sender, args) {
+    title = web.get_title();
+    $("#txtWebTitle").val(title);
+    site = '/sites/AMO' + SLASH + title;
+    FixUpAnchors();
+}
+
+function GetWebTitleFailed(sender, args) {
+    logit("GetWebTitleFailed: " + args.get_message());
+}
+
+function GetUserPermission() {
+    ctxz = new SP.ClientContext.get_current();
+    list = ctxz.get_web().get_lists().getByTitle("AMOFormsList");
+    web = ctxz.get_web();
+    user = web.get_currentUser();
+    ctxz.load(user);
+    ctxz.load(list, "EffectiveBasePermissions");
+    ctxz.executeQueryAsync(GetUserPermissionSucceeded, GetUserPermissionFailed);
+}
+
+function GetUserPermissionSucceeded(sender, args) {
+    var zuser = user.get_loginName();
+    zuser = zuser.split("\\");
+    $("#txtUser").val(zuser[1]);
+    logit("txtUser = " + $("#txtUser").val());
+    $("#txtWebTitle").val(title);
+    if (list.get_effectiveBasePermissions().has(SP.PermissionKind.editListItems)) {
+        CanEdit = true;
+        $("#txtCanEdit").val(CanEdit);
+    }
+    if (list.get_effectiveBasePermissions().has(SP.PermissionKind.deleteListItems)) {
+        CanDelete = true;
+        $("#txtCanDelete").val(CanDelete);
+    }
+    logit("GetUserPermission CanEdit = " + CanEdit + ", CanDelete = " + CanDelete + ", user = " + zuser[1]);
+}
+
+function GetUserPermissionFailed(sender, args) {
+    logit("GetUserPermissionFailed: " + args.get_message());
+}
+/*
+function CanMarkCRB() {
+    ctx = new SP.ClientContext.get_current();
+    groups = ctx.get_web().get_siteGroups();
+    ctx.load(groups, 'Include(Title,Id,Users.Include(Title,LoginName))');
+    ctx.executeQueryAsync(CanMarkCRBSucceeded, CanMarkCRBFailed);
+}
+
+function CanMarkCRBSucceeded() {
+    logit("CanMarkCRBSucceeded");
+    var enumerator = groups.getEnumerator();
+    while (enumerator.moveNext()) {
+        group = enumerator.get_current();
+        if (group.get_title() == "CRBInitiators") {
+            groupusers = group.get_users();
+            groupusersenum = groupusers.getEnumerator();
+            while (groupusersenum.moveNext()) {
+                groupuser = groupusersenum.get_current();
+                if (groupuser.get_loginName() == user.get_loginName()) {
+                    CanMark = true;
+                    $("#txtCanMark").val(CanMark);
+                    logit("CanMark");
+                }
+            }
+        }
+        if (group.get_title() == "CRBReviewers") {
+            groupusers = group.get_users();
+            groupusersenum = groupusers.getEnumerator();
+            while (groupusersenum.moveNext()) {
+                groupuser = groupusersenum.get_current();
+                if (groupuser.get_loginName() == user.get_loginName()) {
+                    CanReview = true;
+                    $("#txtCanReview").val(CanReview);
+                    logit("CanReview");
+                }
+            }
+        }
+    }
+}
+
+function CanMarkCRBFailed(sender, args) {
+    logit("CanMarkCRBFailed: " + args.get_message());
+    return false;
+}
+*/
+$(document).ready(function () {
+    test = new String(window.location);
+    ExecuteOrDelayUntilScriptLoaded(GetUserPermission, "SP.js");
+    ExecuteOrDelayUntilScriptLoaded(GetWebTitle, "SP.js");
+
+    // for testing
+    tp1 = new String(window.location.protocol);
+    tp2 = new String(window.location.host);
+    tp3 = L_Menu_BaseUrl;
+    tp5 = tp3.indexOf("/sites");
+    tp5 = tp3.substring(0, tp5);
+    logit("TP1: " + tp1 + ", TP2: " + tp2 + ", TP3: " + tp3 + ", TP5: " + tp5);
+    // end for testing
+
+    if (test.indexOf("Pages") > 0) {
+        prefix = prefix;
+    }
+    else {
+        prefix = "../../Pages/";
+    }
+    // Fix up the global menu
+    lnk = L_Menu_BaseUrl + "/SiteAssets/amo/mainmenu2010.xml";
+    $.ajax({
+        url: lnk,
+        dataType: "html"
+    }).done(function (menuhtml) {
+        $(".menu-horizontal").html(menuhtml);
+    });
+    if (test.indexOf("AMOFormsList") > 0 || test.indexOf("AMOStaffing") > 0) {
+        ExecuteOrDelayUntilScriptLoaded(OverrideMenuHtc_show, "core.js");
+        $("#idHomePageNewItem").parent().hide();
+        window.onbeforeunload = function (event) {
+            if (formopen == true) {
+                /*
+                var message = "Important: Please click on the Save or Cancel button to close the open contract first.";
+                if (typeof event == 'undefined') {
+                event = window.event;
+                }
+                if (event) {
+                event.returnValue = message;
+                }
+                return message;
+                */
+            }
+        };
+    }
+    if (test.indexOf("Pages") > 0) {
+        if (test.indexOf("AllItems") > 0) { }
+        else {
+            ExecuteOrDelayUntilScriptLoaded(OverrideMenuHtc_show, "core.js");
+        }
+    }
+    if (test.indexOf("EditForm") > 0) {
+        if (test.indexOf("AMOAttach") > 0) {
+            logit("Attaching...");
+            timer = setInterval(setattachvalues, 500);
+        }
+    }
+    if (test.indexOf("Upload") > 0) {
+        logit("Hide Version Row");
+        $("tr[id*='VersionComment']").hide();
+        $("a[id*='UploadMultipleLink']").hide();
+    }
+    if (test.indexOf("CRBReview=1") > 0) {
+        // This will autmatically open the proper form for viewing
+        logit("CRBReview" + itemid);
+        qs = $().SPServices.SPGetQueryString();
+        itemid = new String(qs["ItemID"]);
+        logit("CRBReview" + itemid);
+        ExecuteOrDelayUntilScriptLoaded(CRBReview, "SP.js");
+    }
+    if (test.indexOf("Action") > 0) {
+        qs = $().SPServices.SPGetQueryString();
+        if (new String(qs["Action"]) == "UpdateNextAMONumber") {
+            oamo1 = new String(qs["OldAMO1"]);
+            oamo2 = new String(qs["OldAMO2"]);
+            oldsite = qs["OldSite"];
+            amo = qs["NewAMO"];
+            ExecuteOrDelayUntilScriptLoaded(function () {
+                TRADOC.csom.GetListItemByID.getitem("AMONumber", 1).then(
+                    function (item) {
+                        var ctx = SP.ClientContext.get_current();
+                        ni = item;
+                        nn = parseInt(ni.get_item("NextNumber"));
+                        nn += 1;
+                        ni.set_item("NextNumber", nn);
+                        ni.update();
+                        ctx.load(ni);
+                        ctx.executeQueryAsync(UpdateNextAMONumberSucceeded, UpdateNextAMONumberFailed);
+                    },
+                    function (sender, args) { logit("Get AMONumber Failed: " + args.get_message()); }
+                );
+            }, 'SP.js')
+        }
+    }
+});
+
+//function CRBReview() {
+//    zurl = fixurl('/Pages/AMOEditForm.aspx?tab=0&mode=view&ItemID=' + itemid);
+//    TRADOCDialog(zurl, 'View Contract', '1000', '800', 'RefreshCallback');
+//}
+
+function setattachvalues() {
+    if ($("input[title='Name Required Field']").length > 0) {
+        clearInterval(timer);
+        $(window).on('unload', function () {
+            var returndata = [];
+            if (attach == 1 || attach == "1") {
+                returndata[0] = "Files";
+                returndata[1] = filename;
+                returndata[2] = doctype;
+            }
+            else {
+                returndata[0] = "StaffingFiles";
+                returndata[1] = amo;
+            }
+            SP.UI.ModalDialog.commonModalDialogClose(SP.UI.DialogResult.OK, returndata);
+        });
+        qs = $().SPServices.SPGetQueryString();
+        amo = qs["amo"];
+        staffed = qs["staffed"];
+        doctype = qs["doctype"];
+        attach = qs["AMOAttach"];
+        $("input[title*='AMONumber']").val(amo);
+        $("input[title*='DocumentType']").val(doctype);
+        $("input[title*='Staffing']").val(staffed);
+        filename = $("input[title='Name Required Field']").val();
+        filename += "-" + amo;
+        $("input[title='Name Required Field']").val(filename);
+        filename += $("input[title='Name Required Field']").parent().text();
+        $("input[id*='SaveItem']").click();
+    }
+}
+
+function NewAMOForm() {
+    var zurl = fixurl('/Pages/AMONewForm.aspx');
+    TRADOCDialog(zurl, 'New Contract', '1000', '400', 'NotificationCallback');
+}
+
+function loadpage(lnk) {
+    lnk = L_Menu_BaseUrl + lnk;
+    window.location = lnk;
+}
+
+function FixUpAnchors() {
+    clearInterval(looper);
+    if ($(".ms-listviewtable").length > 0) {
+        $("a[href*='listform']").each(function () {
+            tp1 = $(this).parent().attr("id");
+            tp2 = $(this).parent().parent().parent().attr("iid");
+            if (tp1 == undefined || tp1 == "undefined") { }
+            else {
+                $(this).removeAttr("onclick").removeAttr("href");
+                if (CanEdit == true) {
+                    $(this).click(function () {
+                        DoAction('Edit', tp1);
+                    });
+                }
+                //IsItOpen(tp1, tp2);
+            }
+        });
+    }
+    else {
+        looper = setInterval(function () { FixUpAnchors() }, 500);
+    }
+}
+
+function IsItOpen(amoid, rowid) {
+    //site = fixurl("");
+    TRADOC.csom.GetListItems.getopenforms(amoid, rowid, site).then(function (item, amoid, rowid) {
+        var ci = item;
+        formopen = ci.get_item("Open");
+        if (formopen == 1) {
+            editor = ci.get_item("Editor").get_lookupValue();
+            modified = ci.get_item("Modified");
+            ofid = ci.get_id();
+            $("tr[iid='" + rowid + "']").addClass("readonly");
+            $("div[id='" + amoid + "']").addClass("readonly");
+            $("div[id='" + amoid + "']").attr("Editor", editor);
+            $("div[id='" + amoid + "']").attr("Modified", modified);
+        }
+    }, function (sender, args) {
+        logit("OpenForms Failed, " + args.get_message());
+    });
+}
+
+function OverrideMenuHtc_show() {
+    _MenuHtc_show = window.MenuHtc_show;
+    window.MenuHtc_show = function (m, r, fr, ft, yoff) {
+        _MenuHtc_show(m, r, fr, ft, yoff);
+        $("li[text='Edit in Browser']").remove();
+        $("li[text='Compliance Details']").remove();
+        $("li[text='View Item']").hide(); //Just hide the option because removing it causes the Ribbon button to disable
+        $("li[text='Edit Item']").hide(); //Just hide the option because removing it causes the Ribbon button to disable
+        $("li[text='Delete Item']").hide(); //Just hide the option because removing it causes the Ribbon button to disable
+        $("li[text='Workflows']").hide(); //Just hide the option because removing it causes the Ribbon button to disable
+    };
+}
+
+function Custom_AddListMenuItems(m, ctx) {
+    if (test.indexOf("AMOFormsList") > 0 || test.indexOf("AMOStaffing") > 0 || test.indexOf("Pages") > 0) {
+        if (test.indexOf("AllItems") > 0 && test.indexOf("Pages") > 0) { }
+        else {          
+            if (CanEdit == true) {
+                CAMOpt(m, "Edit Contract", "DoAction('Edit', '" + currentItemID + "')", "/_layouts/images/edit.gif");
+            }
+            CAMSep(m);
+            CAMOpt(m, "Print Pages 1 and 2", "DoAction('Print12', '" + currentItemID + "')", "/_layouts/images/fax.gif");
+            CAMOpt(m, "Print Staffing Columns (Left)", "DoAction('PrintLeft', '" + currentItemID + "')", "/_layouts/images/fax.gif");
+            CAMOpt(m, "Print Staffing Columns (Right)", "DoAction('PrintRight', '" + currentItemID + "')", "/_layouts/images/fax.gif");
+            CAMOpt(m, "Copy to next FY", "DoAction('FYCopy', '" + currentItemID + "')", "/_layouts/images/copy16.gif");
+            CAMSep(m);
+            if (CanDelete == true) {
+                CAMOpt(m, "Change Owner", "DoAction('Author', '" + currentItemID + "')", "/_layouts/images/personresult.gif");
+                //CAMOpt(m, "Copy to next FY", "DoAction('FYCopy', '" + currentItemID + "')", "/_layouts/images/copy16.gif");
+                CAMOpt(m, "Delete Contract", "DoAction('Delete', '" + currentItemID + "')", "/_layouts/images/delete.gif");
+                if ($("div[id='" + currentItemID + "']").hasClass("readonly")) {
+                    CAMOpt(m, "Remove Read Only", "DoAction('ReadOnly', '" + currentItemID + "')", "/_layouts/images/delete.gif");
+                }
+            }
+            return false;
+        }
+    }
+}
+
+function DoAction(action, id) {
+    id = new String(id);
+
+    switch (action) {
+        case "View":
+            zurl = fixurl('/Pages/AMOViewForm.aspx?ItemID=' + id);
+            TRADOCDialog(zurl, 'View Contract', '1000', '800', 'RefreshCallback');
+            break;
+
+        case "Print12":
+            ExecuteOrDelayUntilScriptLoaded(function () { ExecuteOrDelayUntilScriptLoaded(function () { SP.UI.Notify.addNotification("Printing...This will take a few seconds.", false); }, 'core.js') }, 'sp.js');
+            var zurl = fixurl('/Pages/PrintPages12.aspx?IsDlg=1&ItemID=' + id);
+            var pwin = window.open(zurl, "AMOPRINT", "left=10,top=10,width=1000,height=800,scrollbars=1,resizable=1");
+            break;
+
+        case "PrintLeft":
+            ExecuteOrDelayUntilScriptLoaded(function () { ExecuteOrDelayUntilScriptLoaded(function () { SP.UI.Notify.addNotification("Printing...This will take a few seconds.", false); }, 'core.js') }, 'sp.js');
+            var zurl = fixurl('/Pages/PrintColumn.aspx?IsDlg=1&ItemID=' + id + "&Column=tdStaffingLeft");
+            var pwin = window.open(zurl, "AMOPRINT", "left=10,top=10,width=1000,height=800,scrolling=auto");
+            break;
+
+        case "PrintRight":
+            ExecuteOrDelayUntilScriptLoaded(function () { ExecuteOrDelayUntilScriptLoaded(function () { SP.UI.Notify.addNotification("Printing...This will take a few seconds.", false); }, 'core.js') }, 'sp.js');
+            var zurl = fixurl('/Pages/PrintColumn.aspx?IsDlg=1&ItemID=' + id + "&Column=tdStaffingRight");
+            var pwin = window.open(zurl, "AMOPRINT", "left=10,top=10,width=1000,height=800,scrolling=auto");
+            break;
+
+        case "Edit":
+            zurl = fixurl('/Pages/AMOEditForm.aspx?tab=0&mode=edit&ItemID=' + id);
+            TRADOCDialog(zurl, 'Edit Contract', '1010', '800', 'RefreshCallback');
+            break;
+
+        case "Delete":
+            ExecuteOrDelayUntilScriptLoaded(function () { ExecuteOrDelayUntilScriptLoaded(function () { SP.UI.Notify.addNotification("Deleting Contract...This will take a few seconds.", false); }, 'core.js') }, 'sp.js');
+            var ctx = SP.ClientContext.get_current();
+            TRADOC.csom.GetListItemByID.getitem("AMOFormsList", id).then(
+                function (item) {
+                    li = item;
+                    li.set_item("AMOStatus", "Deleted");
+                    li.update();
+                    ctx.load(li);
+                    ctx.executeQueryAsync(DeleteItemSucceeded, DeleteItemFailed);
+                },
+                function (sender, args) { logit("Get Contract For Edit Failed: " + args.get_message()); }
+            );
+            break;
+
+        case "Author":
+            zurl = fixurl('/Pages/ChangeAuthor.aspx?ItemID=' + id);
+            TRADOCDialog(zurl, 'Change Owner', '600', '200', 'RefreshCallback');
+            break;
+
+        case "FYCopy":
+            ExecuteOrDelayUntilScriptLoaded(function () { ExecuteOrDelayUntilScriptLoaded(function () { SP.UI.Notify.addNotification("Copying Contract...This will take some time.", false); }, 'core.js') }, 'sp.js');
+            itemid = id;
+            tp3 = parseInt(title);
+            tp3 = tp3 + 1;
+            tp4 = '/sites/AMO' + SLASH + tp3;    // next fy site
+            TRADOC.csom.GetListItemByID.getitemsite(tp4, "AMONumber", 1).then(
+                function (item) {
+                    tp3 = parseInt(title);
+                    tp3 = tp3 + 1;
+                    tp4 = '/sites/AMO' + SLASH + tp3;    // next fy site
+                    var ctxc = new SP.ClientContext(tp4);
+                    var nn = parseInt(item.get_item("NextNumber"));
+                    amo = "AMO-" + tp3 + "-" + nn;
+                    TRADOC.csom.GetListItemByID.getitemwithfields("AMOFormsList", itemid).then(
+                        function (item, fields) {
+                            tp3 = parseInt(title);
+                            tp3 = tp3 + 1;
+                            tp4 = '/sites/AMO' + SLASH + tp3;    // next fy site
+                            logit("Step 1");
+                            li = item;
+                            oamo1 = li.get_item("AMO_x0020_No_x002e_");
+                            oamo2 = "-" + oamo1;
+                            var ctxa = new SP.ClientContext(tp4);
+                            var copylist = ctxa.get_web().get_lists().getByTitle("AMOFormsList");
+                            var ici = new SP.ListItemCreationInformation();
+                            listItem = copylist.addItem(ici);
+                            var flds = fields.getEnumerator();
+                            while (flds.moveNext()) {
+                                var ttl = flds.get_current().get_internalName();
+                                var kind = new String(flds.get_current().get_fieldTypeKind());
+                                var ro = flds.get_current().get_readOnlyField();
+                                if (kind !== "12" || kind !== "19") {
+                                    if (excluded.indexOf(ttl) == -1) {
+                                        if (ro == false || ro == "false") {
+                                            if (li.get_item(ttl) != null) {
+                                                logit("Setting Name: " + ttl + ", Type: " + kind + ", Readonly: " + ro);
+                                                listItem.set_item(ttl, li.get_item(ttl));
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            listItem.set_item("AMO_x0020_No_x002e_", amo);
+                            listItem.set_item("Previous_x0020_AMO_x0020_No", oamo1);
+                            listItem.update();
+                            ctxa.load(listItem);
+                            ctxa.executeQueryAsync(CopyItemSucceeded, CopyItemFailed);
+                        },
+                        function (sender, args) { logit("TRADOC.csom.GetListItemByID.getitemwithfields Failed: " + args.get_message()); }
+                    );
+                },
+                function (sender, args) { logit("Get AMONumber Failed: " + args.get_message()); }
+            );
+            break;
+
+        case "Cancel":
+            // TODO: Need to also support going through each fiscal year and through the staffing and financial lists.
+            // May not need delete, but setting some form of cancelled or closed status.
+            if (window.confirm("Are you sure you want to cancel the Contract?")) {
+                reason = window.prompt("What is the reason for cancellation?", "Enter Reason Here!");
+                if (reason != "Enter Reason Here!" || reason != "") {
+                    waitDialog = SP.UI.ModalDialog.showWaitScreenWithNoClose('Cancelling Contract...', 'Please wait while the Contract is Cancelled...', 76, 400);
+                    ctx = new SP.ClientContext.get_current();
+                    list = ctx.get_web().get_lists().getByTitle("AMOFormsList");
+                    id = id.trim();
+                    id = parseInt(id);
+                    listItem = list.getItemById(id);
+                    ctx.load(listItem);
+                    ctx.executeQueryAsync(GetItemToCancelSucceeded, GetItemToCancelFailed);
+                }
+            }
+            break;
+    }
+}
+
+function CRBGetItemSucceeded() {
+
+}
+
+function MPOpenFormSucceeded() {
+    zurl = fixurl('/Pages/AMOEditForm.aspx?tab=0&mode=edit&ItemID=' + amoid);
+    TRADOCDialog(zurl, 'Edit Contract', '1010', '800', 'RefreshCallback');
+}
+
+function MPOpenFormFailed(sender, args) {
+    logit(args.get_message());
+}
+
+function DeleteItemSucceeded(sender, args) {
+    ExecuteOrDelayUntilScriptLoaded(function () { ExecuteOrDelayUntilScriptLoaded(function () { SP.UI.Notify.addNotification("Contract Deleted.", false); }, 'core.js') }, 'sp.js');
+    window.location = window.location;
+}
+
+function DeleteItemFailed(sender, args) {
+    var errorstring = "<h3>There was an error Deleting the Contract.</h3><br/><ul>";
+    errorstring += "<li>Please try again.</li><li>If the problem persists, please notify the help desk.</li></ul>";
+    TRADOCError(errorstring);
+    logit(args.get_message());
+}
+
+function GetItemToCancelSucceeded(sender, args) {
+    // TODO: Write the code to update the item cancel checkbox and reason and date if this is going to be a requested function
+    waitDialog.get_html().getElementsByTagName('TD')[1].innerHTML = 'Contract Cancelled...';
+    setTimeout(function () {
+        waitDialog.close();
+    }, 1000);
+}
+
+function GetItemToCancelFailed(sender, args) {
+    var errorstring = "<h3>There was an error cancelling the contract.</h3><br/><ul>";
+    errorstring += "<li>Please try again.</li><li>If the problem persists, please notify the help desk.</li></ul>";
+    TRADOCError(errorstring);
+    logit(args.get_message());
+}
+
+function CopyItemSucceeded() {
+    tp1 = new String(window.location.protocol);
+    tp2 = new String(window.location.host);
+    tp3 = "/sites/AMO" + SLASH + title;
+    tp4 = tp1 + SLASH + SLASH + tp2 + tp4 + "/Lists/AMOFormsList/AllItems.aspx?Action=UpdateNextAMONumber&NewAMO=" + amo + "&OldSite=" + tp3 + "&OldAMO1=" + oamo1 + "&OldAMO2=" + oamo2;
+    window.location = tp4;
+}
+
+function CopyItemFailed(sender, args) {
+    logit("CopyItemFailed: " + args.get_message());
+}
+
+function UpdateNextAMONumberSucceeded() {
+    // Copy all previous FY documents to new FY document library. Must rename the files to include the new AMO number
+    $.when(TRADOC.csom.GetLibraryItems.getfilesfiltered(oldsite, "Documents", ["FileRef", "EncodedAbsUrl", "FileLeafRef", "Title", "LinkFilename", "DocumentType", "Staffing", "DocIcon"], "AMONumber", oamo1)).then(function (files) {
+        var enumerator = files.getEnumerator();
+        while (enumerator.moveNext()) {
+            var file = enumerator.get_current();
+            var d = file.get_item("DocumentType");
+            var f = file.get_item("FileLeafRef");
+            // replace the old amo with the new one on the file ref
+            f = f.replace(oamo1, amo);
+            var y = file.get_item("EncodedAbsUrl");
+            var s = file.get_item("Staffing");
+            farr.push({
+                src: y,
+                type: d,
+                staff: s,
+                fr: f,
+                oldamo: oamo1,
+                newamo: amo
+            });
+        }
+        CopyFiles();
+    }, function (sender, args) { logit("UpdateFiles Failed, " + args.get_message()); });
+    // End Copy
+    ExecuteOrDelayUntilScriptLoaded(function () { ExecuteOrDelayUntilScriptLoaded(function () { SP.UI.Notify.addNotification("Copying Contract Completed. Updating Documents As Needed", false); }, 'core.js') }, 'sp.js');
+    logit("Copy Succeeded");
+}
+
+function UpdateNextAMONumberFailed(sender, args) {
+    logit("UpdateNextAMONumberFailed: " + args.get_message());
+}
+
+function CopyFiles() {
+    $.each(farr, function (index, value) {
+        var src = value.src;
+        tp2 = parseInt(title);
+        tp3 = tp2 - 1; // get previous fy
+        tp4 = "AMO" + SLASH + tp2;
+        tp5 = "AMO" + SLASH + tp3;
+        var dst = src.replace(tp5, tp4);
+        dst = dst.replace(value.oldamo, value.newamo);
+        logit("src: " + src + ", dest: " + dst + ", NewFileLeafRef: " + value.fr);
+        var dest = [dst];
+        $().SPServices({
+            operation: "CopyIntoItemsLocal",
+            SourceUrl: src,
+            DestinationUrls: dest,
+            completefunc: function (xData, Status) {
+                logit(xData.responseText);
+                // Need to update the metadata for the document so try this code to do that
+                ctxa = SP.ClientContext.get_current();
+                TRADOC.csom.GetListItemByKey.getitemandpassdata('Documents', 'FileLeafRef', value.fr, value.newamo).then(
+                    function (items, newamo) {
+                        logit("Passed amo: " + newamo);
+                        var enumerator = items.getEnumerator();
+                        while (enumerator.moveNext()) {
+                            var litem = enumerator.get_current();
+                            litem.set_item('AMONumber', value.newamo);
+                            litem.set_item('DocumentType', value.type);
+                            litem.set_item('Staffing', value.staff);
+                            litem.update();
+                            ctxa.load(litem);
+                            ctxa.executeQueryAsync(CopyDocumentSucceeded, CopyDocumentFailed);
+                        }
+                    },
+                    function (sender, args) { logit("GetListItemByKey Failed: " + args.get_message()); }
+                );
+            }
+        });
+    });
+    ExecuteOrDelayUntilScriptLoaded(function () { ExecuteOrDelayUntilScriptLoaded(function () { SP.UI.Notify.addNotification("Copying files Completed.", false); }, 'core.js') }, 'sp.js');
+}
+
+function CopyDocumentSucceeded() {
+    logit("Document Copied");
+}
+
+function CopyDocumentFailed(sender, args) {
+    logit("CopyDocumentFailed: " + args.get_message());
+}
+
+    var TRADOC = window.TRADOC || {};
+    TRADOC.csom = TRADOC.csom || {};
+    TRADOC.upload = TRADOC.upload || {};
+
+    TRADOC.csom.GetLookupData = function () {
+        var getvalues = function (site, list, field) {
+            var xml = "<View><Method Name='Read List' /><Query><OrderBy><FieldRef Name='" + field + "'/></OrderBy><Where><IsNotNull><FieldRef Name='" + field + "'/></IsNotNull></Where></Query>";
+            xml += "<ViewFields>";
+            xml += "<FieldRef Name='" + field + "'/>";
+            xml += "<FieldRef Name='ID'/>";
+            xml += "</ViewFields>";
+            xml += "</View>";
+            var deferred = $.Deferred();
+            var ctx = new SP.ClientContext(site);
+            var zlist = ctx.get_web().get_lists().getByTitle(list);
+            var caml = new SP.CamlQuery();
+            caml.set_viewXml(xml);
+            var items = zlist.getItems(caml);
+            ctx.load(items);
+            ctx.executeQueryAsync(
+                Function.createDelegate(this, function () { deferred.resolve(items); }),
+                Function.createDelegate(this, function (sender, args) { deferred.reject(sender, args); })
+            );
+            return deferred.promise();
+        };
+
+        var getvaluescurrentsite = function (list, field) {
+            var xml = "<View><Method Name='Read List' /><Query><OrderBy><FieldRef Name='" + field + "'/></OrderBy><Where><IsNotNull><FieldRef Name='" + field + "'/></IsNotNull></Where></Query>";
+            xml += "<ViewFields>";
+            xml += "<FieldRef Name='" + field + "'/>";
+            xml += "<FieldRef Name='ID'/>";
+            xml += "</ViewFields>";
+            xml += "</View>";
+            var deferred = $.Deferred();
+            var ctx = new SP.ClientContext.get_current();
+            var zlist = ctx.get_web().get_lists().getByTitle(list);
+            var caml = new SP.CamlQuery();
+            caml.set_viewXml(xml);
+            var items = zlist.getItems(caml);
+            ctx.load(items);
+            ctx.executeQueryAsync(
+                Function.createDelegate(this, function () { deferred.resolve(items); }),
+                Function.createDelegate(this, function (sender, args) { deferred.reject(sender, args); })
+            );
+            return deferred.promise();
+        };
+
+        var getvaluesfiltered = function (site, list, field, filterfield, filterselect) {
+            var xml = "<View><Method Name='Read List' /><Query><OrderBy><FieldRef Name='" + field + "'/></OrderBy><Where><Eq><FieldRef Name='" + filterfield + "' /><Value Type='Text'>" + $("#" + filterselect + " option:selected").text() + "</Value></Eq></Where></Query>";
+            xml += "<ViewFields>";
+            xml += "<FieldRef Name='" + field + "'/>";
+            xml += "<FieldRef Name='" + filterfield + "'/>";
+            xml += "<FieldRef Name='ID'/>";
+            xml += "</ViewFields>";
+            xml += "</View>";
+            var deferred = $.Deferred();
+            var ctx = new SP.ClientContext(site);
+            var zlist = ctx.get_web().get_lists().getByTitle(list);
+            var caml = new SP.CamlQuery();
+            caml.set_viewXml(xml);
+            var items = zlist.getItems(caml);
+            ctx.load(items);
+            ctx.executeQueryAsync(
+                Function.createDelegate(this, function () { deferred.resolve(items); }),
+                Function.createDelegate(this, function (sender, args) { deferred.reject(sender, args); })
+            );
+            return deferred.promise();
+        };
+
+        return {
+            getvalues: getvalues,
+            getvaluesfiltered: getvaluesfiltered,
+            getvaluescurrentsite: getvaluescurrentsite
+        };
+    } ();
+
+    function iseven(n) {
+        return(n%2 == 0);
+    }
+
+    TRADOC.csom.FillDropdowns = function (items, field, dropdowns) {
+        var opts = "<option selected value='Select...'>Select...</option>";
+        var enumerator = items.getEnumerator();
+        var unique = "";
+        while (enumerator.moveNext()) {
+            var li = enumerator.get_current();
+            if (li.get_item(field) != unique) {
+                opts += "<option value='" + li.get_item(field) + "'>" + li.get_item(field) + "</option>";
+                unique = li.get_item(field);
+            }
+        }
+        for (var z = 0; z <= dropdowns.length; z++) {
+            $("#" + dropdowns[z]).html("").append(opts);
+            $("#" + dropdowns[z]).attr("loaded", "true");
+        }
+    };
+
+    TRADOC.csom.FillTextboxes = function (items, field, textboxes, islookup) {
+        var enumerator = items.getEnumerator(); // Technically there should only be one item
+        var unique = "";
+        while (enumerator.moveNext()) {
+            var li = enumerator.get_current();
+            for (var z = 0; z <= textboxes.length; z++) {
+                if ($("#" + textboxes[z]).attr("function") == "lookuptext") { //used in financial classification
+                    $("#" + textboxes[z]).val(li.get_item(field));
+                    $("#" + textboxes[z]).next().val(li.get_item(field));
+                }
+                else {
+                    $("#" + textboxes[z]).val(li.get_item(field));
+                }
+            }
+        }
+    };
+
+    TRADOC.csom.Copy = function () {
+        var getolditem = function (site, list, id) {
+            var deferred = $.Deferred();
+            var ctx = new SP.ClientContext(site);
+            var zlist = ctx.get_web().get_lists().getByTitle(list);
+            var item = zlist.getItemById(amoid);
+            ctx.load(item);
+            ctx.executeQueryAsync(
+                Function.createDelegate(this, function () { deferred.resolve(item, id); }),
+                Function.createDelegate(this, function (sender, args) { deferred.reject(sender, args); })
+            );
+            return deferred.promise();
+        };
+
+        return {
+            getolditem: getolditem
+        };
+    } ();
+
+    TRADOC.csom.Groups = function () {
+        var getSiteGroups = function (site) {
+            var deferred = $.Deferred();
+            var ctx = new SP.ClientContext(site);
+            var web = ctx.get_web();
+            var groups = ctx.get_web().get_siteGroups();
+            ctx.load(groups, 'Include(Title,Id)');
+            ctx.executeQueryAsync(
+                Function.createDelegate(this, function () { deferred.resolve(groups); }),
+                Function.createDelegate(this, function (sender, args) { deferred.reject(sender, args); })
+            );
+            return deferred.promise();
+        };
+
+        return {
+            getSiteGroups: getSiteGroups
+        };
+    } ();
+
+    TRADOC.csom.GetListItemByID = function () {
+        var getitem = function (list, id) {
+            var deferred = $.Deferred();
+            ctxu = new SP.ClientContext.get_current();
+            var zlist = ctxu.get_web().get_lists().getByTitle(list);
+            var listitem = zlist.getItemById(id, "Include(EncodedAbsUrl)");
+            ctxu.load(listitem);
+            ctxu.executeQueryAsync(
+                Function.createDelegate(this, function () { deferred.resolve(listitem); }),
+                Function.createDelegate(this, function (sender, args) { deferred.reject(sender, args); })
+            );
+            return deferred.promise();
+        };
+
+        var getitemwithfields = function (list, id) {
+            var deferred = $.Deferred();
+            ctxu = new SP.ClientContext.get_current();
+            var zlist = ctxu.get_web().get_lists().getByTitle(list);
+            var fields = zlist.get_fields();
+            var listitem = zlist.getItemById(id, "Include(FileRef)");
+            ctxu.load(listitem);
+            ctxu.load(fields, 'Include(Title,InternalName,FieldTypeKind,ReadOnlyField)');
+            ctxu.executeQueryAsync(
+                Function.createDelegate(this, function () { deferred.resolve(listitem, fields); }),
+                Function.createDelegate(this, function (sender, args) { deferred.reject(sender, args); })
+            );
+            return deferred.promise();
+        };
+
+        var getitemsite = function (site, list, id) {
+            var deferred = $.Deferred();
+            ctxu = new SP.ClientContext(site);
+            var zlist = ctxu.get_web().get_lists().getByTitle(list);
+            var listitem = zlist.getItemById(id, "Include(EncodedAbsUrl)");
+            ctxu.load(listitem);
+            ctxu.executeQueryAsync(
+                Function.createDelegate(this, function () { deferred.resolve(listitem); }),
+                Function.createDelegate(this, function (sender, args) { deferred.reject(sender, args); })
+            );
+            return deferred.promise();
+        };
+
+        var getitemandpassgroupid = function (list, id, groupid) {
+            var deferred = $.Deferred();
+            ctxu = new SP.ClientContext.get_current(); ;
+            var zlist = ctxu.get_web().get_lists().getByTitle(list);
+            var listitem = zlist.getItemById(id, "Include(EncodedAbsUrl)");
+            ctxu.load(listitem);
+            ctxu.executeQueryAsync(
+                Function.createDelegate(this, function () { deferred.resolve(listitem, groupid, site); }),
+                Function.createDelegate(this, function (sender, args) { deferred.reject(sender, args); })
+            );
+            return deferred.promise();
+        };
+
+        return {
+            getitem: getitem,
+            getitemwithfields: getitemwithfields,
+            getitemsite: getitemsite,
+            getitemandpassgroupid: getitemandpassgroupid
+        };
+    } ();
+
+    TRADOC.csom.GetListItemByKey = function () { // Assumes only one item will have this unique value that is not the ID
+        var getitem = function (list, key, keyvalue) {
+            var xml = "<View><Method Name='Read List' /><Query><OrderBy><FieldRef Name='" + key + "'/></OrderBy><Where><Eq><FieldRef Name='" + key + "' /><Value Type='Text'>" + keyvalue + "</Value></Eq></Where></Query>";
+            xml += "<ViewFields>";
+            xml += "<FieldRef Name='" + key + "'/>";
+            xml += "<FieldRef Name='ID'/>";
+            xml += "<FieldRef Name='EncodedAbsUrl'/>";
+            xml += "</ViewFields>";
+            xml += "</View>";
+            var deferred = $.Deferred();
+            var ctx = new SP.ClientContext.get_current();
+            var zlist = ctx.get_web().get_lists().getByTitle(list);
+            var caml = new SP.CamlQuery();
+            caml.set_viewXml(xml);
+            var items = zlist.getItems(caml);
+            ctx.load(items);
+            ctx.executeQueryAsync(
+                Function.createDelegate(this, function () { deferred.resolve(items); }),
+                Function.createDelegate(this, function (sender, args) { deferred.reject(sender, args); })
+            );
+            return deferred.promise();
+        };
+
+        var getitemandpassdata = function (list, key, keyvalue, data) {
+            var xml = "<View><Method Name='Read List' /><Query><OrderBy><FieldRef Name='" + key + "'/></OrderBy><Where><Eq><FieldRef Name='" + key + "' /><Value Type='Text'>" + keyvalue + "</Value></Eq></Where></Query>";
+            xml += "<ViewFields>";
+            xml += "<FieldRef Name='" + key + "'/>";
+            xml += "<FieldRef Name='ID'/>";
+            xml += "<FieldRef Name='EncodedAbsUrl'/>";
+            xml += "</ViewFields>";
+            xml += "</View>";
+            var deferred = $.Deferred();
+            var ctx = new SP.ClientContext.get_current();
+            var zlist = ctx.get_web().get_lists().getByTitle(list);
+            var caml = new SP.CamlQuery();
+            caml.set_viewXml(xml);
+            var items = zlist.getItems(caml);
+            ctx.load(items);
+            ctx.executeQueryAsync(
+                Function.createDelegate(this, function () { deferred.resolve(items, data); }),
+                Function.createDelegate(this, function (sender, args) { deferred.reject(sender, args); })
+            );
+            return deferred.promise();
+        };
+
+        return {
+            getitem: getitem,
+            getitemandpassdata: getitemandpassdata
+        };
+    } ();
+
+    TRADOC.csom.GetLibraryItems = function () {
+        var getfilesfiltered = function (site, library, fields, filterfield, filtervalue) {
+            var inc = "Include(";
+            var xml = "<View><Method Name='Read List' /><Query><OrderBy><FieldRef Name='ID'/></OrderBy><Where><Eq><FieldRef Name='" + filterfield + "' /><Value Type='Text'>" + filtervalue + "</Value></Eq></Where></Query>";
+            xml += "<ViewFields>";
+            for (var z = 0; z <= fields.length - 1; z++) {
+                xml += "<FieldRef Name='" + fields[z] + "'/>";
+                if (z == fields.length - 1) {
+                    inc += fields[z] + ")";
+                }
+                else {
+                    inc += fields[z] + ", ";
+                }
+            }
+            xml += "<FieldRef Name='" + filterfield + "'/>";
+            xml += "<FieldRef Name='ID'/>";
+            xml += "</ViewFields>";
+            xml += "</View>";
+            var deferred = $.Deferred();
+            var ctx;
+            if (site == "current") {
+                ctx = new SP.ClientContext.get_current();
+            }
+            else {
+                ctx = new SP.ClientContext(site);
+            }
+            var zlib = ctx.get_web().get_lists().getByTitle(library);
+            var caml = new SP.CamlQuery();
+            caml.set_viewXml(xml);
+            var files = zlib.getItems(caml);
+            ctx.load(files, inc);
+            ctx.executeQueryAsync(
+                Function.createDelegate(this, function () { deferred.resolve(files); }),
+                Function.createDelegate(this, function (sender, args) { deferred.reject(sender, args); })
+            );
+            return deferred.promise();
+        };
+
+        var getfilesfilteredcomplex = function (library, xml, inc) { //pass in customized xml statement
+            var deferred = $.Deferred();
+            var ctx = new SP.ClientContext.get_current();
+            var zlib = ctx.get_web().get_lists().getByTitle(library);
+            var caml = new SP.CamlQuery();
+            caml.set_viewXml(xml);
+            var files = zlib.getItems(caml);
+            ctx.load(files, inc);
+            ctx.executeQueryAsync(
+                Function.createDelegate(this, function () { deferred.resolve(files); }),
+                Function.createDelegate(this, function (sender, args) { deferred.reject(sender, args); })
+            );
+            return deferred.promise();
+        };
+
+        var getfilesfilteredcomplex2 = function (library, xml, inc, tblid) { //pass in customized xml statement
+            var deferred = $.Deferred();
+            var ctx = new SP.ClientContext.get_current();
+            var zlib = ctx.get_web().get_lists().getByTitle(library);
+            var caml = new SP.CamlQuery();
+            caml.set_viewXml(xml);
+            var files = zlib.getItems(caml);
+            ctx.load(files, inc);
+            ctx.executeQueryAsync(
+                Function.createDelegate(this, function () { deferred.resolve(files, tblid); }),
+                Function.createDelegate(this, function (sender, args) { deferred.reject(sender, args); })
+            );
+            return deferred.promise();
+        };
+
+        var getfileicon = function (file, icon, doctype) {
+            var deferred = $.Deferred();
+            var ctx = new SP.ClientContext.get_current();
+            var web = ctx.get_web();
+            icon = web.mapToIcon(file, '', SP.Utilities.IconSize.Size16);
+            ctx.executeQueryAsync(
+                Function.createDelegate(this, function () { deferred.resolve(icon, doctype); }),
+                Function.createDelegate(this, function (sender, args) { deferred.reject(sender, args); })
+            );
+            return deferred.promise();
+        };
+
+        var getcontractfileicon = function (file, icon, doctype, url) {
+            var deferred = $.Deferred();
+            var ctx = new SP.ClientContext.get_current();
+            var web = ctx.get_web();
+            icon = web.mapToIcon(file, '', SP.Utilities.IconSize.Size16);
+            ctx.executeQueryAsync(
+                Function.createDelegate(this, function () { deferred.resolve(icon, doctype, file, url); }),
+                Function.createDelegate(this, function (sender, args) { deferred.reject(sender, args); })
+            );
+            return deferred.promise();
+        };
+
+        return {
+            getfilesfiltered: getfilesfiltered,
+            getfilesfilteredcomplex: getfilesfilteredcomplex,
+            getfilesfilteredcomplex2: getfilesfilteredcomplex2,
+            getfileicon: getfileicon,
+            getcontractfileicon: getcontractfileicon
+        };
+    } ();
+
+    TRADOC.csom.UpdateFileLinks = function (files) {
+        var enumerator = files.getEnumerator();
+        while (enumerator.moveNext()) {
+            var li = enumerator.get_current();
+            var dt = li.get_item("DocumentType");
+            var file = li.get_item("FileLeafRef");
+            var staff = li.get_item("Staffing");
+            if (staff == "false") {
+                var durl = fixurl("/Documents/" + file);
+                $("input[DocumentType='" + dt + "']").val("Remove");
+                $("input[DocumentType='" + dt + "']").parent().next().css({ border: '1px solid #00ff00' });
+                $("input[DocumentType='" + dt + "']").parent().next().html("<a href='" + durl + "' class='uploadedfilelink'>" + file + "</a>");
+            }
+        }
+    };
+
+    TRADOC.csom.GetListItems = function () {
+        var getitemsfiltered = function (list, filterfield, filtervalue) {
+            var xml = "<View><Method Name='Read List' /><Query><OrderBy><FieldRef Name='ID'/></OrderBy><Where><Eq><FieldRef Name='" + filterfield + "' /><Value Type='Text'>" + filtervalue + "</Value></Eq></Where></Query></View>";
+            var deferred = $.Deferred();
+            var ctx = new SP.ClientContext.get_current();
+            var zlist = ctx.get_web().get_lists().getByTitle(list);
+            var caml = new SP.CamlQuery();
+            caml.set_viewXml(xml);
+            var items = zlist.getItems(caml);
+            ctx.load(items);
+            ctx.executeQueryAsync(
+                Function.createDelegate(this, function () { deferred.resolve(items); }),
+                Function.createDelegate(this, function (sender, args) { deferred.reject(sender, args); })
+            );
+            return deferred.promise();
+        };
+
+        var getitemsfilteredwithgroups = function (list, filterfield, filtervalue, groups) {
+            var xml = "<View><Method Name='Read List' /><Query><OrderBy><FieldRef Name='ID'/></OrderBy><Where><Eq><FieldRef Name='" + filterfield + "' /><Value Type='Text'>" + filtervalue + "</Value></Eq></Where></Query></View>";
+            var deferred = $.Deferred();
+            var ctx = new SP.ClientContext.get_current(); ;
+            var zlist = ctx.get_web().get_lists().getByTitle(list);
+            groups = ctx.get_web().get_siteGroups();
+            var caml = new SP.CamlQuery();
+            caml.set_viewXml(xml);
+            var items = zlist.getItems(caml);
+            ctx.load(items);
+            ctx.load(groups, 'Include(Title,Id)');
+            ctx.executeQueryAsync(
+                Function.createDelegate(this, function () { deferred.resolve(items, groups); }),
+                Function.createDelegate(this, function (sender, args) { deferred.reject(sender, args); })
+            );
+            return deferred.promise();
+        };
+
+        var getopenforms = function (amoid, rowid, site) {
+            var deferred = $.Deferred();
+            var ctx = new SP.ClientContext(site);
+            var zlist = ctx.get_web().get_lists().getByTitle("AMOFormsList");
+            var item = zlist.getItemById(amoid);
+            ctx.load(item);
+            ctx.executeQueryAsync(
+                Function.createDelegate(this, function () { deferred.resolve(item, amoid, rowid); }),
+                Function.createDelegate(this, function (sender, args) { deferred.reject(sender, args); })
+            );
+            return deferred.promise();
+        };
+
+        var getmarked = function (amo, tsite) {
+            var xml = "<View><Method Name='Read List' /><Query><Where><Eq><FieldRef Name='Title' /><Value Type='Text'>" + amo + "</Value></Eq></Where></Query></View>";
+            var deferred = $.Deferred();
+            var ctx = new SP.ClientContext(tsite);
+            var zlist = ctx.get_web().get_lists().getByTitle("CRBReview");
+            var caml = new SP.CamlQuery();
+            caml.set_viewXml(xml);
+            var items = zlist.getItems(caml);
+            ctx.load(items);
+            ctx.executeQueryAsync(
+                Function.createDelegate(this, function () { deferred.resolve(items, amo); }),
+                Function.createDelegate(this, function (sender, args) { deferred.reject(sender, args); })
+            );
+            return deferred.promise();
+        };
+
+        var getamount = function (amo, tsite, type) {
+            var xml = "<View><Method Name='Read List' /><Query><Where><Eq><FieldRef Name='AMO_x0020_No_x002e_' /><Value Type='Text'>" + amo + "</Value></Eq></Where></Query>";
+            xml += "<ViewFields><FieldRef Name='AMO_x0020_No_x002e_' />";
+            for (var x = 1; x <= 5; x++) {
+                tp1 = "EstimatedTotalCost" + x;
+                tp2 = "FY_x0020_" + x;
+                xml += "<FieldRef Name='" + tp1 + "'/>";
+                xml += "<FieldRef Name='" + tp2 + "'/>";
+            }
+            xml += "<FieldRef Name='ID'/>";
+            xml += "</ViewFields>";
+            xml += "</View>";
+            tp3 = new String(tsite);
+            tp4 = tsite.lastIndexOf('/');
+            tp5 = tsite.substring(tp4 + 1);
+            var deferred = $.Deferred();
+            var ctx = new SP.ClientContext(tsite);
+            var zlist = ctx.get_web().get_lists().getByTitle("AMOFormsList");
+            var caml = new SP.CamlQuery();
+            caml.set_viewXml(xml);
+            var items = zlist.getItems(caml);
+            ctx.load(items);
+            ctx.executeQueryAsync(
+                Function.createDelegate(this, function () { deferred.resolve(items, amo, tp5, type); }),
+                Function.createDelegate(this, function (sender, args) { deferred.reject(sender, args); })
+            );
+            return deferred.promise();
+        };
+
+        return {
+            getitemsfiltered: getitemsfiltered,
+            getitemsfilteredwithgroups: getitemsfilteredwithgroups,
+            getopenforms: getopenforms,
+            getmarked: getmarked,
+            getamount: getamount
+        };
+    } ();

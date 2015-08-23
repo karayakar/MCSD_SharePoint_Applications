@@ -1,0 +1,12 @@
+﻿<Feature xmlns="http://schemas.microsoft.com/sharepoint/" Id="e52fd6fb-bd2b-4fc8-81b2-0321f7bdfd5d" Scope="Site" Title="Farm_Solution2 Feature1">
+  <ElementManifests>
+    <ElementManifest Location="TestListInstance\Elements.xml" />
+    <ElementManifest Location="TestList\Elements.xml" />
+    <ElementFile Location="TestList\Schema.xml" />
+    <ElementManifest Location="ChemicalAtomicMass\Elements.xml" />
+    <ElementManifest Location="ChemicalAtomicNumber\Elements.xml" />
+    <ElementManifest Location="ChemicalName\Elements.xml" />
+    <ElementManifest Location="ChemicalContent\Elements.xml" />
+    <ElementManifest Location="ChemicalListStapler\Elements.xml" />
+  </ElementManifests>
+</Feature>
