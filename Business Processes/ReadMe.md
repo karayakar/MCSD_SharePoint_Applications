@@ -1,13 +1,4 @@
-﻿#Microsoft.SharePoint namespace
-
-https://msdn.microsoft.com/en-us/library/office/microsoft.sharepoint.aspx
-
-#Microsoft.SharePoint.Administration namespace
-
-https://msdn.microsoft.com/en-us/library/office/microsoft.sharepoint.administration.aspx
-
-
-# Creating Timer Jobs in SharePoint 2010 That Target Specific Web Applications (Wrox)
+﻿# Creating Timer Jobs in SharePoint 2010 That Target Specific Web Applications (Wrox)
 
 https://msdn.microsoft.com/en-us/library/office/hh528518%28v=office.14%29.aspx
 
