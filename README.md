@@ -1,6 +1,6 @@
 ﻿#SharePoint Understanding
 
-Shaun Lewis(aka budostylz): SharePoint Applications 2010/2013 Developer
+Shaun Lewis(aka budostylz): SharePoint 2010/2013 Applications  Developer
 
 
 #Chill Out ----- Concentration Musica
