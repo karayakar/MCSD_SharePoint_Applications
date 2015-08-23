@@ -6,6 +6,11 @@ Shaun Lewis(aka budostylz): SharePoint 2010/2013 Applications  Developer
 
 http://jsbeautifier.org/
 
+#JavaScript Minifier
+
+http://javascript-minifier.com/
+
+
 #Chill Out ----- Concentration Musica
 
 http://www.dancetrippin.tv/
