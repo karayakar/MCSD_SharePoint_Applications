@@ -1,4 +1,4 @@
-﻿#Example REST/oDATA Calla
+﻿#Example REST oDATA Calls
 
 #Query Web
 
