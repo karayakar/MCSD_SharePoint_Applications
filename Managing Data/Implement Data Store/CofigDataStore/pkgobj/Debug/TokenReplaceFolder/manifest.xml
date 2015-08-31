@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Solution xmlns="http://schemas.microsoft.com/sharepoint/" SolutionId="8a00b4b2-0d55-4d4d-98ea-d088c9c014f6" SharePointProductVersion="15.0">
+  <Assemblies>
+    <Assembly Location="CofigDataStore.dll" DeploymentTarget="GlobalAssemblyCache" />
+  </Assemblies>
+</Solution>

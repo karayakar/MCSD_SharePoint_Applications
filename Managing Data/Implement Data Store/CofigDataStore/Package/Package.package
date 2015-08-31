@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" dslVersion="1.0.0.0" Id="8a00b4b2-0d55-4d4d-98ea-d088c9c014f6" solutionId="8a00b4b2-0d55-4d4d-98ea-d088c9c014f6" resetWebServer="false" sharePointProductVersion="15.0" name="CofigDataStore" xmlns="http://schemas.microsoft.com/VisualStudio/2008/SharePointTools/PackageModel">
+  <projectItems>
+    <projectItemReference itemId="9d593521-0c49-4f70-bed6-2191f205fefd" />
+    <projectItemReference itemId="f0986f37-332a-41f6-b77d-dff8c4f57123" />
+  </projectItems>
+</package>
