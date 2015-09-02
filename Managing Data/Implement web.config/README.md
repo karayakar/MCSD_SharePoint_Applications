@@ -1,3 +1,7 @@
+#Configuration File Schema for the .NET Framework
+
+https://msdn.microsoft.com/en-us/library/1fk1t1t0%28v=vs.110%29.aspx
+
 #SPWebConfigModification - Add Remove Stuff from web.config
 
 https://msdn.microsoft.com/en-us/library/office/microsoft.sharepoint.administration.spwebconfigmodification.aspx
