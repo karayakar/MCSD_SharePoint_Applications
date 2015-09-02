@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Solution xmlns="http://schemas.microsoft.com/sharepoint/" SolutionId="796a9e3c-6917-4951-afd6-12eded5bd484" SharePointProductVersion="15.0">
+  <Assemblies>
+    <Assembly Location="_61528.Features.WebConfigFeature.dll" DeploymentTarget="GlobalAssemblyCache" />
+  </Assemblies>
+  <TemplateFiles>
+    <TemplateFile Location="Layouts\web_config1.aspx" />
+  </TemplateFiles>
+  <FeatureManifests>
+    <FeatureManifest Location="_61528.Features.WebConfigFeature_WebConfigFeatureEventReceiver\Feature.xml" />
+  </FeatureManifests>
+</Solution>

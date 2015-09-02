@@ -1,0 +1,2 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Feature xmlns="http://schemas.microsoft.com/sharepoint/" Title="_61528.Features.WebConfigFeature Feature1" Id="8eb5c466-be78-4f39-8282-d14eaddabd93" ReceiverAssembly="_61528.Features.WebConfigFeature, Version=1.0.0.0, Culture=neutral, PublicKeyToken=7302655caf8aa6d2" ReceiverClass="_61528.Features.WebConfigFeature.Features.Feature1.Feature1EventReceiver" Scope="Web"></Feature>

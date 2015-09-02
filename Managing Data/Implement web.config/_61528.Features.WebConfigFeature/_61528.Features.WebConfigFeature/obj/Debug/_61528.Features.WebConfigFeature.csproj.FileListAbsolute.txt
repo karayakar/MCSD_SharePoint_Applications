@@ -1,0 +1,5 @@
+c:\users\administrator\documents\visual studio 2015\Projects\_61528.Features.WebConfigFeature\_61528.Features.WebConfigFeature\bin\Debug\_61528.Features.WebConfigFeature.dll
+c:\users\administrator\documents\visual studio 2015\Projects\_61528.Features.WebConfigFeature\_61528.Features.WebConfigFeature\bin\Debug\_61528.Features.WebConfigFeature.pdb
+c:\users\administrator\documents\visual studio 2015\Projects\_61528.Features.WebConfigFeature\_61528.Features.WebConfigFeature\obj\Debug\_61528.Features.WebConfigFeature.csprojResolveAssemblyReference.cache
+c:\users\administrator\documents\visual studio 2015\Projects\_61528.Features.WebConfigFeature\_61528.Features.WebConfigFeature\obj\Debug\_61528.Features.WebConfigFeature.dll
+c:\users\administrator\documents\visual studio 2015\Projects\_61528.Features.WebConfigFeature\_61528.Features.WebConfigFeature\obj\Debug\_61528.Features.WebConfigFeature.pdb
