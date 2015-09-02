@@ -9,8 +9,8 @@ https://msdn.microsoft.com/en-us/library/system.configuration.configurationmanag
 #Example Project Steps (Check Project Folder and Screen Shots)
 
 a. Create Empty Project 
-b. Create Event Receiver
-c. Create aspx page
+b. Create Event Receiver -> WebConfigFeatureEventReceiver.EventReceiver.cs
+c. Create aspx page -> web_config1.aspx
 
 
 
