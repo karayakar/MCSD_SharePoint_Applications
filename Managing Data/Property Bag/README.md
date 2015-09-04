@@ -5,6 +5,7 @@ https://msdn.microsoft.com/en-us/library/office/microsoft.sharepoint.spweb.prope
 #App Description
 
 a. Stores data in property bag
+
 b. uses aspx and code behind pages
 
 
