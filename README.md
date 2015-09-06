@@ -10,6 +10,10 @@ http://jsbeautifier.org/
 
 http://javascript-minifier.com/
 
+#HTML Encoding Symbols(debug urls)
+
+http://www.w3schools.com/tags/ref_urlencode.asp
+
 
 #Chill Out ----- Concentration Musica
 
