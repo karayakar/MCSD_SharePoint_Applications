@@ -17,3 +17,4 @@
 	15. Data Connection Wizard(Authentication Settings) -> s15
 	16. Data Connection Wizard(Authentication Settings) -> s16
 	17. Import Data -> s17
+	18. Reseult Set -> s18
