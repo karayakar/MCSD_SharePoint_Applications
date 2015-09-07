@@ -14,9 +14,9 @@ http://javascript-minifier.com/
 
 http://www.w3schools.com/tags/ref_urlencode.asp
 
-#SharePoint Internal Field Names
+#SPBuiltInFieldId fields
 
-http://blogs.msdn.com/b/michael_yeager/archive/2008/11/03/reference-list-for-internal-field-names.aspx
+https://msdn.microsoft.com/EN-US/library/office/microsoft.sharepoint.spbuiltinfieldid_fields.aspx
 
 
 #Chill Out ----- Concentration Musica
