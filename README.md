@@ -14,6 +14,10 @@ http://javascript-minifier.com/
 
 http://www.w3schools.com/tags/ref_urlencode.asp
 
+#SharePoint Internal Field Names
+
+http://blogs.msdn.com/b/michael_yeager/archive/2008/11/03/reference-list-for-internal-field-names.aspx
+
 
 #Chill Out ----- Concentration Musica
 
