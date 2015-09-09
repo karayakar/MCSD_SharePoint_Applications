@@ -1,4 +1,4 @@
-﻿# Deployment
+﻿# PowerShell Deployment
 
 	1. (Visual Studio)Build -> Configuration Manager -> Active Solution Configuration -> Release
 	2. (Visual Studio)Click Build -> Publish
@@ -27,4 +27,3 @@
 
 	https://msdn.microsoft.com/en-us/library/aa544500%28office.14%29.aspx
 
-	
