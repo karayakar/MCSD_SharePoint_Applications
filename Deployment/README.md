@@ -4,7 +4,7 @@
 	2. (Visual Studio)Click Build -> Publish
 	3. Use .wsp for next steps in PowerShell
 
-#PowerShell Commands for deployment
+#PowerShell Commands for Deployment
 
 	1. Add-SPSolution
 
@@ -22,4 +22,4 @@
 
 		https://technet.microsoft.com/en-us/library/ff607748.aspx
 
-		
+
