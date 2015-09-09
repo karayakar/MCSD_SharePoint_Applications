@@ -23,3 +23,8 @@
 		https://technet.microsoft.com/en-us/library/ff607748.aspx
 
 
+#Deployment Process
+
+	https://msdn.microsoft.com/en-us/library/aa544500%28office.14%29.aspx
+
+	
