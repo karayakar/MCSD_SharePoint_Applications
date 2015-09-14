@@ -1,0 +1,9 @@
+<Feature xmlns="http://schemas.microsoft.com/sharepoint/" Hidden="True" Title="World Cup Features" Id="dc7ce12f-5bc8-400b-b178-4c595ddbac3f" Scope="Site">
+  <ElementManifests>
+    <ElementManifest Location="Countries\Elements.xml" />
+    <ElementManifest Location="Country\Elements.xml" />
+    <ElementManifest Location="CountryCode\Elements.xml" />
+    <ElementManifest Location="CountryPhoneCode\Elements.xml" />
+    <ElementManifest Location="CountryItem\Elements.xml" />
+  </ElementManifests>
+</Feature>

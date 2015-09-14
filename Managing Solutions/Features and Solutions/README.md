@@ -6,3 +6,7 @@
 
 
 #Countries List Template and Content Type wsp Attached Above
+
+	1. Solution Name: UnderstandSolutions
+
+	2. Feature Name: World Cup Features
