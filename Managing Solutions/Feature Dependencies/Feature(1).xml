@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Feature xmlns="http://schemas.microsoft.com/sharepoint/" Title="World Cup List " Id="95f07bff-884e-4e1d-a196-b687a8938f6b" Scope="Web">
+  <ActivationDependencies>
+    <ActivationDependency FeatureId="dc7ce12f-5bc8-400b-b178-4c595ddbac3f" FeatureTitle="World Cup Definitions" />
+  </ActivationDependencies>
+  <ElementManifests>
+    <ElementManifest Location="Countries\Elements.xml" />
+    <ElementManifest Location="Country\Elements.xml" />
+    <ElementManifest Location="CountryCode\Elements.xml" />
+    <ElementManifest Location="CountryPhoneCode\Elements.xml" />
+    <ElementManifest Location="CountryItem\Elements.xml" />
+  </ElementManifests>
+</Feature>
