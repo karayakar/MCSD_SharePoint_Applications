@@ -1,0 +1,17 @@
+﻿<Feature xmlns="http://schemas.microsoft.com/sharepoint/" Title="World Cup Definitions" Id="dc7ce12f-5bc8-400b-b178-4c595ddbac3f" Scope="Site" Version="2.0.0.0">
+  <UpgradeActions>
+    <VersionRange BeginVersion="1.0.0.0" EndVersion="2.0.0.0">
+      <ApplyElementManifests>
+        <ElementManifest Location="Player\Elements.xml"/>
+      </ApplyElementManifests>
+    </VersionRange>
+  </UpgradeActions>
+    <ElementManifests>
+    <ElementManifest Location="Countries\Elements.xml" />
+    <ElementManifest Location="Country\Elements.xml" />
+    <ElementManifest Location="CountryCode\Elements.xml" />
+    <ElementManifest Location="CountryPhoneCode\Elements.xml" />
+    <ElementManifest Location="CountryItem\Elements.xml" />
+    <ElementManifest Location="PlayerItem\Elements.xml" />
+  </ElementManifests>
+</Feature>

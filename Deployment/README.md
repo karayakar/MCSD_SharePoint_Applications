@@ -8,22 +8,22 @@
 
 	1. Add-SPSolution
 
-		https://technet.microsoft.com/en-us/library/ff607552.aspx
+	https://technet.microsoft.com/en-us/library/ff607552.aspx
 
 	2. Install-SPSolution
 
-		https://technet.microsoft.com/en-us/library/Ff607534.aspx
+	https://technet.microsoft.com/en-us/library/Ff607534.aspx
 
 	3. Uninstall-SPSolution
 
-		https://technet.microsoft.com/en-us/library/ff607873.aspx
+	https://technet.microsoft.com/en-us/library/ff607873.aspx
 
 	4. Remove-SPSolution
 
-		https://technet.microsoft.com/en-us/library/ff607748.aspx
+	https://technet.microsoft.com/en-us/library/ff607748.aspx
 
 
 #Deployment Process
 
-	https://msdn.microsoft.com/en-us/library/aa544500%28office.14%29.aspx
+https://msdn.microsoft.com/en-us/library/aa544500%28office.14%29.aspx
 
