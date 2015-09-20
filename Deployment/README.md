@@ -6,19 +6,19 @@
 
 #PowerShell Commands for Deployment
 
-1. Add-SPSolution
+Add-SPSolution
 
 https://technet.microsoft.com/en-us/library/ff607552.aspx
 
-2. Install-SPSolution
+Install-SPSolution
 
 https://technet.microsoft.com/en-us/library/Ff607534.aspx
 
-3. Uninstall-SPSolution
+Uninstall-SPSolution
 
 https://technet.microsoft.com/en-us/library/ff607873.aspx
 
-4. Remove-SPSolution
+Remove-SPSolution
 
 https://technet.microsoft.com/en-us/library/ff607748.aspx
 
