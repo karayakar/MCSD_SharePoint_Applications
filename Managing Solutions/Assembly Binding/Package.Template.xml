@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Solution xmlns="http://schemas.microsoft.com/sharepoint/">
+  <Assemblies>
+    <Assembly Location="UnderstandSolutions.dll" DeploymentTarget="GlobalAssemblyCache">
+      <BindingRedirects>
+        <BindingRedirect OldVersion="1.0.0.0"/>
+      </BindingRedirects>     
+    </Assembly>  
+  </Assemblies>
+</Solution>
