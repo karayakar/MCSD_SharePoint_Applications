@@ -22,6 +22,10 @@ Remove-SPSolution
 
 https://technet.microsoft.com/en-us/library/ff607748.aspx
 
+Get-SPSolution
+
+https://technet.microsoft.com/en-us/library/ff607754.aspx
+
 
 #Deployment Process
 
