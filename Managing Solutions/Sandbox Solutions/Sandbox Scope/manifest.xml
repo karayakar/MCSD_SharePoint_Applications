@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Solution xmlns="http://schemas.microsoft.com/sharepoint/" SolutionId="f163a10c-ff6e-4434-a005-166c44f574a6" SharePointProductVersion="15.0">
+  <Assemblies>
+    <Assembly Location="UnderstandSolutions.dll" DeploymentTarget="GlobalAssemblyCache">
+      <BindingRedirects>
+        <BindingRedirect OldVersion="1.0.0.0" />
+      </BindingRedirects>
+    </Assembly>
+  </Assemblies>
+  <FeatureManifests>
+    <FeatureManifest Location="UnderstandSolutions_Word Cup Definitions\Feature.xml" />
+    <FeatureManifest Location="UnderstandSolutions_World Cup List\Feature.xml" />
+  </FeatureManifests>
+</Solution>

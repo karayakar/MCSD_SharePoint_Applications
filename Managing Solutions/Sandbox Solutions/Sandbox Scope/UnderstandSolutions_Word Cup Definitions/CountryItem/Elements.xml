@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Elements xmlns="http://schemas.microsoft.com/sharepoint/">
+  <!-- Parent ContentType: Item (0x01) -->
+  <ContentType ID="0x0100AB63B0B8A26A4D5AB303D32488CFC912" Name="CountryItem" Group="Custom Content Types" Description="My Content Type" Inherits="TRUE" Version="0">
+    <FieldRefs>
+      <FieldRef ID="{63fb8d7e-8e4c-456c-85f0-1ea28d7af75e}" DisplayName="Country" Required="TRUE" Name="Country" />
+      <FieldRef ID="{eddccdb4-fd95-4142-9626-6de4db7cf08e}" DisplayName="Country Code" Required="TRUE" Name="CountryCode" />
+      <FieldRef ID="{65f2c503-5b02-4d90-b128-72d0730d17e7}" DisplayName="Country Phone Code" Required="TRUE" Name="CountryPhoneCode" />
+    </FieldRefs>
+  </ContentType>
+</Elements>
