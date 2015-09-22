@@ -1,4 +1,4 @@
-﻿#SharePoint Understanding
+﻿#SharePoint Dojo
 
 Shaun Lewis(aka budostylz): SharePoint 2010/2013 Applications  Developer
 
