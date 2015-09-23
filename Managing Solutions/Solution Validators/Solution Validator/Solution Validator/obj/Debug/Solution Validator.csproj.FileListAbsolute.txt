@@ -1,0 +1,4 @@
+c:\users\administrator\documents\visual studio 2015\Projects\Solution Validator\Solution Validator\bin\Debug\Solution Validator.dll
+c:\users\administrator\documents\visual studio 2015\Projects\Solution Validator\Solution Validator\bin\Debug\Solution Validator.pdb
+c:\users\administrator\documents\visual studio 2015\Projects\Solution Validator\Solution Validator\obj\Debug\Solution Validator.dll
+c:\users\administrator\documents\visual studio 2015\Projects\Solution Validator\Solution Validator\obj\Debug\Solution Validator.pdb

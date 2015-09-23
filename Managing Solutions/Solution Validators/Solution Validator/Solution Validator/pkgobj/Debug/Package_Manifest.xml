@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Solution xmlns="http://schemas.microsoft.com/sharepoint/" SolutionId="64633897-ef2b-436b-b6de-4786e18907fc" SharePointProductVersion="15.0">
+  <Assemblies>
+    <Assembly Location="Solution Validator.dll" DeploymentTarget="GlobalAssemblyCache" />
+  </Assemblies>
+  <FeatureManifests>
+    <FeatureManifest Location="Solution Validator_SolutionValidatorFeature\Feature.xml" />
+  </FeatureManifests>
+</Solution>
