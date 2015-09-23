@@ -18,6 +18,11 @@ http://www.w3schools.com/tags/ref_urlencode.asp
 
 https://msdn.microsoft.com/EN-US/library/office/microsoft.sharepoint.spbuiltinfieldid_fields.aspx
 
+#wsp Deployment Analysis Tools
+
+http://www.telerik.com/products/decompiler.aspx
+
+http://spdisposecheckstatic.codeplex.com/
 
 #Chill Out ----- Concentration Musica
 
