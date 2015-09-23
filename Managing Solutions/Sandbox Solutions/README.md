@@ -1,5 +1,6 @@
-﻿#Process
-	
-	SPUCWorkerProcess.exe -> Farm Solutions(w3wp.exe)
+﻿#Sandboxed Solutions
+
+https://msdn.microsoft.com/en-us/library/ff798382.aspx
+
 
 
