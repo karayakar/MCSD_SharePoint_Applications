@@ -24,6 +24,8 @@ http://www.telerik.com/products/decompiler.aspx
 
 http://spdisposecheckstatic.codeplex.com/
 
+http://www.spcaf.com/partners/offerings/microsoft/
+
 #Chill Out ----- Concentration Musica
 
 http://www.dancetrippin.tv/
