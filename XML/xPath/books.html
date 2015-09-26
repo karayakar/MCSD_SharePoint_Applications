@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+	<head>
+
+	    <meta charset='utf-8'>
+
+	    <title>Using XPath from JavaScript</title>      
+
+	</head>
+	<body>
+		<script>
+
+
+		function loadXMLDoc(dname)
+		{
+			alert("inside");
+			/*
+			if (window.XMLHttpRequest) {
+			  xhttp=new XMLHttpRequest();
+			}
+			else{
+			  xhttp=new ActiveXObject("Microsoft.XMLHTTP");
+			}
+			
+			xhttp.open("GET",dname,false);
+
+				try {
+					xhttp.responseType="msxml-document"
+				} 
+				catch(err) 
+				{
+
+				} // Helping IE
+				xhttp.send("");
+				return xhttp;
+				*/
+		}//end function loadXMLDoc(dname)
+
+		var oReq = new XMLHttpRequest();
+		oREq.open("GET","C:/Users/Shaun/Desktop/repos/XML/xPath/books.xml",false)
+
+		//var x=loadXMLDoc("C:/Users/Shaun/Desktop/repos/XML/xPath/books.xml");
+		//var xml=x.responseXML;
+		/*
+		path="/bookstore/book/title";
+
+		// code for IE
+		if (window.ActiveXObject || xhttp.responseType=="msxml-document"){
+			xml.setProperty("SelectionLanguage","XPath");
+			nodes=xml.selectNodes(path);
+
+			for (i=0;i<nodes.length;i++) {
+			  document.write(nodes[i].childNodes[0].nodeValue);
+			  document.write("<br>");
+			}//end for
+		}//end if
+		// code for Chrome, Firefox, Opera, etc.
+		else if (document.implementation && document.implementation.createDocument)
+		{
+			var nodes=xml.evaluate(path, xml, null, XPathResult.ANY_TYPE, null);
+			var result=nodes.iterateNext();
+
+			while (result) {
+			  document.write(result.childNodes[0].nodeValue);
+			  document.write("<br>");
+			  result=nodes.iterateNext();
+			}//end while	  
+		}//end else if
+
+		*/
+		
+		</script>
+	</body>
+</html>

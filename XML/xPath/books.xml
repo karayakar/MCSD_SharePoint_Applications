@@ -1,0 +1,60 @@
+
+<?xml version="1.0" encoding="UTF-8"?>
+
+<bookstore>
+
+	<book category="COOKING">
+	  <title lang="en">Everyday Italian</title>
+	  <author>Giada De Laurentiis</author>
+	  <year>2005</year>
+	  <price>30.00</price>
+	</book>
+
+	<book category="CHILDREN">
+	  <title lang="en">Harry Potter</title>
+	  <author>J K. Rowling</author>
+	  <year>2005</year>
+	  <price>29.99</price>
+	</book>
+
+	<book category="WEB">
+	  <title lang="en">XQuery Kick Start</title>
+	  <author>James McGovern</author>
+	  <author>Per Bothner</author>
+	  <author>Kurt Cagle</author>
+	  <author>James Linn</author>
+	  <author>Vaidyanathan Nagarajan</author>
+	  <year>2003</year>
+	  <price>49.99</price>
+	</book>
+
+	<book category="WEB">
+	  <title lang="en">Learning XML</title>
+	  <author>Erik T. Ray</author>
+	  <year>2003</year>
+	  <price>39.95</price>
+	</book>
+
+</bookstore> 
+
+<!-- 
+	Loading the XML Document
+
+	Code for most modern browsers:
+	var xmlhttp = new XMLHttpRequest()
+
+	Code for old Microsoft browsers (IE 5 and 6)
+	var xmlhttp = new ActiveXObject("Microsoft.XMLHTTP")
+
+	Selecting Nodes
+	IE uses the selectNodes() method to select nodes from the XML document:
+	xmlDoc.selectNodes(path)
+
+	Firefox, Chrome, Opera and Safari use the evaluate() method to select nodes from the XML document:
+	xml.Doc.Evaluate(xpath, xmlDoc, null, XPathResult.ANY_Type, null)
+
+	
+
+
+
+>

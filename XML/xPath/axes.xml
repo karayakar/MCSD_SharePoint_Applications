@@ -1,0 +1,69 @@
+
+	
+	<?xml version="1.0" encoding="UTF-8"?>
+
+	<bookstore>
+
+		<book>
+		  <title lang="en">Harry Potter</title>
+		  <price>29.99</price>
+		</book>
+
+		<book>
+		  <title lang="en">Learning XML</title>
+		  <price>39.95</price>
+		</book>
+
+	</bookstore> 
+
+<!--
+	XPath Axes
+	An axis defines a node-set relative to the current node.
+
+	AxisName	
+
+		ancestor				Selects all ancestors (parent, grandparent, etc) of the current node
+		ancestor-or-self		Selects all ancestors (parent, grandparent, etc) of the current node and the current node itself
+		attribute				Selects all attributes of the current node
+		child					Selects all children of the current node
+		descendant				Selects all descendants (children,grandchildren, etc) of the current node
+		descendant-or-self		Selects all descendants (children,grandchildren, etc) of the current node and the current node itself
+		following				Selects everything in the document after the closing tag of the current node
+		following-sibling		Selects all siblings after the current node.
+		namespace				Selects all namespace nodes of the current node
+		parent					Selects the parent of the current node
+		preceding				Selects all nodes that appear before the current node in the document, except ancestors, attribute nodes and namespace nodes
+		preceding-sibling		Selects all siblings before the current node
+		self 					Selects the current node
+
+
+	Location Path Expression
+		A location path can be absolute or relative.
+
+		An absolute path starts with a slash (/) and a relative location path does not. In both cases the location path consists of one or more steps,
+		each seperated by a slash:
+
+		An absoulte location path
+			/step/step/...
+
+		A relative location path
+			step/step/...
+
+	Each step is evaluated against the nodes in the current node-set.
+
+	A step consists of:
+		an axis(defines the tree-relationship between the selected nodes and the current node)
+		a node-test (identifies a node within an axis)
+		zero or more predicates (to further refine the selected node set)
+
+		child::book 			Selects all book nodes that are children of the current node
+		attribute::lang 		Selects the lang attribute of the current node
+		child::*				Selects all element children of the current node
+		attribute::*			Selects all attributes of the current node
+		child::text()			Selects all text node children of the current node
+		child::node()			Selects all children of the current node
+		descendant::book 		Selects all book decendants of the current node
+		ancestor::book 			Selects all book ancestors of the current node
+		ancestor-or-self::book 	Selects all book ancestors of the current node - and the current as well if it is a book node
+		child::*/child::price 	Selects all price grandchildren of the current node
+

@@ -1,0 +1,35 @@
+
+
+<!--
+	
+	XPath Operators
+
+	An XPath expression returns either a node-set, a string, a Boolean, or a number.
+
+	XPath OPerators
+	Below is a list of the operators that can be used in XPath expressions:
+
+	Operator 
+
+	| 		Computes two node-sets		//book | //cd
+	+		Addition					6 + 4
+	-		Subtraction					6 - 4
+	*		Multiplication				6 * 4
+	div		Division					8 div 4
+	=		Equal						price = 9.80
+	!=		Not Equal					price != 9.80
+	< 		Less Than					price < 9.80
+	<=		Less Than or Equal To 		price <= 9.80
+	> 		Greater Than				price > 9.80
+	>= 		Greater Than or Equal To 	price >= 9.80
+	or 		or 							price = 9.80 or price = 9.70
+	and 	and							price > 9.00 and price < 9.90
+	mod 	Modulus(division remainder) 5 mod 2
+
+
+
+
+
+
+
+>
