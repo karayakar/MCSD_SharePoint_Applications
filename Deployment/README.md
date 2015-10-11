@@ -35,7 +35,7 @@ https://msdn.microsoft.com/en-us/library/aa544500%28office.14%29.aspx
 
 https://technet.microsoft.com/en-us/library/Cc262995%28v=Office.14%29.aspx
 
-#stsadnin Deployment Steps
+#Stsadm Deployment Steps
 	
 	1. Add the solution
 	stsadm -o addsolution -filename {WSPFILENAME}
