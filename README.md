@@ -1,6 +1,6 @@
 ﻿#SharePoint Dojo
 
-Shaun Lewis(aka budostylz): SharePoint 2010/2013 Applications  Developer
+Shaun Lewis(aka budostylz): SharePoint 2010/2013 Applications/Solutions  Developer
 
 #JavaScript Beautifier
 
