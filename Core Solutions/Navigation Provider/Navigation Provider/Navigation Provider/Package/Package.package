@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package dslVersion="1.0.0.0" 
+        Id="2c8b7a61-f31f-4b04-ad60-d4548f74366a" 
+        solutionId="2c8b7a61-f31f-4b04-ad60-d4548f74366a" 
+        xmlns="http://schemas.microsoft.com/VisualStudio/2008/SharePointTools/PackageModel" 
+        name="Navigation_Provider"
+        sharePointProductVersion="15.0">
+</package>
