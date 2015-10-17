@@ -2,6 +2,14 @@
 
 Shaun Lewis(aka budostylz): SharePoint 2010/2013 Applications/Solutions  Developer
 
+#Client Object Model (sp.js Namespace)
+
+https://msdn.microsoft.com/en-us/library/ee557057
+
+#Server Object Model Reference
+
+https://msdn.microsoft.com/en-us/library/office/ms453225%28v=office.14%29.aspx
+
 #JavaScript Beautifier
 
 http://jsbeautifier.org/
