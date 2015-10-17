@@ -6,7 +6,7 @@ Shaun Lewis(aka budostylz): SharePoint 2010/2013 Applications/Solutions  Develop
 
 https://msdn.microsoft.com/en-us/library/ee557057
 
-#Server Object Model Reference
+#Server Object Model Namespaces
 
 https://msdn.microsoft.com/en-us/library/office/ms453225%28v=office.14%29.aspx
 
