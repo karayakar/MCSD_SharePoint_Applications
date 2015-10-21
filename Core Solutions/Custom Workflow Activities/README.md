@@ -1,7 +1,10 @@
-﻿#How to: Create SharePoint 2013 Workflows using Visual Studio
+﻿#Clear Cache
 
-https://msdn.microsoft.com/EN-US/library/office/dn584771.aspx
+	Clear contents at: 
 
+	%APPDATA%\Microsoft\Web Server Extensions\Cache
+
+	%USERPROFILE%\AppData\Local\Microsoft\WebCache
 
 
 
