@@ -10,6 +10,10 @@ https://msdn.microsoft.com/en-us/library/ee557057
 
 https://msdn.microsoft.com/en-us/library/office/ms453225%28v=office.14%29.aspx
 
+#SPServices
+
+http://spservices.codeplex.com/
+
 #JavaScript Beautifier
 
 http://jsbeautifier.org/
