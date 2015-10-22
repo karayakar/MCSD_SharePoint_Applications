@@ -2,7 +2,7 @@
 	
 	Event fire first, action is perform.
 
-#Aynchronous Events 'was'
+#Asynchronous Events 'was'
 
 	Events fire the same time as the action.
 
