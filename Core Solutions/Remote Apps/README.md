@@ -1,10 +1,12 @@
-﻿#Microsoft.SharePoint.RemoteApp namespace
+﻿#Announcing the new SharePointContext helper in Apps for SharePoint 2013
 
-https://msdn.microsoft.com/EN-US/library/office/microsoft.sharepoint.remoteapp.aspx
+http://blogs.msdn.com/b/officeapps/archive/2013/11/07/announcing-the-new-sharepointcontext-helper-in-apps-for-sharepoint-2013.aspx
 
-#Create a remote event receiver in SharePoint Add-ins
 
-https://msdn.microsoft.com/en-us/library/office/jj220043.aspx
+#Authorization and authentication of SharePoint Add-ins
+
+https://msdn.microsoft.com/en-us/library/office/fp142384.aspx
+
 
 
 
