@@ -1,6 +1,6 @@
 ﻿#Synchronous Events 'is being' 
 	
-	Event fire first, action is perform.
+	Event fire first, action is perform second.
 
 #Asynchronous Events 'was'
 
