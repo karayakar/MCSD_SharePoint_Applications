@@ -6,6 +6,10 @@ Shaun Lewis(aka budostylz): SharePoint 2010/2013 Applications/Solutions  Develop
 
 https://msdn.microsoft.com/en-us/library/ee557057
 
+#SharePoint 2013 .NET Server, CSOM, JSOM, and REST API index
+
+https://msdn.microsoft.com/en-us/library/office/dn268594.aspx
+
 #Server Object Model Namespaces
 
 https://msdn.microsoft.com/en-us/library/office/ms453225%28v=office.14%29.aspx
@@ -29,6 +33,10 @@ http://www.w3schools.com/tags/ref_urlencode.asp
 #SPBuiltInFieldId fields
 
 https://msdn.microsoft.com/EN-US/library/office/microsoft.sharepoint.spbuiltinfieldid_fields.aspx
+
+#Frodes awesome list of SharePoint Column Field IDs
+
+http://aarebrot.net/blog/2008/07/frodes-awesome-list-of-sharepoint-column-field-ids-for-sharepoint-2007/?tmpl=component&print=1&page=
 
 #wsp Deployment Analysis Tools
 
