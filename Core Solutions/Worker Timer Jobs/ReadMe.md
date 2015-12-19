@@ -1,9 +1,9 @@
-##How to: Debug a Timer Job
+#How to: Debug a Timer Job
 
 https://msdn.microsoft.com/en-us/library/ff798310.aspx
 
 
-##Timer Job Steps
+#Timer Job Steps
 
 1. Add Class
 2. Inherit Class from SPJob Definition
