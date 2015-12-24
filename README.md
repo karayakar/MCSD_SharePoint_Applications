@@ -2,7 +2,7 @@
 
 Shaun Lewis(aka budostylz): SharePoint 2010/2013 Applications/Solutions  Developer
 
-##SharePoint Development Walkthroughs
+#SharePoint Development Walkthroughs
 
 https://msdn.microsoft.com/en-us/library/ee290858.aspx
 
