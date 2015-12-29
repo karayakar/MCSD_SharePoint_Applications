@@ -53,22 +53,24 @@ http://www.spcaf.com/partners/offerings/microsoft/
 #Suffixes
 
 ##Users and Permissions:
-People and Groups: _layouts/people.aspx
-Site Collection Admins: _layouts/mngsiteadmin.aspx 
-Advanced Permissions: _layouts/user.aspx 
-Master Pages: _Layouts/ChangeSiteMasterPage.aspx 
+
+  People and Groups: _layouts/people.aspx
+  Site Collection Admins: _layouts/mngsiteadmin.aspx 
+  Advanced Permissions: _layouts/user.aspx 
+  Master Pages: _Layouts/ChangeSiteMasterPage.aspx 
   
-##Look and Feel: 
-Title, Description, and Icon: _layouts/prjsetng.aspx 
-Navigation: _layouts/AreaNavigationSettings.aspx 
-Page Layout and Site Templates: _Layouts/AreaTemplateSettings.aspx 
-Welcome Page: _Layouts/AreaWelcomePage.aspx 
-Tree View: _layouts/navoptions.aspx 
-Top Navigation Bar: _layouts/topnav.aspx 
-Site Theme: _layouts/themeweb.aspx 
-Reset to Site Definition: _layouts/reghost.aspx 
-Searchable Columns: _Layouts/NoCrawlSettings.aspx 
-Site Content Types: _layouts/mngctype.aspx 
+##Look and Feel:
+
+  Title, Description, and Icon: _layouts/prjsetng.aspx 
+  Navigation: _layouts/AreaNavigationSettings.aspx 
+  Page Layout and Site Templates: _Layouts/AreaTemplateSettings.aspx 
+  Welcome Page: _Layouts/AreaWelcomePage.aspx 
+  Tree View: _layouts/navoptions.aspx 
+  Top Navigation Bar: _layouts/topnav.aspx 
+  Site Theme: _layouts/themeweb.aspx 
+  Reset to Site Definition: _layouts/reghost.aspx 
+  Searchable Columns: _Layouts/NoCrawlSettings.aspx 
+  Site Content Types: _layouts/mngctype.aspx 
   
 ##Galleries 
 Site Columns: _layouts/mngfield.aspx 
