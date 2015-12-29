@@ -30,7 +30,7 @@ http://jsbeautifier.org/
 
 http://javascript-minifier.com/
 
-##Microsoft.SharePoint.WebControls Namespace
+#Microsoft.SharePoint.WebControls Namespace
 
 https://msdn.microsoft.com/en-us/library/office/Microsoft.SharePoint.WebControls%28v=office.14%29.aspx
 
