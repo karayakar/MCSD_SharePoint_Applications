@@ -30,6 +30,10 @@ http://jsbeautifier.org/
 
 http://javascript-minifier.com/
 
+##Microsoft.SharePoint.WebControls Namespace
+
+https://msdn.microsoft.com/en-us/library/office/Microsoft.SharePoint.WebControls%28v=office.14%29.aspx
+
 #HTML Encoding Symbols(debug urls)
 
 http://www.w3schools.com/tags/ref_urlencode.asp
