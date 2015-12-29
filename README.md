@@ -55,8 +55,9 @@ http://www.spcaf.com/partners/offerings/microsoft/
 ##Users and Permissions:
 
   People and Groups: _layouts/people.aspx
+  
   Site Collection Admins: _layouts/mngsiteadmin.aspx 
-  Advanced Permissions: _layouts/user.aspx 
+  
   Master Pages: _Layouts/ChangeSiteMasterPage.aspx 
   
 ##Look and Feel:
