@@ -57,8 +57,8 @@ http://www.spcaf.com/partners/offerings/microsoft/
 #Enable .wmv Video Files to Run via HTML5 <video> Element
 
   1. Convert .wmv to .mov files at http://www.zamzar.com/
-  2. Apply HTML5 "/<video>/" element.
-  3. Most of "/<Object>/" properties are obsolete.
+  2. Apply HTML5 Video element.
+  3. Most of Object element properties are obsolete.
 
 #Suffixes
 
