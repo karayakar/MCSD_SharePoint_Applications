@@ -58,7 +58,7 @@ http://www.spcaf.com/partners/offerings/microsoft/
 
   1. Convert .wmv to .mov files at http://www.zamzar.com/
   2. Apply HTML5 <video> element.
-  3. most of <Object> properties are obsolete.
+  3. Most of <Object> properties are obsolete.
 
 #Suffixes
 
