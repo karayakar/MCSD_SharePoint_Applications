@@ -96,9 +96,9 @@ http://www.spcaf.com/partners/offerings/microsoft/
   7. Site Features: _layouts/ManageFeatures.aspx 
   8. Delete This Site: _layouts/deleteweb.aspx 
   9. Site Output Cache: _Layouts/areacachesettings.aspx 
-  10.Content and Structure: _Layouts/sitemanager.aspx 
-  11.Content and Structure Logs: _Layouts/SiteManager.aspx?lro=all 
-  12.Search Settings: _layouts/enhancedSearch.aspx 
+  10. Content and Structure: _Layouts/sitemanager.aspx 
+  11. Content and Structure Logs: _Layouts/SiteManager.aspx?lro=all 
+  12. Search Settings: _layouts/enhancedSearch.aspx 
   
 ##Site Collection Administration 
 
@@ -111,13 +111,13 @@ http://www.spcaf.com/partners/offerings/microsoft/
   7. Site Collection Audit Settings: _layouts/AuditSettings.aspx 
   8. Site Collection Policies: _layouts/Policylist.aspx 
   9. Site Collection Cache Profiles: Cache%20Profiles/AllItems.aspx 
-  10.Site Collection Output Cache: _Layouts/sitecachesettings.aspx 
-  11.Site Collection Object Cache: _Layouts/objectcachesettings.aspx 
-  12.Variations: _Layouts/VariationSettings.aspx 
-  13.Variation Labels: _Layouts/VariationLabels.aspx 
-  14.Translatable Columns: _Layouts/TranslatableSettings.aspx 
-  15.Variation Logs: _Layouts/VariationLogs.aspx 
-  16.Site Settings: _layouts/settings.aspx 
+  10. Site Collection Output Cache: _Layouts/sitecachesettings.aspx 
+  11. Site Collection Object Cache: _Layouts/objectcachesettings.aspx 
+  12. Variations: _Layouts/VariationSettings.aspx 
+  13. Variation Labels: _Layouts/VariationLabels.aspx 
+  14. Translatable Columns: _Layouts/TranslatableSettings.aspx 
+  15. Variation Logs: _Layouts/VariationLogs.aspx 
+  16. Site Settings: _layouts/settings.aspx 
   
 ##Function Add to the URL Notes 
 
