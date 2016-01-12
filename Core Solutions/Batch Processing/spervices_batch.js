@@ -24,7 +24,7 @@ $().SPServices({
 							        	}
 	});
 	
-	//delete items
+	//delete list items
 	$().SPServices({
 								        operation: "UpdateListItems",
 								        ID: 1,
