@@ -180,6 +180,8 @@ http://www.spcaf.com/partners/offerings/microsoft/
   Web Part Page Maintenance ?contents=1 Add to the end of the page URL 
   Workflows /_layouts/wrkmng.aspx   
 
+#Install Additional VS Templates at VS Command Line
+  devenv /installvstemplates
 
 #Chill Out ----- Concentration Musica
 
