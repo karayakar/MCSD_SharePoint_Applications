@@ -179,12 +179,14 @@ http://www.spcaf.com/partners/offerings/microsoft/
   Web Part Gallery /_catalogs/wp   
   Web Part Page Maintenance ?contents=1 Add to the end of the page URL 
   Workflows /_layouts/wrkmng.aspx   
+  
+##Quick Launch
+https://any.domain/sites/any_site/_layouts/quiklnch.aspx
 
 #Install Additional VS Templates at VS Command Line
   devenv /installvstemplates
   
-#Quick Launch
-https://any.domain/sites/any_site/_layouts/quiklnch.aspx
+
 
 #Chill Out ----- Concentration Musica
 
