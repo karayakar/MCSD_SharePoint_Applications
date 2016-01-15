@@ -182,6 +182,9 @@ http://www.spcaf.com/partners/offerings/microsoft/
 
 #Install Additional VS Templates at VS Command Line
   devenv /installvstemplates
+  
+#Quick Launch
+https://any.domain/sites/any_site/_layouts/quiklnch.aspx
 
 #Chill Out ----- Concentration Musica
 
